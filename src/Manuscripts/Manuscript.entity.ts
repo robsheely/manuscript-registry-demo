@@ -12,7 +12,6 @@ import {
 } from 'remult'
 import { AccountManager } from '../AccountManagers/AccountManager.entity'
 import { Author } from '../Authors/Author.entity'
-import { Acquisition } from './Acquisition'
 import { ManuscriptNote } from './ManuscriptNote.entity'
 import { ManuscriptTag } from './ManuscriptTag.entity'
 import { Gender } from './Gender'
@@ -49,8 +48,6 @@ export class Manuscript {
   phoneNumber2 = ''
   @Fields.string()
   background = ''
-  @Field(() => Acquisition)
-  acquisition = Acquisition.inbound
   @Fields.string()
   email = ''
   @Fields.string()

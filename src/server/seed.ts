@@ -16,7 +16,6 @@ import { sectors } from '../Authors/Sectors'
 import { AuthorSize } from '../Authors/AuthorSize'
 import { Manuscript } from '../Manuscripts/Manuscript.entity'
 import { Gender } from '../Manuscripts/Gender'
-import { Acquisition } from '../Manuscripts/Acquisition'
 import { Status } from '../Manuscripts/Status'
 import { ManuscriptNote } from '../Manuscripts/ManuscriptNote.entity'
 import { Tag } from '../Manuscripts/Tag.entity'
@@ -122,7 +121,6 @@ export async function seed() {
                 phoneNumber1: phone.phoneNumber(),
                 phoneNumber2: phone.phoneNumber(),
                 background: lorem.sentence(),
-                acquisition: random.arrayElement(getValueList(Acquisition)),
                 avatar: 'https://i.pravatar.cc/40?img=' + datatype.number(70),
                 hasNewsletter: datatype.boolean(),
                 status: random.arrayElement(getValueList(Status)),

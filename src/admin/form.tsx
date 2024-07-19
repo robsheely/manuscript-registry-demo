@@ -13,7 +13,6 @@ import { getValueList, ValueListItem } from 'remult'
 import { AccountManager } from '../AccountManagers/AccountManager.entity'
 import { remult } from 'remult'
 import { Author } from '../Authors/Author.entity'
-import { Acquisition } from '../Manuscripts/Acquisition'
 import { Manuscript } from '../Manuscripts/Manuscript.entity'
 import { Gender } from '../Manuscripts/Gender'
 import { Status } from '../Manuscripts/Status'
@@ -47,14 +46,7 @@ export const PlayForm = () => {
             accountManagers,
             (a) => a.firstName + ' ' + a.lastName
           )
-        },
-        [
-          { ...f.status, renderInput: RenderSelect(getValueList(Status)) },
-          {
-            ...f.acquisition,
-            renderInput: RenderSelect(getValueList(Acquisition))
-          }
-        ]
+        }
       ]
     ] as Layout
   }, [authors, accountManagers])
