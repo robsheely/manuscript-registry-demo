@@ -2,7 +2,6 @@ import { Allow, Entity, Field, Fields, Relations } from 'remult'
 import { AccountManager } from '../AccountManagers/AccountManager.entity'
 import { AuthorSize } from './AuthorSize'
 import { Manuscript } from '../Manuscripts/Manuscript.entity'
-import { Deal } from '../Deals/Deal.entity'
 
 @Entity('companies', {
   allowApiCrud: Allow.authenticated,
@@ -39,6 +38,4 @@ export class Author {
   createdAt = new Date()
   @Relations.toMany(() => Manuscript)
   manuscripts?: Manuscript[]
-  @Relations.toMany(() => Deal)
-  deals?: Deal[]
 }

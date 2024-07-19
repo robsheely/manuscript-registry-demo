@@ -18,9 +18,6 @@ import { Manuscript } from '../Manuscripts/Manuscript.entity'
 import { Status } from '../Manuscripts/Status'
 import { ManuscriptNote } from '../Manuscripts/ManuscriptNote.entity'
 import { Tag } from '../Manuscripts/Tag.entity'
-import { Deal, DealManuscript } from '../Deals/Deal.entity'
-import { DealStages } from '../Deals/DealStage'
-import { DealTypes } from '../Deals/DealType'
 
 export async function seed() {
   try {
@@ -57,8 +54,6 @@ export async function seed() {
       if ((await authorRepo.count()) == 0) {
         console.log('Start seed author')
         Manuscript.disableLastSeenUpdate = true
-        const dealRepo = remult.repo(Deal)
-        const dealManuscriptRepo = remult.repo(DealManuscript)
 
         const tags = await remult.repo(Tag).find()
         // delete related data
@@ -72,12 +67,6 @@ export async function seed() {
 
           for (const c of await repo(ManuscriptNote).find()) {
             await repo(ManuscriptNote).delete(c)
-          }
-          for (const c of await dealRepo.find()) {
-            await dealRepo.delete(c)
-          }
-          for (const c of await dealManuscriptRepo.find()) {
-            await dealManuscriptRepo.delete(c)
           }
         }
         // Start create Authors
@@ -148,32 +137,6 @@ export async function seed() {
                   .map((tag) => ({ tag }))
               )
               await compRel.manuscripts.save(contact)
-            }
-          }
-          {
-            for (let index = 0; index < datatype.number(5) + 1; index++) {
-              let name = lorem.words()
-              name = name[0].toUpperCase() + name.slice(1)
-              const created_at = date.between(author.createdAt, new Date())
-              const deal = await dealRepo.insert({
-                accountManager: random.arrayElement(accountManagers),
-                amount: datatype.number(1000) * 100,
-                author,
-                name,
-                description: lorem.paragraph(datatype.number(4) + 1),
-                createdAt: created_at,
-                stage: random.arrayElement(DealStages),
-                type: random.arrayElement(DealTypes),
-                updatedAt: date.between(created_at, new Date())
-              })
-
-              dealRepo.relations(deal).manuscripts.insert(
-                random
-                  .arrayElements(manuscripts, datatype.number(4) + 1)
-                  .map((contact) => ({
-                    contact
-                  }))
-              )
             }
           }
         }

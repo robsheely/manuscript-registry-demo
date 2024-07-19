@@ -2,7 +2,6 @@ import { remultExpress } from 'remult/remult-express'
 import { createPostgresConnection } from 'remult/postgres'
 import { seed } from './seed'
 import { config } from 'dotenv'
-import { Deal, DealManuscript } from '../Deals/Deal.entity'
 import { AccountManager } from '../AccountManagers/AccountManager.entity'
 import { Author } from '../Authors/Author.entity'
 import { Manuscript } from '../Manuscripts/Manuscript.entity'
@@ -17,9 +16,7 @@ export const entities = [
   ManuscriptNote,
   Tag,
   ManuscriptTag,
-  DealManuscript,
-  AccountManager,
-  Deal
+  AccountManager
 ]
 
 export const api = remultExpress({
