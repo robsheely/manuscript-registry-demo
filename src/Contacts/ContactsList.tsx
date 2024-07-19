@@ -16,7 +16,7 @@ import React, { useState } from 'react'
 import { Contact } from './Contact.entity'
 import AddIcon from '@mui/icons-material/Add'
 import { ContactEdit } from './ContactEdit'
-import { Company } from '../Companies/Company.entity'
+import { Author } from '../Authors/Author.entity'
 import { formatDistance } from 'date-fns'
 import { Link } from 'react-router-dom'
 import { StatusIndicator } from './StatusIndicator'
@@ -25,7 +25,7 @@ import { useIsDesktop } from '../utils/useIsDesktop'
 export const ContactsList: React.FC<{
   contacts: Contact[]
   setContacts: (contacts: Contact[]) => void
-  defaultCompany?: Company
+  defaultCompany?: Author
   loading: boolean
   itemsPerPage?: number
   addedContacts?: Contact[]
@@ -58,7 +58,7 @@ export const ContactsList: React.FC<{
   }
   const create = () => {
     const newContact = new Contact()
-    newContact.company = defaultCompany
+    newContact.author = defaultCompany
     setEditContact(newContact)
   }
   const now = Date.now()
@@ -119,7 +119,7 @@ export const ContactsList: React.FC<{
                   primary={`${contact.firstName} ${contact.lastName}`}
                   secondary={
                     <>
-                      {contact.title} at {contact.company?.name}{' '}
+                      {contact.title} at {contact.author?.name}{' '}
                       {`- ${contact.nbNotes} notes `}
                       {contact.tags?.map((tag) => (
                         <span

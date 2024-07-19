@@ -19,7 +19,7 @@ import { remult, repo } from 'remult'
 import { Contact } from '../Contacts/Contact.entity'
 import { ContactNote } from './ContactNote.entity'
 import { ContactAside } from './ContactAside'
-import { Logo } from '../Companies/Logo'
+import { Logo } from '../Authors/Logo'
 import { StatusIndicator } from './StatusIndicator'
 
 import { Status } from './Status'
@@ -78,17 +78,17 @@ export const ContactShow: React.FC<{}> = () => {
                   {contact.title} at{' '}
                   <Link
                     component={RouterLink}
-                    to={`/companies/${contact.company?.id}`}
+                    to={`/companies/${contact.author?.id}`}
                   >
-                    {contact.company?.name}
+                    {contact.author?.name}
                   </Link>
                 </Typography>
               </Box>
               <Box>
-                {contact.company && (
+                {contact.author && (
                   <Logo
-                    url={contact.company!.logo}
-                    title={contact.company!.name}
+                    url={contact.author!.logo}
+                    title={contact.author!.name}
                     sizeInPixels={20}
                   />
                 )}

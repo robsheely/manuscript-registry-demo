@@ -15,34 +15,30 @@ import {
   FormHelperText
 } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { Company } from './Company.entity'
+import { Author } from './Author.entity'
 import { remult } from 'remult'
 import { ErrorInfo, getValueList } from 'remult'
 import { sectors } from './Sectors'
-import { CompanySize } from './CompanySize'
+import { AuthorSize } from './AuthorSize'
 import { AccountManager } from '../AccountManagers/AccountManager.entity'
 
-const companyRepo = remult.repo(Company)
+const companyRepo = remult.repo(Author)
 
 interface IProps {
-  company: Company
+  author: Author
   onClose: () => void
-  onSaved: (company: Company) => void
+  onSaved: (author: Author) => void
 }
 
-export const CompanyEdit: React.FC<IProps> = ({
-  company,
-  onSaved,
-  onClose
-}) => {
+export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
   const [accountManagers, setAccountManagers] = useState<AccountManager[]>([])
   useEffect(() => {
     remult.repo(AccountManager).find().then(setAccountManagers)
   }, [])
 
-  const [state, setState] = useState(company)
+  const [state, setState] = useState(author)
 
-  const [errors, setErrors] = useState<ErrorInfo<Company>>()
+  const [errors, setErrors] = useState<ErrorInfo<Author>>()
   const handleClose = () => {
     onClose()
   }
@@ -59,8 +55,8 @@ export const CompanyEdit: React.FC<IProps> = ({
 
   return (
     <div>
-      <Dialog open={Boolean(company)} onClose={handleClose}>
-        <DialogTitle>{!company.id ? 'Create ' : 'Update '} Company</DialogTitle>
+      <Dialog open={Boolean(author)} onClose={handleClose}>
+        <DialogTitle>{!author.id ? 'Create ' : 'Update '} Author</DialogTitle>
         <DialogContent>
           <Box component="form" sx={{ pt: 1 }} noValidate autoComplete="off">
             <Stack spacing={2}>
@@ -113,14 +109,14 @@ export const CompanyEdit: React.FC<IProps> = ({
                     onChange={(e) =>
                       setState({
                         ...state,
-                        size: getValueList(CompanySize).find(
+                        size: getValueList(AuthorSize).find(
                           (item) => item.id === e.target.value
                         )!
                       })
                     }
                   >
                     <MenuItem value={''}></MenuItem>
-                    {getValueList(CompanySize).map((s) => (
+                    {getValueList(AuthorSize).map((s) => (
                       <MenuItem key={s.id} value={s.id}>
                         {s.caption}
                       </MenuItem>

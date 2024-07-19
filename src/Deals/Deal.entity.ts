@@ -9,7 +9,7 @@ import {
   repo
 } from 'remult'
 import { AccountManager } from '../AccountManagers/AccountManager.entity'
-import { Company } from '../Companies/Company.entity'
+import { Author } from '../Authors/Author.entity'
 import { Contact } from '../Contacts/Contact.entity'
 
 @Entity('deals', {
@@ -20,8 +20,8 @@ export class Deal {
   id?: string
   @Fields.string()
   name = ''
-  @Relations.toOne(() => Company, { defaultIncluded: true })
-  company!: Company
+  @Relations.toOne(() => Author, { defaultIncluded: true })
+  author!: Author
   @Fields.string()
   type = ''
   @Fields.string()

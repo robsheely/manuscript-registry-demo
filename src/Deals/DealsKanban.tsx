@@ -14,7 +14,7 @@ export const DealsKanban = () => {
         .find({
           orderBy: { index: 'asc' },
           include: {
-            company: true
+            author: true
           }
         })
         .then((deals) => {

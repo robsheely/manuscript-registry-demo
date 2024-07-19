@@ -32,7 +32,7 @@ export const ContactAside = ({
   link = 'edit'
 }: {
   contact: Contact
-  setContact: (company: Contact) => void
+  setContact: (author: Contact) => void
   link?: string
 }) => {
   const [editContact, setEditContact] = useState<Contact>()

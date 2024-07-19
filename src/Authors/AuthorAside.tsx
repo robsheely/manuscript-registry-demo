@@ -1,56 +1,56 @@
 import { Box, Typography, Divider, Link, Button } from '@mui/material'
-import { Company } from './Company.entity'
+import { Author } from './Author.entity'
 import EditIcon from '@mui/icons-material/Edit'
 import { useState } from 'react'
-import { CompanyEdit } from './CompanyEdit'
+import { AuthorEdit } from './AuthorEdit'
 
-export const CompanyAside = ({
-  company,
+export const AuthorAside = ({
+  author,
   setCompany,
   link = 'edit'
 }: {
-  company: Company
-  setCompany: (company: Company) => void
+  author: Author
+  setCompany: (author: Author) => void
   link?: string
 }) => {
-  const [editCompany, setEditCompany] = useState<Company>()
+  const [editCompany, setEditCompany] = useState<Author>()
 
-  return company ? (
+  return author ? (
     <>
       <Box ml={4} width={250} minWidth={250}>
         <Box textAlign="center" mb={2}>
           {link === 'edit' ? (
             <Button
               startIcon={<EditIcon />}
-              onClick={() => setEditCompany(company)}
+              onClick={() => setEditCompany(author)}
             >
-              Edit Company
+              Edit Author
             </Button>
           ) : (
-            <Button>Show Company</Button>
+            <Button>Show Author</Button>
           )}
         </Box>
 
-        <Typography variant="subtitle2">Company info</Typography>
+        <Typography variant="subtitle2">Author info</Typography>
         <Divider />
 
         <Box mt={2}>
-          Website: <Link href={company.website}>{company.website}</Link>
+          Website: <Link href={author.website}>{author.website}</Link>
           <br />
-          LinkedIn: <Link href={company.linkedIn}>LinkedIn</Link>
+          LinkedIn: <Link href={author.linkedIn}>LinkedIn</Link>
         </Box>
 
         <Box mt={1}>
-          {company.phoneNumber}{' '}
+          {author.phoneNumber}{' '}
           <Typography variant="body1" color="textSecondary" component="span">
             Main
           </Typography>
         </Box>
 
         <Box mt={1} mb={3}>
-          {company.address}
+          {author.address}
           <br />
-          {company.city} {company.zipcode} {company.stateAbbr}
+          {author.city} {author.zipcode} {author.stateAbbr}
         </Box>
 
         <Typography variant="subtitle2">Background</Typography>
@@ -59,7 +59,7 @@ export const CompanyAside = ({
         <Box mt={1}>
           <Typography variant="body1" color="textSecondary" component="span">
             Added on{' '}
-            {company.createdAt.toLocaleDateString(undefined, {
+            {author.createdAt.toLocaleDateString(undefined, {
               year: 'numeric',
               month: 'long',
               day: 'numeric'
@@ -70,18 +70,18 @@ export const CompanyAside = ({
             Followed by
           </Typography>{' '}
           <Link href="#">
-            {company.accountManager
-              ? `${company.accountManager.firstName} ${company.accountManager.lastName}`
+            {author.accountManager
+              ? `${author.accountManager.firstName} ${author.accountManager.lastName}`
               : ''}
           </Link>
         </Box>
       </Box>
       {editCompany && (
-        <CompanyEdit
-          company={editCompany}
+        <AuthorEdit
+          author={editCompany}
           onClose={() => setEditCompany(undefined)}
-          onSaved={(company) => {
-            setCompany(company)
+          onSaved={(author) => {
+            setCompany(author)
           }}
         />
       )}

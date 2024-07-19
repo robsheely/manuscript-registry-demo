@@ -12,7 +12,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import { getValueList, ValueListItem } from 'remult'
 import { AccountManager } from '../AccountManagers/AccountManager.entity'
 import { remult } from 'remult'
-import { Company } from '../Companies/Company.entity'
+import { Author } from '../Authors/Author.entity'
 import { Acquisition } from '../Contacts/Acquisition'
 import { Contact } from '../Contacts/Contact.entity'
 import { Gender } from '../Contacts/Gender'
@@ -21,7 +21,7 @@ import { FieldRenderProps, Layout, useInputArea } from './useForm'
 
 const contactRepo = remult.repo(Contact)
 export const PlayForm = () => {
-  const [companies, setCompanies] = useState<Company[]>([])
+  const [companies, setCompanies] = useState<Author[]>([])
   const [accountManagers, setAccountManagers] = useState<AccountManager[]>([])
 
   const layout = useMemo(() => {
@@ -36,7 +36,7 @@ export const PlayForm = () => {
             renderInput: RenderSelect(getValueList(Gender))
           }
         ],
-        { ...f.company, renderInput: RenderSelect(companies, (c) => c.name) }
+        { ...f.author, renderInput: RenderSelect(companies, (c) => c.name) }
       ],
       [f.email, [f.phoneNumber1, f.phoneNumber2]],
       [f.background, f.avatar, { ...f.hasNewsletter, inputType: 'checkbox' }],
@@ -71,7 +71,7 @@ export const PlayForm = () => {
   })
   useEffect(() => {
     contactRepo.findFirst().then(f.setState)
-    remult.repo(Company).find().then(setCompanies)
+    remult.repo(Author).find().then(setCompanies)
     remult.repo(AccountManager).find().then(setAccountManagers)
   }, [f.setState])
   return (

@@ -25,7 +25,7 @@ export const DealCard = ({ deal, index }: { deal: Deal; index: number }) => {
             elevation={snapshot.isDragging ? 3 : 1}
           >
             <div>
-              {deal.company.name}
+              {deal.author.name}
               <div>
                 <Typography variant="body2" gutterBottom>
                   {deal.name}

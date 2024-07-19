@@ -23,7 +23,7 @@ import { remult } from 'remult'
 import { ErrorInfo, getValueList } from 'remult'
 
 import { AccountManager } from '../AccountManagers/AccountManager.entity'
-import { Company } from '../Companies/Company.entity'
+import { Author } from '../Authors/Author.entity'
 import { Gender } from './Gender'
 import { Acquisition } from './Acquisition'
 import { Status } from './Status'
@@ -42,14 +42,14 @@ export const ContactEdit: React.FC<IProps> = ({
   onClose
 }) => {
   const [accountManagers, setAccountManagers] = useState<AccountManager[]>([])
-  const [companies, setCompanies] = useState<Company[]>([])
+  const [companies, setCompanies] = useState<Author[]>([])
   useEffect(() => {
     remult.repo(AccountManager).find().then(setAccountManagers)
   }, [])
   const [companySearch, setCompanySearch] = useState('')
   useEffect(() => {
     remult
-      .repo(Company)
+      .repo(Author)
       .find({ where: { name: { $contains: companySearch } }, limit: 20 })
       .then((x) => setCompanies(x))
   }, [companySearch])
@@ -154,18 +154,18 @@ export const ContactEdit: React.FC<IProps> = ({
                   disablePortal
                   id="combo-box-demo"
                   options={companies}
-                  value={state.company ? state.company : null}
+                  value={state.author ? state.author : null}
                   getOptionLabel={(c) => c.name}
                   inputValue={companySearch}
-                  onChange={(e, newValue: Company | null) =>
-                    setState({ ...state, company: newValue ? newValue : null! })
+                  onChange={(e, newValue: Author | null) =>
+                    setState({ ...state, author: newValue ? newValue : null! })
                   }
                   onInputChange={(e, newInput) => setCompanySearch(newInput)}
                   renderInput={(params) => (
-                    <TextField {...params} label="Company" />
+                    <TextField {...params} label="Author" />
                   )}
                 />
-                <FormHelperText>{errors?.modelState?.company}</FormHelperText>
+                <FormHelperText>{errors?.modelState?.author}</FormHelperText>
               </FormControl>
               <Divider />
 

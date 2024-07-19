@@ -6,7 +6,7 @@ import styled from '@emotion/styled'
 import { useTable, useFilters } from 'react-table'
 import { remult } from 'remult'
 
-import { Company } from '../Companies/Company.entity'
+import { Author } from '../Authors/Author.entity'
 import { useRemultReactTable } from './remult-react-table'
 
 const Styles = styled.div`
@@ -56,7 +56,7 @@ function DefaultColumnFilter({
   )
 }
 function Table() {
-  const options = useRemultReactTable(remult.repo(Company))
+  const options = useRemultReactTable(remult.repo(Author))
   const { pageCount } = options
 
   const defaultColumn = React.useMemo(

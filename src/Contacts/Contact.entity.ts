@@ -11,7 +11,7 @@ import {
   Relations
 } from 'remult'
 import { AccountManager } from '../AccountManagers/AccountManager.entity'
-import { Company } from '../Companies/Company.entity'
+import { Author } from '../Authors/Author.entity'
 import { Acquisition } from './Acquisition'
 import { ContactNote } from './ContactNote.entity'
 import { ContactTag } from './ContactTag.entity'
@@ -41,8 +41,8 @@ export class Contact {
   gender = Gender.male
   @Fields.string()
   title = ''
-  @Relations.toOne(() => Company, { defaultIncluded: true })
-  company?: Company
+  @Relations.toOne(() => Author, { defaultIncluded: true })
+  author?: Author
   @Fields.string()
   phoneNumber1 = ''
   @Fields.string()

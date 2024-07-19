@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Drawer,
   Grid,
   IconButton,
   List,
@@ -13,40 +12,35 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { remult } from 'remult'
-import { Company } from './Company.entity'
+import { Author } from './Author.entity'
 import AddIcon from '@mui/icons-material/Add'
-import { CompanyEdit } from './CompanyEdit'
+import { AuthorEdit } from './AuthorEdit'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { useSearchParams } from 'react-router-dom'
-import { CompanySize } from './CompanySize'
-import CancelIcon from '@mui/icons-material/Cancel'
-import { sectors } from './Sectors'
+import { AuthorSize } from './AuthorSize'
 import { Link } from 'react-router-dom'
 import InfiniteLoader from 'react-window-infinite-loader'
 import { FixedSizeList } from 'react-window'
 import { getValueList, Paginator } from 'remult'
 import { useIsDesktop } from '../utils/useIsDesktop'
-import FilterAltIcon from '@mui/icons-material/FilterAlt'
 
-const amRepo = remult.repo(Company)
+const amRepo = remult.repo(Author)
 
-export const CompaniesList: React.FC<{}> = () => {
+export const AuthorsList: React.FC<{}> = () => {
   let [searchParams, setSearchParams] = useSearchParams()
   const filter = {
     search: searchParams.get('search') || '',
     size: searchParams.get('size') || '',
     sector: searchParams.get('sector') || ''
   }
-  const [openDrawer, setOpenDrawer] = useState(false)
   const patchFilter = (f: Partial<typeof filter>) => {
     setSearchParams({ ...filter, ...f })
-    setOpenDrawer(false)
   }
 
   const [companies, setCompanies] = useState<{
-    companies: Company[]
-    paginator?: Paginator<Company>
+    companies: Author[]
+    paginator?: Paginator<Author>
   }>({
     companies: []
   })
@@ -58,7 +52,7 @@ export const CompaniesList: React.FC<{}> = () => {
           where: {
             name: { $contains: filter.search },
             size: filter.size
-              ? getValueList(CompanySize).find(
+              ? getValueList(AuthorSize).find(
                   (item) => item.id === +filter.size
                 )
               : undefined,
@@ -91,108 +85,30 @@ export const CompaniesList: React.FC<{}> = () => {
     !!companies.paginator &&
     (!companies.paginator.hasNextPage || index < companies.companies.length)
 
-  const [editCompany, setEditCompany] = useState<Company>()
-  const deleteCompany = async (deletedCompany: Company) => {
+  const [editCompany, setEditCompany] = useState<Author>()
+  const deleteCompany = async (deletedCompany: Author) => {
     await amRepo.delete(deletedCompany)
     setCompanies({
       companies: companies.companies.filter(
-        (company) => deletedCompany.id !== company.id
+        (author) => deletedCompany.id !== author.id
       ),
       paginator: companies.paginator
     })
   }
-  const editCompanySaved = (editCompany: Company) =>
+  const editCompanySaved = (editCompany: Author) =>
     setCompanies({
-      companies: companies.companies.map((company) =>
-        company.id === editCompany.id ? editCompany : company
+      companies: companies.companies.map((author) =>
+        author.id === editCompany.id ? editCompany : author
       ),
       paginator: companies.paginator
     })
 
   const isDesktop = useIsDesktop()
-  const FilterElement = () => (
-    <List dense={true}>
-      <ListItem>
-        <ListItemText>SIZE</ListItemText>
-      </ListItem>
-      {getValueList(CompanySize).map((s: CompanySize) => (
-        <ListItem
-          key={s.id}
-          secondaryAction={
-            s.id.toString() === filter.size && (
-              <IconButton
-                edge="end"
-                aria-label="cancel"
-                onClick={() => {
-                  patchFilter({ size: '' })
-                }}
-              >
-                <CancelIcon />
-              </IconButton>
-            )
-          }
-        >
-          <ListItemButton
-            onClick={() => {
-              patchFilter({ size: s.id.toString() })
-            }}
-          >
-            <ListItemText primary={s.caption} />
-          </ListItemButton>
-        </ListItem>
-      ))}
-      <ListItem>
-        <ListItemText>SECTOR</ListItemText>
-      </ListItem>
-      {sectors.map((s) => (
-        <ListItem
-          key={s}
-          secondaryAction={
-            s.toString() === filter.sector && (
-              <IconButton
-                edge="end"
-                aria-label="cancel"
-                onClick={() => {
-                  patchFilter({ sector: '' })
-                }}
-              >
-                <CancelIcon />
-              </IconButton>
-            )
-          }
-        >
-          <ListItemButton
-            onClick={() => {
-              patchFilter({ sector: s })
-            }}
-          >
-            <ListItemText primary={s} />
-          </ListItemButton>
-        </ListItem>
-      ))}
-    </List>
-  )
+
   return (
     <Grid container spacing={2}>
-      <Drawer
-        anchor="left"
-        open={openDrawer}
-        onClose={() => setOpenDrawer(false)}
-      >
-        <FilterElement />
-      </Drawer>
-      {isDesktop && (
-        <Grid item sm={2}>
-          <FilterElement />
-        </Grid>
-      )}
       <Grid item xs={12} sm={10}>
         <Box display="flex" justifyContent="space-between">
-          {!isDesktop && (
-            <IconButton onClick={() => setOpenDrawer(true)}>
-              <FilterAltIcon />
-            </IconButton>
-          )}
           <TextField
             label="Search"
             variant="filled"
@@ -203,14 +119,14 @@ export const CompaniesList: React.FC<{}> = () => {
             {isDesktop ? (
               <Button
                 variant="contained"
-                onClick={() => setEditCompany(new Company())}
+                onClick={() => setEditCompany(new Author())}
                 startIcon={<AddIcon />}
               >
-                Add Company
+                Add Author
               </Button>
             ) : (
               <Button
-                onClick={() => setEditCompany(new Company())}
+                onClick={() => setEditCompany(new Author())}
                 variant="contained"
               >
                 <AddIcon />
@@ -239,25 +155,25 @@ export const CompaniesList: React.FC<{}> = () => {
                     if (!isItemLoaded(index)) {
                       return <div style={style}>Loading...</div>
                     } else {
-                      const company = companies.companies[index]
+                      const author = companies.companies[index]
                       return (
                         <div style={style}>
                           <ListItem
                             disablePadding
-                            key={company.id}
+                            key={author.id}
                             secondaryAction={
                               <Stack direction="row" spacing={2}>
                                 <IconButton
                                   edge="end"
                                   aria-label="edit"
-                                  onClick={() => deleteCompany(company)}
+                                  onClick={() => deleteCompany(author)}
                                 >
                                   <DeleteIcon />
                                 </IconButton>
                                 <IconButton
                                   edge="end"
                                   aria-label="edit"
-                                  onClick={() => setEditCompany(company)}
+                                  onClick={() => setEditCompany(author)}
                                 >
                                   <EditIcon />
                                 </IconButton>
@@ -266,9 +182,9 @@ export const CompaniesList: React.FC<{}> = () => {
                           >
                             <ListItemButton
                               component={Link}
-                              to={`/companies/${company.id}`}
+                              to={`/companies/${author.id}`}
                             >
-                              <ListItemText primary={company.name} />
+                              <ListItemText primary={author.name} />
                             </ListItemButton>
                           </ListItem>
                         </div>
@@ -281,11 +197,11 @@ export const CompaniesList: React.FC<{}> = () => {
           ) : null}
         </List>
         {editCompany && (
-          <CompanyEdit
-            company={editCompany}
+          <AuthorEdit
+            author={editCompany}
             onClose={() => setEditCompany(undefined)}
-            onSaved={(company) => {
-              editCompanySaved(company)
+            onSaved={(author) => {
+              editCompanySaved(author)
             }}
           />
         )}

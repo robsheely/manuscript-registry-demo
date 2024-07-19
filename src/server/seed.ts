@@ -5,15 +5,15 @@ import {
   internet,
   random,
   address,
-  company as companyFaker,
+  author as companyFaker,
   datatype,
   phone,
   lorem,
   date
 } from 'faker'
-import { Company } from '../Companies/Company.entity'
-import { sectors } from '../Companies/Sectors'
-import { CompanySize } from '../Companies/CompanySize'
+import { Author } from '../Authors/Author.entity'
+import { sectors } from '../Authors/Sectors'
+import { AuthorSize } from '../Authors/AuthorSize'
 import { Contact } from '../Contacts/Contact.entity'
 import { Gender } from '../Contacts/Gender'
 import { Acquisition } from '../Contacts/Acquisition'
@@ -55,10 +55,10 @@ export async function seed() {
       }
     }
     {
-      const companyRepo = remult.repo(Company)
+      const companyRepo = remult.repo(Author)
       const accountManagers = await remult.repo(AccountManager).find()
       if ((await companyRepo.count()) == 0) {
-        console.log('Start seed company')
+        console.log('Start seed author')
         Contact.disableLastSeenUpdate = true
         const dealRepo = remult.repo(Deal)
         const dealContactRepo = remult.repo(DealContact)
@@ -83,32 +83,32 @@ export async function seed() {
             await dealContactRepo.delete(c)
           }
         }
-        // Start create Companies
+        // Start create Authors
         for (let index = 0; index < 100; index++) {
           const name = companyFaker.companyName()
-          const company = await companyRepo.insert({
+          const author = await companyRepo.insert({
             accountManager: random.arrayElement(accountManagers),
             address: address.streetAddress(),
             city: address.city(),
-            linkedIn: `https://www.linkedin.com/company/${name
+            linkedIn: `https://www.linkedin.com/author/${name
               .toLowerCase()
               .replace(/\W+/, '_')}`,
             logo: `https://picsum.photos/id/${datatype.number(1000)}/200/200`,
             name,
             phoneNumber: phone.phoneNumber(),
             sector: random.arrayElement(sectors),
-            size: random.arrayElement(getValueList(CompanySize)),
+            size: random.arrayElement(getValueList(AuthorSize)),
             stateAbbr: address.stateAbbr(),
             website: internet.url(),
             zipcode: address.zipCode(),
             createdAt: date.recent(500)
           })
-          const compRel = companyRepo.relations(company)
+          const compRel = companyRepo.relations(author)
           const contacts: Contact[] = []
-          console.log(index + ': ' + company.name)
+          console.log(index + ': ' + author.name)
           // Create contact
           {
-            let numOfContacts = datatype.number(company.size.id / 10)
+            let numOfContacts = datatype.number(author.size.id / 10)
             if (numOfContacts < 1) numOfContacts = 1
             for (let index = 0; index < numOfContacts; index++) {
               const firstName = nameFaker.firstName()
@@ -136,7 +136,7 @@ export async function seed() {
                 const note = await contactRel.notes.insert({
                   text: lorem.paragraphs(3),
                   accountManager: random.arrayElement(accountManagers),
-                  createdAt: date.between(company.createdAt, new Date()),
+                  createdAt: date.between(author.createdAt, new Date()),
                   status: random.arrayElement(getValueList(Status))
                 })
                 if (index == 0 || note.createdAt > contact.lastSeen) {
@@ -159,11 +159,11 @@ export async function seed() {
             for (let index = 0; index < datatype.number(5) + 1; index++) {
               let name = lorem.words()
               name = name[0].toUpperCase() + name.slice(1)
-              const created_at = date.between(company.createdAt, new Date())
+              const created_at = date.between(author.createdAt, new Date())
               const deal = await dealRepo.insert({
                 accountManager: random.arrayElement(accountManagers),
                 amount: datatype.number(1000) * 100,
-                company,
+                author,
                 name,
                 description: lorem.paragraph(datatype.number(4) + 1),
                 createdAt: created_at,
@@ -182,7 +182,7 @@ export async function seed() {
             }
           }
         }
-        console.log('End seed company')
+        console.log('End seed author')
       }
     }
   } catch (err) {

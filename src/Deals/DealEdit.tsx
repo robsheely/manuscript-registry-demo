@@ -20,7 +20,7 @@ import { remult, repo } from 'remult'
 import { ErrorInfo } from 'remult'
 
 import { AccountManager } from '../AccountManagers/AccountManager.entity'
-import { Company } from '../Companies/Company.entity'
+import { Author } from '../Authors/Author.entity'
 import { DealTypes } from './DealType'
 import { DealStages } from './DealStage'
 import { Contact } from '../Contacts/Contact.entity'
@@ -37,8 +37,8 @@ export const DealEdit: React.FC<IProps> = ({ deal, onSaved, onClose }) => {
   const [accountManagers, setAccountManagers] = useState<AccountManager[]>(
     deal.accountManager ? [deal.accountManager] : []
   )
-  const [companies, setCompanies] = useState<Company[]>(
-    deal.company ? [deal.company] : []
+  const [companies, setCompanies] = useState<Author[]>(
+    deal.author ? [deal.author] : []
   )
   const [companyContacts, setCompanyContacts] = useState<Contact[]>([])
   const [selectedContacts, setSelectedContacts] = useState<Contact[]>([])
@@ -62,7 +62,7 @@ export const DealEdit: React.FC<IProps> = ({ deal, onSaved, onClose }) => {
   }, [deal])
   const [companySearch, setCompanySearch] = useState('')
   useEffect(() => {
-    repo(Company)
+    repo(Author)
       .find({ where: { name: { $contains: companySearch } }, limit: 20 })
       .then((x) => setCompanies(x))
   }, [companySearch])
@@ -71,12 +71,12 @@ export const DealEdit: React.FC<IProps> = ({ deal, onSaved, onClose }) => {
 
   useEffect(() => {
     repo(Contact)
-      .find({ where: { company: [state.company] } })
+      .find({ where: { author: [state.author] } })
       .then(setCompanyContacts)
     setSelectedContacts([
-      ...selectedContacts.filter((sc) => sc.company?.id === state.company?.id)
+      ...selectedContacts.filter((sc) => sc.author?.id === state.author?.id)
     ])
-  }, [state.company])
+  }, [state.author])
 
   const [errors, setErrors] = useState<ErrorInfo<Deal>>()
   const handleClose = () => {
@@ -133,17 +133,17 @@ export const DealEdit: React.FC<IProps> = ({ deal, onSaved, onClose }) => {
                   id="combo-box-demo"
                   getOptionLabel={(c) => c.name}
                   options={companies}
-                  value={state.company ? state.company : null}
+                  value={state.author ? state.author : null}
                   inputValue={companySearch}
-                  onChange={(e, newValue: Company | null) =>
-                    setState({ ...state, company: newValue ? newValue : null! })
+                  onChange={(e, newValue: Author | null) =>
+                    setState({ ...state, author: newValue ? newValue : null! })
                   }
                   onInputChange={(e, newInput) => setCompanySearch(newInput)}
                   renderInput={(params) => (
-                    <TextField {...params} label="Company" />
+                    <TextField {...params} label="Author" />
                   )}
                 />
-                <FormHelperText>{errors?.modelState?.company}</FormHelperText>
+                <FormHelperText>{errors?.modelState?.author}</FormHelperText>
               </FormControl>
               <FormControl sx={{ flexGrow: 1 }}>
                 <Autocomplete

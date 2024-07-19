@@ -1,6 +1,6 @@
 import { Allow, Entity, Field, Fields, Relations } from 'remult'
 import { AccountManager } from '../AccountManagers/AccountManager.entity'
-import { CompanySize } from './CompanySize'
+import { AuthorSize } from './AuthorSize'
 import { Contact } from '../Contacts/Contact.entity'
 import { Deal } from '../Deals/Deal.entity'
 
@@ -8,7 +8,7 @@ import { Deal } from '../Deals/Deal.entity'
   allowApiCrud: Allow.authenticated,
   allowApiDelete: false
 })
-export class Company {
+export class Author {
   @Fields.uuid()
   id?: string
   @Fields.string()
@@ -17,8 +17,8 @@ export class Company {
   logo = ''
   @Fields.string()
   sector = ''
-  @Field(() => CompanySize)
-  size = CompanySize.s1
+  @Field(() => AuthorSize)
+  size = AuthorSize.s1
   @Fields.string()
   linkedIn = ''
   @Fields.string()

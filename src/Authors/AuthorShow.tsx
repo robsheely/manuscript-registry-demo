@@ -20,13 +20,13 @@ import { Contact } from '../Contacts/Contact.entity'
 import { ContactsList } from '../Contacts/ContactsList'
 import { Deal } from '../Deals/Deal.entity'
 import { useIsDesktop } from '../utils/useIsDesktop'
-import { Company } from './Company.entity'
-import { CompanyAside } from './CompanyAside'
+import { Author } from './Author.entity'
+import { AuthorAside } from './AuthorAside'
 import { Logo } from './Logo'
 
-export const CompanyShow: React.FC<{}> = () => {
+export const AuthorShow: React.FC<{}> = () => {
   let params = useParams()
-  const [company, setCompany] = useState<Company>()
+  const [author, setCompany] = useState<Author>()
   const [contacts, setContacts] = useState<Contact[]>([])
   const [deals, setDeals] = useState<Deal[]>([])
 
@@ -37,7 +37,7 @@ export const CompanyShow: React.FC<{}> = () => {
 
   useEffect(() => {
     ;(async () => {
-      const company = await remult.repo(Company).findId(params.id!, {
+      const author = await remult.repo(Author).findId(params.id!, {
         include: {
           accountManager: true,
           contacts: {
@@ -48,16 +48,16 @@ export const CompanyShow: React.FC<{}> = () => {
           deals: true
         }
       })
-      setCompany(company)
+      setCompany(author)
       setLoading(false)
-      if (company) {
-        setContacts(company.contacts!)
-        setDeals(company.deals!)
+      if (author) {
+        setContacts(author.contacts!)
+        setDeals(author.deals!)
       }
     })()
   }, [params.id])
   if (loading) return <span>Loading</span>
-  if (!company) return <span>not found</span>
+  if (!author) return <span>not found</span>
   return (
     <Stack direction={{ xs: 'column', sm: 'row' }}>
       <Box flex="1">
@@ -65,15 +65,11 @@ export const CompanyShow: React.FC<{}> = () => {
           <CardContent>
             <Stack>
               <Stack direction="row">
-                <Logo
-                  url={company.logo}
-                  title={company.name}
-                  sizeInPixels={42}
-                />
+                <Logo url={author.logo} title={author.name} sizeInPixels={42} />
                 <Stack sx={{ ml: 1 }} alignItems="flex-start">
-                  <Typography variant="h5">{company.name}</Typography>
+                  <Typography variant="h5">{author.name}</Typography>
                   <Typography variant="body1">
-                    {company.sector}, {company.size?.caption}
+                    {author.sector}, {author.size?.caption}
                   </Typography>
                 </Stack>
               </Stack>
@@ -92,7 +88,7 @@ export const CompanyShow: React.FC<{}> = () => {
                     <ContactsList
                       contacts={contacts}
                       setContacts={setContacts}
-                      defaultCompany={company}
+                      defaultCompany={author}
                       loading={false}
                     />
                   </TabPanel>
@@ -136,7 +132,7 @@ export const CompanyShow: React.FC<{}> = () => {
           </CardContent>
         </Card>
       </Box>
-      <CompanyAside company={company} setCompany={setCompany}></CompanyAside>
+      <AuthorAside author={author} setCompany={setCompany}></AuthorAside>
     </Stack>
   )
 }

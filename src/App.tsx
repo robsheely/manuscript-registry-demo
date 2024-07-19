@@ -1,9 +1,9 @@
 import React, { useMemo, useState } from 'react'
 import { Link, Route, Routes } from 'react-router-dom'
 import { AccountManagersList } from './AccountManagers/AccountManagersList'
-import { CompaniesList } from './Companies/CompaniesList'
+import { AuthorsList } from './Authors/AuthorsList'
 import { ContactsPage } from './Contacts/ContactsPage'
-import { CompanyShow } from './Companies/CompanyShow'
+import { AuthorShow } from './Authors/AuthorShow'
 import {
   AppBar,
   Avatar,
@@ -53,7 +53,7 @@ function App({ signOut }: { signOut: VoidFunction }) {
     () => [
       { path: '/', caption: 'Contacts' },
       { path: '/kanban', caption: 'Kanban' },
-      { path: `/companies`, caption: 'Companies' },
+      { path: `/companies`, caption: 'Authors' },
       { path: `/accountManagers`, caption: 'Account Managers' },
       { path: `/deals`, caption: 'Deals' }
     ],
@@ -131,7 +131,7 @@ function App({ signOut }: { signOut: VoidFunction }) {
                 <MenuItem>
                   <Button
                     component="a"
-                    href="https://github.com/remult/crm-demo/blob/master/src/Companies/Company.entity.ts"
+                    href="https://github.com/remult/crm-demo/blob/master/src/Authors/Author.entity.ts"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -221,8 +221,8 @@ function App({ signOut }: { signOut: VoidFunction }) {
             <Routes>
               <Route path="/" element={<ContactsPage />} />
               <Route path="/kanban" element={<DealsKanban />} />
-              <Route path="/companies" element={<CompaniesList />} />
-              <Route path="/companies/:id" element={<CompanyShow />} />
+              <Route path="/companies" element={<AuthorsList />} />
+              <Route path="/companies/:id" element={<AuthorShow />} />
               <Route path="/deals" element={<DealsList />} />
               <Route
                 path="/accountManagers"

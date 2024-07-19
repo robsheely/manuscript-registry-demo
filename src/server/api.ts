@@ -4,7 +4,7 @@ import { seed } from './seed'
 import { config } from 'dotenv'
 import { Deal, DealContact } from '../Deals/Deal.entity'
 import { AccountManager } from '../AccountManagers/AccountManager.entity'
-import { Company } from '../Companies/Company.entity'
+import { Author } from '../Authors/Author.entity'
 import { Contact } from '../Contacts/Contact.entity'
 import { ContactTag } from '../Contacts/ContactTag.entity'
 import { ContactNote } from '../Contacts/ContactNote.entity'
@@ -12,7 +12,7 @@ import { Tag } from '../Contacts/Tag.entity'
 
 config()
 export const entities = [
-  Company,
+  Author,
   Contact,
   ContactNote,
   Tag,
