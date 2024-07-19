@@ -78,7 +78,7 @@ export const ContactShow: React.FC<{}> = () => {
                   {contact.title} at{' '}
                   <Link
                     component={RouterLink}
-                    to={`/companies/${contact.author?.id}`}
+                    to={`/authors/${contact.author?.id}`}
                   >
                     {contact.author?.name}
                   </Link>

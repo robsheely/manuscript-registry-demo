@@ -38,11 +38,11 @@ export const AuthorsList: React.FC<{}> = () => {
     setSearchParams({ ...filter, ...f })
   }
 
-  const [companies, setCompanies] = useState<{
-    companies: Author[]
+  const [authors, setAuthors] = useState<{
+    authors: Author[]
     paginator?: Paginator<Author>
   }>({
-    companies: []
+    authors: []
   })
 
   useEffect(() => {
@@ -61,46 +61,46 @@ export const AuthorsList: React.FC<{}> = () => {
           pageSize: 50
         })
         .paginator()
-      setCompanies({ companies: paginator.items, paginator: paginator })
+      setAuthors({ authors: paginator.items, paginator: paginator })
     })()
   }, [filter.search, filter.size, filter.sector])
 
-  const itemCount = companies.paginator
-    ? companies.paginator.hasNextPage
-      ? companies.companies.length + 1
-      : companies.companies.length
+  const itemCount = authors.paginator
+    ? authors.paginator.hasNextPage
+      ? authors.authors.length + 1
+      : authors.authors.length
     : 0
 
   const loadMoreItems = async () => {
-    if (companies.paginator) {
-      const newPaginator = await companies.paginator.nextPage()
-      setCompanies({
-        companies: [...companies.companies, ...newPaginator.items],
+    if (authors.paginator) {
+      const newPaginator = await authors.paginator.nextPage()
+      setAuthors({
+        authors: [...authors.authors, ...newPaginator.items],
         paginator: newPaginator
       })
     }
   }
 
   const isItemLoaded = (index: number) =>
-    !!companies.paginator &&
-    (!companies.paginator.hasNextPage || index < companies.companies.length)
+    !!authors.paginator &&
+    (!authors.paginator.hasNextPage || index < authors.authors.length)
 
-  const [editCompany, setEditCompany] = useState<Author>()
-  const deleteCompany = async (deletedCompany: Author) => {
-    await amRepo.delete(deletedCompany)
-    setCompanies({
-      companies: companies.companies.filter(
-        (author) => deletedCompany.id !== author.id
+  const [editAuthor, setEditAuthor] = useState<Author>()
+  const deleteAuthor = async (deletedAuthor: Author) => {
+    await amRepo.delete(deletedAuthor)
+    setAuthors({
+      authors: authors.authors.filter(
+        (author) => deletedAuthor.id !== author.id
       ),
-      paginator: companies.paginator
+      paginator: authors.paginator
     })
   }
-  const editCompanySaved = (editCompany: Author) =>
-    setCompanies({
-      companies: companies.companies.map((author) =>
-        author.id === editCompany.id ? editCompany : author
+  const editAuthorSaved = (editAuthor: Author) =>
+    setAuthors({
+      authors: authors.authors.map((author) =>
+        author.id === editAuthor.id ? editAuthor : author
       ),
-      paginator: companies.paginator
+      paginator: authors.paginator
     })
 
   const isDesktop = useIsDesktop()
@@ -119,14 +119,14 @@ export const AuthorsList: React.FC<{}> = () => {
             {isDesktop ? (
               <Button
                 variant="contained"
-                onClick={() => setEditCompany(new Author())}
+                onClick={() => setEditAuthor(new Author())}
                 startIcon={<AddIcon />}
               >
                 Add Author
               </Button>
             ) : (
               <Button
-                onClick={() => setEditCompany(new Author())}
+                onClick={() => setEditAuthor(new Author())}
                 variant="contained"
               >
                 <AddIcon />
@@ -135,7 +135,7 @@ export const AuthorsList: React.FC<{}> = () => {
           </div>
         </Box>
         <List>
-          {companies.paginator ? (
+          {authors.paginator ? (
             <InfiniteLoader
               isItemLoaded={isItemLoaded}
               itemCount={itemCount}
@@ -155,7 +155,7 @@ export const AuthorsList: React.FC<{}> = () => {
                     if (!isItemLoaded(index)) {
                       return <div style={style}>Loading...</div>
                     } else {
-                      const author = companies.companies[index]
+                      const author = authors.authors[index]
                       return (
                         <div style={style}>
                           <ListItem
@@ -166,14 +166,14 @@ export const AuthorsList: React.FC<{}> = () => {
                                 <IconButton
                                   edge="end"
                                   aria-label="edit"
-                                  onClick={() => deleteCompany(author)}
+                                  onClick={() => deleteAuthor(author)}
                                 >
                                   <DeleteIcon />
                                 </IconButton>
                                 <IconButton
                                   edge="end"
                                   aria-label="edit"
-                                  onClick={() => setEditCompany(author)}
+                                  onClick={() => setEditAuthor(author)}
                                 >
                                   <EditIcon />
                                 </IconButton>
@@ -182,7 +182,7 @@ export const AuthorsList: React.FC<{}> = () => {
                           >
                             <ListItemButton
                               component={Link}
-                              to={`/companies/${author.id}`}
+                              to={`/authors/${author.id}`}
                             >
                               <ListItemText primary={author.name} />
                             </ListItemButton>
@@ -196,12 +196,12 @@ export const AuthorsList: React.FC<{}> = () => {
             </InfiniteLoader>
           ) : null}
         </List>
-        {editCompany && (
+        {editAuthor && (
           <AuthorEdit
-            author={editCompany}
-            onClose={() => setEditCompany(undefined)}
+            author={editAuthor}
+            onClose={() => setEditAuthor(undefined)}
             onSaved={(author) => {
-              editCompanySaved(author)
+              editAuthorSaved(author)
             }}
           />
         )}

@@ -26,7 +26,7 @@ import { Logo } from './Logo'
 
 export const AuthorShow: React.FC<{}> = () => {
   let params = useParams()
-  const [author, setCompany] = useState<Author>()
+  const [author, setAuthor] = useState<Author>()
   const [contacts, setContacts] = useState<Contact[]>([])
   const [deals, setDeals] = useState<Deal[]>([])
 
@@ -48,7 +48,7 @@ export const AuthorShow: React.FC<{}> = () => {
           deals: true
         }
       })
-      setCompany(author)
+      setAuthor(author)
       setLoading(false)
       if (author) {
         setContacts(author.contacts!)
@@ -88,7 +88,7 @@ export const AuthorShow: React.FC<{}> = () => {
                     <ContactsList
                       contacts={contacts}
                       setContacts={setContacts}
-                      defaultCompany={author}
+                      defaultAuthor={author}
                       loading={false}
                     />
                   </TabPanel>
@@ -132,7 +132,7 @@ export const AuthorShow: React.FC<{}> = () => {
           </CardContent>
         </Card>
       </Box>
-      <AuthorAside author={author} setCompany={setCompany}></AuthorAside>
+      <AuthorAside author={author} setAuthor={setAuthor}></AuthorAside>
     </Stack>
   )
 }

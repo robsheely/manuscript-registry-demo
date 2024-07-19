@@ -18,7 +18,7 @@ import {
   Autocomplete
 } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { Contact } from './Contact.entity'
+import { Manuscript } from './Manuscript.entity'
 import { remult } from 'remult'
 import { ErrorInfo, getValueList } from 'remult'
 
@@ -28,16 +28,16 @@ import { Gender } from './Gender'
 import { Acquisition } from './Acquisition'
 import { Status } from './Status'
 
-const contactRepo = remult.repo(Contact)
+const contactRepo = remult.repo(Manuscript)
 
 interface IProps {
-  contact: Contact
+  manuscript: Manuscript
   onClose: () => void
-  onSaved: (contact: Contact) => void
+  onSaved: (manuscript: Manuscript) => void
 }
 
-export const ContactEdit: React.FC<IProps> = ({
-  contact,
+export const ManuscriptEdit: React.FC<IProps> = ({
+  manuscript,
   onSaved,
   onClose
 }) => {
@@ -54,9 +54,9 @@ export const ContactEdit: React.FC<IProps> = ({
       .then((x) => setAuthors(x))
   }, [authorSearch])
 
-  const [state, setState] = useState(contact)
+  const [state, setState] = useState(manuscript)
 
-  const [errors, setErrors] = useState<ErrorInfo<Contact>>()
+  const [errors, setErrors] = useState<ErrorInfo<Manuscript>>()
   const handleClose = () => {
     onClose()
   }
@@ -73,8 +73,10 @@ export const ContactEdit: React.FC<IProps> = ({
 
   return (
     <div>
-      <Dialog open={Boolean(contact)} onClose={handleClose}>
-        <DialogTitle>{!contact.id ? 'Create ' : 'Update '} Contact</DialogTitle>
+      <Dialog open={Boolean(manuscript)} onClose={handleClose}>
+        <DialogTitle>
+          {!manuscript.id ? 'Create ' : 'Update '} Manuscript
+        </DialogTitle>
         <DialogContent>
           <Box component="form" sx={{ pt: 1 }} noValidate autoComplete="off">
             <Stack spacing={2}>

@@ -22,7 +22,7 @@ import { sectors } from './Sectors'
 import { AuthorSize } from './AuthorSize'
 import { AccountManager } from '../AccountManagers/AccountManager.entity'
 
-const companyRepo = remult.repo(Author)
+const authorRepo = remult.repo(Author)
 
 interface IProps {
   author: Author
@@ -45,8 +45,8 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
   const handleSave = async () => {
     try {
       setErrors(undefined)
-      let newCompany = await companyRepo.save(state)
-      onSaved(newCompany)
+      let newAuthor = await authorRepo.save(state)
+      onSaved(newAuthor)
       handleClose()
     } catch (err: any) {
       setErrors(err)

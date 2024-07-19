@@ -5,7 +5,7 @@ import {
   internet,
   random,
   address,
-  author as companyFaker,
+  company as authorFaker,
   datatype,
   phone,
   lorem,
@@ -20,7 +20,6 @@ import { Acquisition } from '../Contacts/Acquisition'
 import { Status } from '../Contacts/Status'
 import { ContactNote } from '../Contacts/ContactNote.entity'
 import { Tag } from '../Contacts/Tag.entity'
-import { ContactTag } from '../Contacts/ContactTag.entity'
 import { Deal, DealContact } from '../Deals/Deal.entity'
 import { DealStages } from '../Deals/DealStage'
 import { DealTypes } from '../Deals/DealType'
@@ -55,9 +54,9 @@ export async function seed() {
       }
     }
     {
-      const companyRepo = remult.repo(Author)
+      const authorRepo = remult.repo(Author)
       const accountManagers = await remult.repo(AccountManager).find()
-      if ((await companyRepo.count()) == 0) {
+      if ((await authorRepo.count()) == 0) {
         console.log('Start seed author')
         Contact.disableLastSeenUpdate = true
         const dealRepo = remult.repo(Deal)
@@ -85,8 +84,8 @@ export async function seed() {
         }
         // Start create Authors
         for (let index = 0; index < 100; index++) {
-          const name = companyFaker.companyName()
-          const author = await companyRepo.insert({
+          const name = authorFaker.companyName()
+          const author = await authorRepo.insert({
             accountManager: random.arrayElement(accountManagers),
             address: address.streetAddress(),
             city: address.city(),
@@ -103,7 +102,7 @@ export async function seed() {
             zipcode: address.zipCode(),
             createdAt: date.recent(500)
           })
-          const compRel = companyRepo.relations(author)
+          const compRel = authorRepo.relations(author)
           const contacts: Contact[] = []
           console.log(index + ': ' + author.name)
           // Create contact
@@ -113,7 +112,7 @@ export async function seed() {
             for (let index = 0; index < numOfContacts; index++) {
               const firstName = nameFaker.firstName()
               const lastName = nameFaker.lastName()
-              const title = companyFaker.bsAdjective()
+              const title = authorFaker.bsAdjective()
               const contact = await compRel.contacts.insert({
                 firstName,
                 lastName,

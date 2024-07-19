@@ -21,7 +21,7 @@ import { FieldRenderProps, Layout, useInputArea } from './useForm'
 
 const contactRepo = remult.repo(Contact)
 export const PlayForm = () => {
-  const [companies, setCompanies] = useState<Author[]>([])
+  const [authors, setAuthors] = useState<Author[]>([])
   const [accountManagers, setAccountManagers] = useState<AccountManager[]>([])
 
   const layout = useMemo(() => {
@@ -36,7 +36,7 @@ export const PlayForm = () => {
             renderInput: RenderSelect(getValueList(Gender))
           }
         ],
-        { ...f.author, renderInput: RenderSelect(companies, (c) => c.name) }
+        { ...f.author, renderInput: RenderSelect(authors, (c) => c.name) }
       ],
       [f.email, [f.phoneNumber1, f.phoneNumber2]],
       [f.background, f.avatar, { ...f.hasNewsletter, inputType: 'checkbox' }],
@@ -57,7 +57,7 @@ export const PlayForm = () => {
         ]
       ]
     ] as Layout
-  }, [companies, accountManagers])
+  }, [authors, accountManagers])
   const f = useInputArea({
     layout,
     renderInput: (props) => (
@@ -71,7 +71,7 @@ export const PlayForm = () => {
   })
   useEffect(() => {
     contactRepo.findFirst().then(f.setState)
-    remult.repo(Author).find().then(setCompanies)
+    remult.repo(Author).find().then(setAuthors)
     remult.repo(AccountManager).find().then(setAccountManagers)
   }, [f.setState])
   return (

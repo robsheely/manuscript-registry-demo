@@ -37,10 +37,10 @@ export const DealEdit: React.FC<IProps> = ({ deal, onSaved, onClose }) => {
   const [accountManagers, setAccountManagers] = useState<AccountManager[]>(
     deal.accountManager ? [deal.accountManager] : []
   )
-  const [companies, setCompanies] = useState<Author[]>(
+  const [authors, setAuthors] = useState<Author[]>(
     deal.author ? [deal.author] : []
   )
-  const [companyContacts, setCompanyContacts] = useState<Contact[]>([])
+  const [authorContacts, setAuthorContacts] = useState<Contact[]>([])
   const [selectedContacts, setSelectedContacts] = useState<Contact[]>([])
   useEffect(() => {
     remult.repo(AccountManager).find().then(setAccountManagers)
@@ -54,25 +54,25 @@ export const DealEdit: React.FC<IProps> = ({ deal, onSaved, onClose }) => {
         })
         .then((dc) => {
           const contacts = dc.filter((dc) => dc.contact).map((dc) => dc.contact)
-          setCompanyContacts((companyContacts) =>
-            companyContacts.length === 0 ? contacts : companyContacts
+          setAuthorContacts((authorContacts) =>
+            authorContacts.length === 0 ? contacts : authorContacts
           )
           setSelectedContacts(contacts)
         })
   }, [deal])
-  const [companySearch, setCompanySearch] = useState('')
+  const [authorSearch, setAuthorSearch] = useState('')
   useEffect(() => {
     repo(Author)
-      .find({ where: { name: { $contains: companySearch } }, limit: 20 })
-      .then((x) => setCompanies(x))
-  }, [companySearch])
+      .find({ where: { name: { $contains: authorSearch } }, limit: 20 })
+      .then((x) => setAuthors(x))
+  }, [authorSearch])
 
   const [state, setState] = useState(deal)
 
   useEffect(() => {
     repo(Contact)
       .find({ where: { author: [state.author] } })
-      .then(setCompanyContacts)
+      .then(setAuthorContacts)
     setSelectedContacts([
       ...selectedContacts.filter((sc) => sc.author?.id === state.author?.id)
     ])
@@ -132,13 +132,13 @@ export const DealEdit: React.FC<IProps> = ({ deal, onSaved, onClose }) => {
                   isOptionEqualToValue={(a, b) => a.id === b.id}
                   id="combo-box-demo"
                   getOptionLabel={(c) => c.name}
-                  options={companies}
+                  options={authors}
                   value={state.author ? state.author : null}
-                  inputValue={companySearch}
+                  inputValue={authorSearch}
                   onChange={(e, newValue: Author | null) =>
                     setState({ ...state, author: newValue ? newValue : null! })
                   }
-                  onInputChange={(e, newInput) => setCompanySearch(newInput)}
+                  onInputChange={(e, newInput) => setAuthorSearch(newInput)}
                   renderInput={(params) => (
                     <TextField {...params} label="Author" />
                   )}
@@ -152,7 +152,7 @@ export const DealEdit: React.FC<IProps> = ({ deal, onSaved, onClose }) => {
                   isOptionEqualToValue={(a, b) => a.id === b.id}
                   id="combo-box-demo"
                   getOptionLabel={(c) => c.firstName + ' ' + c.lastName}
-                  options={companyContacts}
+                  options={authorContacts}
                   value={selectedContacts}
                   onChange={(e, newValue: Contact[] | null) =>
                     setSelectedContacts(newValue ? newValue : [])

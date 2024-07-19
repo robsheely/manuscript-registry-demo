@@ -25,7 +25,7 @@ import { useIsDesktop } from '../utils/useIsDesktop'
 export const ContactsList: React.FC<{
   contacts: Contact[]
   setContacts: (contacts: Contact[]) => void
-  defaultCompany?: Author
+  defaultAuthor?: Author
   loading: boolean
   itemsPerPage?: number
   addedContacts?: Contact[]
@@ -33,7 +33,7 @@ export const ContactsList: React.FC<{
 }> = ({
   contacts,
   setContacts,
-  defaultCompany,
+  defaultAuthor,
   loading,
   children,
   itemsPerPage = 10,
@@ -58,7 +58,7 @@ export const ContactsList: React.FC<{
   }
   const create = () => {
     const newContact = new Contact()
-    newContact.author = defaultCompany
+    newContact.author = defaultAuthor
     setEditContact(newContact)
   }
   const now = Date.now()

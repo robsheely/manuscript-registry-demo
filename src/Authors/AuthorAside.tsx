@@ -6,14 +6,14 @@ import { AuthorEdit } from './AuthorEdit'
 
 export const AuthorAside = ({
   author,
-  setCompany,
+  setAuthor,
   link = 'edit'
 }: {
   author: Author
-  setCompany: (author: Author) => void
+  setAuthor: (author: Author) => void
   link?: string
 }) => {
-  const [editCompany, setEditCompany] = useState<Author>()
+  const [editAuthor, setEditAuthor] = useState<Author>()
 
   return author ? (
     <>
@@ -22,7 +22,7 @@ export const AuthorAside = ({
           {link === 'edit' ? (
             <Button
               startIcon={<EditIcon />}
-              onClick={() => setEditCompany(author)}
+              onClick={() => setEditAuthor(author)}
             >
               Edit Author
             </Button>
@@ -76,12 +76,12 @@ export const AuthorAside = ({
           </Link>
         </Box>
       </Box>
-      {editCompany && (
+      {editAuthor && (
         <AuthorEdit
-          author={editCompany}
-          onClose={() => setEditCompany(undefined)}
+          author={editAuthor}
+          onClose={() => setEditAuthor(undefined)}
           onSaved={(author) => {
-            setCompany(author)
+            setAuthor(author)
           }}
         />
       )}

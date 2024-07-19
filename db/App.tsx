@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { Link, Route, Routes } from 'react-router-dom'
+import { AccountManagersList } from './AccountManagers/AccountManagersList'
 import { AuthorsList } from './Authors/AuthorsList'
 import { ContactsPage } from './Contacts/ContactsPage'
 import { AuthorShow } from './Authors/AuthorShow'
@@ -30,7 +31,12 @@ import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 
 import { remult } from 'remult'
+import { DealsList } from './Deals/DealList'
+import { DealsAuthor } from './Deals/DealsAuthor'
+import { AdminPage } from './admin/AdminPage'
 import MenuIcon from '@mui/icons-material/Menu'
+import ReactTable from './admin/ReactTable'
+import { PlayForm } from './admin/form'
 import { useIsDesktop } from './utils/useIsDesktop'
 
 const theme = createTheme()
@@ -38,6 +44,7 @@ const theme = createTheme()
 function App({ signOut }: { signOut: VoidFunction }) {
   const isDesktop = useIsDesktop()
   const [openDrawer, setOpenDrawer] = useState(false)
+  const [anchorElDevMenu, setAnchorElDevMenu] = useState<Element | null>(null)
 
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
@@ -45,7 +52,9 @@ function App({ signOut }: { signOut: VoidFunction }) {
   const routes = useMemo(
     () => [
       { path: '/', caption: 'Contacts' },
-      { path: `/authors`, caption: 'Authors' }
+      { path: `/authors`, caption: 'Authors' },
+      { path: `/accountManagers`, caption: 'Account Managers' },
+      { path: `/deals`, caption: 'Deals' }
     ],
     []
   )
@@ -91,7 +100,7 @@ function App({ signOut }: { signOut: VoidFunction }) {
                 </IconButton>
               )}
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                MANUSCRIPT REGISTRY
+                CRM
               </Typography>
 
               {isDesktop &&
@@ -105,6 +114,70 @@ function App({ signOut }: { signOut: VoidFunction }) {
                     {route.caption}
                   </Button>
                 ))}
+              <Button
+                color="inherit"
+                onClick={(e) => setAnchorElDevMenu(e.currentTarget)}
+              >
+                dev
+              </Button>
+              <Menu
+                id="dev-menu"
+                anchorEl={anchorElDevMenu}
+                keepMounted
+                open={Boolean(anchorElDevMenu)}
+                onClose={() => setAnchorElDevMenu(null)}
+              >
+                <MenuItem>
+                  <Button
+                    component="a"
+                    href="https://github.com/remult/crm-demo/blob/master/src/Authors/Author.entity.ts"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Entity
+                  </Button>
+                </MenuItem>
+                <MenuItem>
+                  <Button
+                    component="a"
+                    href="/api/admin"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Admin
+                  </Button>
+                </MenuItem>
+                <MenuItem>
+                  <Button
+                    component="a"
+                    href="/api/graphql"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Graphql
+                  </Button>
+                </MenuItem>
+                <MenuItem>
+                  <Button
+                    component="a"
+                    href="/api/docs"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Swagger
+                  </Button>
+                </MenuItem>
+                <MenuItem>
+                  <Button
+                    component="a"
+                    href="https://github.com/remult/crm-demo"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Source
+                  </Button>
+                </MenuItem>
+              </Menu>
 
               <Box sx={{ flexGrow: 0 }}>
                 <Tooltip title={remult.user!.name!}>
@@ -146,9 +219,18 @@ function App({ signOut }: { signOut: VoidFunction }) {
           <Box sx={{ p: 1 }}>
             <Routes>
               <Route path="/" element={<ContactsPage />} />
+              <Route path="/kanban" element={<DealsAuthor />} />
               <Route path="/authors" element={<AuthorsList />} />
               <Route path="/authors/:id" element={<AuthorShow />} />
+              <Route path="/deals" element={<DealsList />} />
+              <Route
+                path="/accountManagers"
+                element={<AccountManagersList />}
+              />
               <Route path="/contacts/:id" element={<ContactShow />} />
+              <Route path="/admin" element={<AdminPage />} />
+              <Route path="/react-table" element={<ReactTable />} />
+              <Route path="/form" element={<PlayForm />} />
             </Routes>
           </Box>
         </LocalizationProvider>
