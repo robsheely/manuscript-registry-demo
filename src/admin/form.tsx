@@ -14,8 +14,6 @@ import { AccountManager } from '../AccountManagers/AccountManager.entity'
 import { remult } from 'remult'
 import { Author } from '../Authors/Author.entity'
 import { Manuscript } from '../Manuscripts/Manuscript.entity'
-import { Gender } from '../Manuscripts/Gender'
-import { Status } from '../Manuscripts/Status'
 import { FieldRenderProps, Layout, useInputArea } from './useForm'
 
 const contactRepo = remult.repo(Manuscript)
@@ -28,13 +26,7 @@ export const PlayForm = () => {
     return [
       [
         [{ ...f.firstName, readonly: true }, f.lastName],
-        [
-          f.title,
-          {
-            ...f.gender,
-            renderInput: RenderSelect(getValueList(Gender))
-          }
-        ],
+        [f.title],
         { ...f.author, renderInput: RenderSelect(authors, (c) => c.name) }
       ],
       [f.email, [f.phoneNumber1, f.phoneNumber2]],

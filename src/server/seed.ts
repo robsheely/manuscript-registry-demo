@@ -15,7 +15,6 @@ import { Author } from '../Authors/Author.entity'
 import { sectors } from '../Authors/Sectors'
 import { AuthorSize } from '../Authors/AuthorSize'
 import { Manuscript } from '../Manuscripts/Manuscript.entity'
-import { Gender } from '../Manuscripts/Gender'
 import { Status } from '../Manuscripts/Status'
 import { ManuscriptNote } from '../Manuscripts/ManuscriptNote.entity'
 import { Tag } from '../Manuscripts/Tag.entity'
@@ -115,7 +114,6 @@ export async function seed() {
               const contact = await compRel.contacts.insert({
                 firstName,
                 lastName,
-                gender: random.arrayElement(getValueList(Gender)),
                 title,
                 email: internet.email(firstName, lastName),
                 phoneNumber1: phone.phoneNumber(),

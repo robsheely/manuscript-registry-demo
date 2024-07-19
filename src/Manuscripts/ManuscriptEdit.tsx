@@ -24,7 +24,6 @@ import { ErrorInfo, getValueList } from 'remult'
 
 import { AccountManager } from '../AccountManagers/AccountManager.entity'
 import { Author } from '../Authors/Author.entity'
-import { Gender } from './Gender'
 import { Status } from './Status'
 
 const contactRepo = remult.repo(Manuscript)
@@ -120,32 +119,6 @@ export const ManuscriptEdit: React.FC<IProps> = ({
                     setState({ ...state, title: e.target.value })
                   }
                 />
-                <FormControl
-                  sx={{ flexGrow: 1 }}
-                  error={Boolean(errors?.modelState?.gender)}
-                >
-                  <InputLabel id="gender-label">Gender</InputLabel>
-                  <Select
-                    labelId="gender-label"
-                    label="Gender"
-                    value={state.gender?.id}
-                    onChange={(e) =>
-                      setState({
-                        ...state,
-                        gender: getValueList(Gender).find(
-                          (item) => item.id === e.target.value
-                        )!
-                      })
-                    }
-                  >
-                    {getValueList(Gender).map((s) => (
-                      <MenuItem key={s.id} value={s.id}>
-                        {s.caption}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                  <FormHelperText>{errors?.modelState?.gender}</FormHelperText>
-                </FormControl>
               </Stack>
               <FormControl
                 sx={{ flexGrow: 1 }}

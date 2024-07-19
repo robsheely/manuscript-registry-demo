@@ -17,7 +17,6 @@ import EditIcon from '@mui/icons-material/Edit'
 import { FormEvent, useEffect, useState } from 'react'
 import { Manuscript } from './Manuscript.entity'
 import { ManuscriptEdit } from './ManuscriptEdit'
-import { Gender } from './Gender'
 import ControlPointIcon from '@mui/icons-material/ControlPoint'
 import { colors, Tag } from './Tag.entity'
 import { ManuscriptTag } from './ManuscriptTag.entity'
@@ -123,12 +122,6 @@ export const ManuscriptAside = ({
           {contact.phoneNumber2}{' '}
           <Typography variant="body1" color="textSecondary" component="span">
             Home
-          </Typography>
-        </Box>
-
-        <Box mb={3}>
-          <Typography variant="body1">
-            {contact.gender === Gender.male ? 'He/Him' : 'She/Her'}
           </Typography>
         </Box>
 

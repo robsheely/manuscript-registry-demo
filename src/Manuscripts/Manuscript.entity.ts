@@ -14,7 +14,6 @@ import { AccountManager } from '../AccountManagers/AccountManager.entity'
 import { Author } from '../Authors/Author.entity'
 import { ManuscriptNote } from './ManuscriptNote.entity'
 import { ManuscriptTag } from './ManuscriptTag.entity'
-import { Gender } from './Gender'
 import { Status } from './Status'
 import { Tag } from './Tag.entity'
 
@@ -36,8 +35,6 @@ export class Manuscript {
     validate: Validators.required
   })
   lastName = ''
-  @Field(() => Gender)
-  gender = Gender.male
   @Fields.string()
   title = ''
   @Relations.toOne(() => Author, { defaultIncluded: true })
