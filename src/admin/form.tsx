@@ -13,13 +13,13 @@ import { getValueList, ValueListItem } from 'remult'
 import { AccountManager } from '../AccountManagers/AccountManager.entity'
 import { remult } from 'remult'
 import { Author } from '../Authors/Author.entity'
-import { Acquisition } from '../Contacts/Acquisition'
-import { Contact } from '../Contacts/Contact.entity'
-import { Gender } from '../Contacts/Gender'
-import { Status } from '../Contacts/Status'
+import { Acquisition } from '../Manuscripts/Acquisition'
+import { Manuscript } from '../Manuscripts/Manuscript.entity'
+import { Gender } from '../Manuscripts/Gender'
+import { Status } from '../Manuscripts/Status'
 import { FieldRenderProps, Layout, useInputArea } from './useForm'
 
-const contactRepo = remult.repo(Contact)
+const contactRepo = remult.repo(Manuscript)
 export const PlayForm = () => {
   const [authors, setAuthors] = useState<Author[]>([])
   const [accountManagers, setAccountManagers] = useState<AccountManager[]>([])

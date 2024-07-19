@@ -8,10 +8,10 @@ import {
   remult
 } from 'remult'
 import { AccountManager } from '../AccountManagers/AccountManager.entity'
-import { Contact } from './Contact.entity'
+import { Manuscript } from './Manuscript.entity'
 import { Status } from './Status'
 
-@Entity<ContactNote>('contactNote', {
+@Entity<ManuscriptNote>('contactNote', {
   allowApiCrud: Allow.authenticated,
   defaultOrderBy: {
     createdAt: 'desc'
@@ -24,17 +24,17 @@ import { Status } from './Status'
     }
   },
   saved: async (_, { relations }) =>
-    Contact.updateLastSeen((await relations.contact.findOne())!),
+    Manuscript.updateLastSeen((await relations.contact.findOne())!),
   deleted: async (_, { relations }) =>
-    Contact.updateLastSeen((await relations.contact.findOne())!)
+    Manuscript.updateLastSeen((await relations.contact.findOne())!)
 })
-export class ContactNote {
+export class ManuscriptNote {
   @Fields.uuid()
   id?: string
   @Fields.string({ dbName: 'contact' })
   contactId = ''
-  @Relations.toOne<ContactNote, Contact>(() => Contact, 'contactId')
-  contact?: Contact
+  @Relations.toOne<ManuscriptNote, Manuscript>(() => Manuscript, 'contactId')
+  contact?: Manuscript
   @Fields.string()
   text = ''
   @Field(() => AccountManager, { allowApiUpdate: false })

@@ -15,7 +15,7 @@ import {
   Autocomplete
 } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { Deal, DealContact } from './Deal.entity'
+import { Deal, DealManuscript } from './Deal.entity'
 import { remult, repo } from 'remult'
 import { ErrorInfo } from 'remult'
 
@@ -23,7 +23,7 @@ import { AccountManager } from '../AccountManagers/AccountManager.entity'
 import { Author } from '../Authors/Author.entity'
 import { DealTypes } from './DealType'
 import { DealStages } from './DealStage'
-import { Contact } from '../Contacts/Contact.entity'
+import { Manuscript } from '../Manuscripts/Manuscript.entity'
 
 const dealRepo = remult.repo(Deal)
 
@@ -40,8 +40,10 @@ export const DealEdit: React.FC<IProps> = ({ deal, onSaved, onClose }) => {
   const [authors, setAuthors] = useState<Author[]>(
     deal.author ? [deal.author] : []
   )
-  const [authorContacts, setAuthorContacts] = useState<Contact[]>([])
-  const [selectedContacts, setSelectedContacts] = useState<Contact[]>([])
+  const [authorManuscripts, setAuthorManuscripts] = useState<Manuscript[]>([])
+  const [selectedManuscripts, setSelectedManuscripts] = useState<Manuscript[]>(
+    []
+  )
   useEffect(() => {
     remult.repo(AccountManager).find().then(setAccountManagers)
     if (deal.id)
@@ -54,10 +56,10 @@ export const DealEdit: React.FC<IProps> = ({ deal, onSaved, onClose }) => {
         })
         .then((dc) => {
           const contacts = dc.filter((dc) => dc.contact).map((dc) => dc.contact)
-          setAuthorContacts((authorContacts) =>
-            authorContacts.length === 0 ? contacts : authorContacts
+          setAuthorManuscripts((authorManuscripts) =>
+            authorManuscripts.length === 0 ? contacts : authorManuscripts
           )
-          setSelectedContacts(contacts)
+          setSelectedManuscripts(contacts)
         })
   }, [deal])
   const [authorSearch, setAuthorSearch] = useState('')
@@ -70,11 +72,11 @@ export const DealEdit: React.FC<IProps> = ({ deal, onSaved, onClose }) => {
   const [state, setState] = useState(deal)
 
   useEffect(() => {
-    repo(Contact)
+    repo(Manuscript)
       .find({ where: { author: [state.author] } })
-      .then(setAuthorContacts)
-    setSelectedContacts([
-      ...selectedContacts.filter((sc) => sc.author?.id === state.author?.id)
+      .then(setAuthorManuscripts)
+    setSelectedManuscripts([
+      ...selectedManuscripts.filter((sc) => sc.author?.id === state.author?.id)
     ])
   }, [state.author])
 
@@ -87,7 +89,7 @@ export const DealEdit: React.FC<IProps> = ({ deal, onSaved, onClose }) => {
     try {
       setErrors(undefined)
       deal = Object.assign(deal, state)
-      await deal.saveWithContacts!(selectedContacts.map((c) => c.id!))
+      await deal.saveWithManuscripts!(selectedManuscripts.map((c) => c.id!))
       onSaved(deal)
       handleClose()
     } catch (err: any) {
@@ -152,13 +154,13 @@ export const DealEdit: React.FC<IProps> = ({ deal, onSaved, onClose }) => {
                   isOptionEqualToValue={(a, b) => a.id === b.id}
                   id="combo-box-demo"
                   getOptionLabel={(c) => c.firstName + ' ' + c.lastName}
-                  options={authorContacts}
-                  value={selectedContacts}
-                  onChange={(e, newValue: Contact[] | null) =>
-                    setSelectedContacts(newValue ? newValue : [])
+                  options={authorManuscripts}
+                  value={selectedManuscripts}
+                  onChange={(e, newValue: Manuscript[] | null) =>
+                    setSelectedManuscripts(newValue ? newValue : [])
                   }
                   renderInput={(params) => (
-                    <TextField {...params} label="Contacts" />
+                    <TextField {...params} label="Manuscripts" />
                   )}
                 />
               </FormControl>

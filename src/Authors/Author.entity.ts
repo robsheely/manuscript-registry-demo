@@ -1,7 +1,7 @@
 import { Allow, Entity, Field, Fields, Relations } from 'remult'
 import { AccountManager } from '../AccountManagers/AccountManager.entity'
 import { AuthorSize } from './AuthorSize'
-import { Contact } from '../Contacts/Contact.entity'
+import { Manuscript } from '../Manuscripts/Manuscript.entity'
 import { Deal } from '../Deals/Deal.entity'
 
 @Entity('companies', {
@@ -37,8 +37,8 @@ export class Author {
   accountManager?: AccountManager
   @Fields.date({ allowApiUpdate: false })
   createdAt = new Date()
-  @Relations.toMany(() => Contact)
-  contacts?: Contact[]
+  @Relations.toMany(() => Manuscript)
+  contacts?: Manuscript[]
   @Relations.toMany(() => Deal)
   deals?: Deal[]
 }

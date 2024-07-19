@@ -10,7 +10,7 @@ import {
 } from 'remult'
 import { AccountManager } from '../AccountManagers/AccountManager.entity'
 import { Author } from '../Authors/Author.entity'
-import { Contact } from '../Contacts/Contact.entity'
+import { Manuscript } from '../Manuscripts/Manuscript.entity'
 
 @Entity('deals', {
   allowApiCrud: Allow.authenticated
@@ -38,8 +38,8 @@ export class Deal {
   accountManager?: AccountManager
   @Fields.integer()
   index = 0
-  @Relations.toMany(() => DealContact)
-  contacts?: DealContact[]
+  @Relations.toMany(() => DealManuscript)
+  contacts?: DealManuscript[]
 
   @BackendMethod({ allowed: Allow.authenticated })
   static async DealDroppedOnKanban(
@@ -101,46 +101,48 @@ export class Deal {
     }
   }
   @BackendMethod({ allowed: Allow.authenticated })
-  async saveWithContacts?(contacts: string[]) {
+  async saveWithManuscripts?(contacts: string[]) {
     const isNew = !this.id
     console.log('#### 0')
     const deal = await repo(Deal).save(this)
     console.log('#### 1')
-    const dealContactRepo = repo(Deal).relations(deal).contacts
-    const existingContacts = isNew
+    const dealManuscriptRepo = repo(Deal).relations(deal).contacts
+    const existingManuscripts = isNew
       ? []
-      : await dealContactRepo.find({
+      : await dealManuscriptRepo.find({
           include: {
             contact: false
           }
         })
-    const contactsToDelete = existingContacts.filter(
+    const contactsToDelete = existingManuscripts.filter(
       (c) => !contacts.includes(c.contactId)
     )
     const contactsToAdd = contacts.filter(
-      (c) => !existingContacts.find((e) => e.contactId == c)
+      (c) => !existingManuscripts.find((e) => e.contactId == c)
     )
     console.log('#### 2', {
-      existingContacts,
+      existingManuscripts,
       contactsToDelete,
       contactsToAdd
     })
-    await Promise.all(contactsToDelete.map((dc) => dealContactRepo.delete(dc)))
-    await dealContactRepo.insert(
+    await Promise.all(
+      contactsToDelete.map((dc) => dealManuscriptRepo.delete(dc))
+    )
+    await dealManuscriptRepo.insert(
       contactsToAdd.map((contactId) => ({ contactId }))
     )
   }
 }
 
-@Entity<DealContact>('dealContacts', {
+@Entity<DealManuscript>('dealManuscripts', {
   allowApiCrud: Allow.authenticated,
   id: { deal: true, contactId: true }
 })
-export class DealContact {
+export class DealManuscript {
   @Relations.toOne(() => Deal)
   deal!: Deal
-  @Relations.toOne<DealContact, Contact>(() => Contact, 'contactId')
-  contact!: Contact
+  @Relations.toOne<DealManuscript, Manuscript>(() => Manuscript, 'contactId')
+  contact!: Manuscript
   @Fields.string({ dbName: 'contact' })
   contactId!: string
 }

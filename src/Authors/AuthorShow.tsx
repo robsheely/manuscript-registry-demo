@@ -16,8 +16,8 @@ import { formatDistance } from 'date-fns'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { remult } from 'remult'
-import { Contact } from '../Contacts/Contact.entity'
-import { ContactsList } from '../Contacts/ContactsList'
+import { Manuscript } from '../Manuscripts/Manuscript.entity'
+import { ManuscriptsList } from '../Manuscripts/ManuscriptsList'
 import { Deal } from '../Deals/Deal.entity'
 import { useIsDesktop } from '../utils/useIsDesktop'
 import { Author } from './Author.entity'
@@ -27,7 +27,7 @@ import { Logo } from './Logo'
 export const AuthorShow: React.FC<{}> = () => {
   let params = useParams()
   const [author, setAuthor] = useState<Author>()
-  const [contacts, setContacts] = useState<Contact[]>([])
+  const [contacts, setManuscripts] = useState<Manuscript[]>([])
   const [deals, setDeals] = useState<Deal[]>([])
 
   const [loading, setLoading] = useState(true)
@@ -51,7 +51,7 @@ export const AuthorShow: React.FC<{}> = () => {
       setAuthor(author)
       setLoading(false)
       if (author) {
-        setContacts(author.contacts!)
+        setManuscripts(author.contacts!)
         setDeals(author.deals!)
       }
     })()
@@ -80,14 +80,14 @@ export const AuthorShow: React.FC<{}> = () => {
                       onChange={(_, v) => setCurrentTab(v)}
                       aria-label="lab API tabs example"
                     >
-                      <Tab label="Contacts" value="1" />
+                      <Tab label="Manuscripts" value="1" />
                       <Tab label="Deals" value="2" />
                     </TabList>
                   </Box>
                   <TabPanel value="1">
-                    <ContactsList
+                    <ManuscriptsList
                       contacts={contacts}
-                      setContacts={setContacts}
+                      setManuscripts={setManuscripts}
                       defaultAuthor={author}
                       loading={false}
                     />

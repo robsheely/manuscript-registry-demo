@@ -13,20 +13,20 @@ import {
 import { AccountManager } from '../AccountManagers/AccountManager.entity'
 import { Author } from '../Authors/Author.entity'
 import { Acquisition } from './Acquisition'
-import { ContactNote } from './ContactNote.entity'
-import { ContactTag } from './ContactTag.entity'
+import { ManuscriptNote } from './ManuscriptNote.entity'
+import { ManuscriptTag } from './ManuscriptTag.entity'
 import { Gender } from './Gender'
 import { Status } from './Status'
 import { Tag } from './Tag.entity'
 
-@Entity<Contact>('contacts', {
+@Entity<Manuscript>('contacts', {
   allowApiCrud: Allow.authenticated,
   allowApiDelete: false,
   defaultOrderBy: {
     lastName: 'asc'
   }
 })
-export class Contact {
+export class Manuscript {
   @Fields.uuid()
   id?: string
   @Fields.string({
@@ -57,11 +57,11 @@ export class Contact {
   avatar? = ''
   @Fields.boolean()
   hasNewsletter: boolean = false
-  @Relations.toMany(() => ContactTag)
-  tags?: ContactTag[]
+  @Relations.toMany(() => ManuscriptTag)
+  tags?: ManuscriptTag[]
   @Fields.string({ dbName: 'accountManager' })
   accountManagerId = ''
-  @Relations.toOne<Contact, AccountManager>(
+  @Relations.toOne<Manuscript, AccountManager>(
     () => AccountManager,
     'accountManagerId'
   )
@@ -79,18 +79,18 @@ export class Contact {
 
   @Fields.integer({
     serverExpression: async (contact) =>
-      remult.repo(Contact).relations(contact).notes.count()
+      remult.repo(Manuscript).relations(contact).notes.count()
   })
   nbNotes = 0 //[ ] reconsider - maybe make server expression managed with include etc...
 
-  @Relations.toMany(() => ContactNote)
-  notes?: ContactNote[]
+  @Relations.toMany(() => ManuscriptNote)
+  notes?: ManuscriptNote[]
 
-  static filterTag = Filter.createCustom<Contact, string>(async (tag) => {
+  static filterTag = Filter.createCustom<Manuscript, string>(async (tag) => {
     if (!tag) return {}
-    const r: EntityFilter<Contact> = {
+    const r: EntityFilter<Manuscript> = {
       id: await remult
-        .repo(ContactTag)
+        .repo(ManuscriptTag)
         .find({
           where: {
             tag: await remult.repo(Tag).findFirst({ tag })
@@ -102,9 +102,9 @@ export class Contact {
     return r
   })
   static disableLastSeenUpdate = false
-  static async updateLastSeen(contact: Contact) {
-    if (Contact.disableLastSeenUpdate) return
-    const last = await repo(Contact)
+  static async updateLastSeen(contact: Manuscript) {
+    if (Manuscript.disableLastSeenUpdate) return
+    const last = await repo(Manuscript)
       .relations(contact)
       .notes.findFirst(
         {},
@@ -116,6 +116,6 @@ export class Contact {
       )
 
     contact.lastSeen = last?.createdAt
-    await remult.repo(Contact).save(contact)
+    await remult.repo(Manuscript).save(contact)
   }
 }

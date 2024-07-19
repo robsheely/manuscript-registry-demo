@@ -16,9 +16,9 @@ import {
 import React, { useEffect, useState } from 'react'
 import { useParams, Link as RouterLink } from 'react-router-dom'
 import { remult, repo } from 'remult'
-import { Contact } from '../Contacts/Contact.entity'
-import { ContactNote } from './ContactNote.entity'
-import { ContactAside } from './ContactAside'
+import { Manuscript } from '../Manuscripts/Manuscript.entity'
+import { ManuscriptNote } from './ManuscriptNote.entity'
+import { ManuscriptAside } from './ManuscriptAside'
 import { Logo } from '../Authors/Logo'
 import { StatusIndicator } from './StatusIndicator'
 
@@ -27,31 +27,31 @@ import { Note } from './Note'
 import { getValueList } from 'remult'
 import { useIsDesktop } from '../utils/useIsDesktop'
 
-export const ContactShow: React.FC<{}> = () => {
+export const ManuscriptShow: React.FC<{}> = () => {
   let params = useParams()
-  const [contact, setContact] = useState<Contact>()
-  const [notes, setNotes] = useState<ContactNote[]>([])
+  const [contact, setManuscript] = useState<Manuscript>()
+  const [notes, setNotes] = useState<ManuscriptNote[]>([])
 
   const [loading, setLoading] = useState(true)
 
-  const [newNote, setNewNote] = useState(new ContactNote())
+  const [newNote, setNewNote] = useState(new ManuscriptNote())
 
   const submitNewNote = async () => {
-    const submittedNote = await repo(Contact)
+    const submittedNote = await repo(Manuscript)
       .relations(contact!)
       .notes.insert(newNote)
     setNotes([submittedNote, ...notes])
-    setNewNote(new ContactNote())
+    setNewNote(new ManuscriptNote())
   }
 
   useEffect(() => {
     ;(async () => {
-      const contact = await repo(Contact).findId(params.id!, {
+      const contact = await repo(Manuscript).findId(params.id!, {
         include: {
           notes: true
         }
       })
-      setContact(contact)
+      setManuscript(contact)
       if (contact) {
         setNotes(contact.notes!)
       }
@@ -96,10 +96,10 @@ export const ContactShow: React.FC<{}> = () => {
             </Box>
             {!isDesktop && (
               <Box>
-                <ContactAside
+                <ManuscriptAside
                   contact={contact}
-                  setContact={setContact}
-                ></ContactAside>
+                  setManuscript={setManuscript}
+                ></ManuscriptAside>
               </Box>
             )}
 
@@ -209,7 +209,10 @@ export const ContactShow: React.FC<{}> = () => {
         </Card>
       </Box>
       {isDesktop && (
-        <ContactAside contact={contact} setContact={setContact}></ContactAside>
+        <ManuscriptAside
+          contact={contact}
+          setManuscript={setManuscript}
+        ></ManuscriptAside>
       )}
     </Box>
   )

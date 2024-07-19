@@ -2,12 +2,12 @@ import styled from '@emotion/styled'
 import { useEffect, useMemo, useState } from 'react'
 import { EntityOrderBy, FieldMetadata, Paginator } from 'remult'
 import { remult } from 'remult'
-import { Contact } from '../Contacts/Contact.entity'
+import { Manuscript } from '../Manuscripts/Manuscript.entity'
 
 export const AdminPage = () => {
-  const repo = remult.repo(Contact)
-  const [items, setItems] = useState<Paginator<Contact>>()
-  const [orderBy, setOrderBy] = useState<EntityOrderBy<Contact>>({})
+  const repo = remult.repo(Manuscript)
+  const [items, setItems] = useState<Paginator<Manuscript>>()
+  const [orderBy, setOrderBy] = useState<EntityOrderBy<Manuscript>>({})
   useEffect(() => {
     repo.query({ orderBy, pageSize: 25 }).paginator().then(setItems)
   }, [orderBy])

@@ -14,20 +14,20 @@ import {
 } from '@mui/material'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { remult } from 'remult'
-import { Contact } from './Contact.entity'
+import { Manuscript } from './Manuscript.entity'
 
 import { useSearchParams } from 'react-router-dom'
 import CancelIcon from '@mui/icons-material/Cancel'
 import { Status } from './Status'
-import { ContactsList } from './ContactsList'
+import { ManuscriptsList } from './ManuscriptsList'
 import { Tag } from './Tag.entity'
 import { getValueList } from 'remult'
 import { useIsDesktop } from '../utils/useIsDesktop'
 import FilterAltIcon from '@mui/icons-material/FilterAlt'
 
-const amRepo = remult.repo(Contact)
+const amRepo = remult.repo(Manuscript)
 
-export const ContactsPage: React.FC<{}> = () => {
+export const ManuscriptsPage: React.FC<{}> = () => {
   let [searchParams, setSearchParams] = useSearchParams()
   const filter = {
     search: searchParams.get('search') || '',
@@ -39,16 +39,16 @@ export const ContactsPage: React.FC<{}> = () => {
     setSearchParams({ ...filter, ...f })
     setOpenDrawer(false)
   }
-  const [contacts, setContacts] = useState<Contact[]>([])
+  const [contacts, setManuscripts] = useState<Manuscript[]>([])
   const [tags, setTags] = useState<Tag[]>([])
   const [loading, setLoading] = useState(false)
   const [loadingTags, setLoadingTags] = useState(false)
 
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(25)
-  const [contactsCount, setContactsCount] = useState(0)
+  const [contactsCount, setManuscriptsCount] = useState(0)
 
-  const [addedContacts, setAddedContacts] = useState<Contact[]>([])
+  const [addedManuscripts, setAddedManuscripts] = useState<Manuscript[]>([])
 
   const contactsQuery = useMemo(() => {
     const query = amRepo.query({
@@ -60,14 +60,14 @@ export const ContactsPage: React.FC<{}> = () => {
         status: filter.status
           ? getValueList(Status).find((s) => s.id === filter.status)
           : undefined,
-        $and: [filter.tag ? Contact.filterTag(filter.tag) : undefined!]
+        $and: [filter.tag ? Manuscript.filterTag(filter.tag) : undefined!]
       },
       pageSize: rowsPerPage,
       include: {
         tags: true
       }
     })
-    query.count().then((count) => setContactsCount(count))
+    query.count().then((count) => setManuscriptsCount(count))
     return query
   }, [filter.search, filter.status, filter.tag, rowsPerPage])
   const fetchRef = useRef(0)
@@ -77,7 +77,7 @@ export const ContactsPage: React.FC<{}> = () => {
       try {
         setLoading(true)
         const contacts = await contactsQuery.getPage(page)
-        if (ref === fetchRef.current) setContacts(contacts)
+        if (ref === fetchRef.current) setManuscripts(contacts)
       } finally {
         if (ref === fetchRef.current) setLoading(false)
       }
@@ -173,13 +173,13 @@ export const ContactsPage: React.FC<{}> = () => {
         </Grid>
       )}
       <Grid item xs={isDesktop ? 10 : 12}>
-        <ContactsList
+        <ManuscriptsList
           contacts={contacts}
-          setContacts={setContacts}
+          setManuscripts={setManuscripts}
           loading={loading}
           itemsPerPage={rowsPerPage}
-          addedContacts={addedContacts}
-          setAddedContacts={setAddedContacts}
+          addedManuscripts={addedManuscripts}
+          setAddedManuscripts={setAddedManuscripts}
         >
           {!isDesktop && (
             <IconButton onClick={() => setOpenDrawer(true)}>
@@ -192,7 +192,7 @@ export const ContactsPage: React.FC<{}> = () => {
             value={filter.search}
             onChange={(e) => patchFilter({ search: e.target.value })}
           />
-        </ContactsList>
+        </ManuscriptsList>
 
         <TablePagination
           component="div"

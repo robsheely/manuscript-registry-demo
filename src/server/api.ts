@@ -2,22 +2,22 @@ import { remultExpress } from 'remult/remult-express'
 import { createPostgresConnection } from 'remult/postgres'
 import { seed } from './seed'
 import { config } from 'dotenv'
-import { Deal, DealContact } from '../Deals/Deal.entity'
+import { Deal, DealManuscript } from '../Deals/Deal.entity'
 import { AccountManager } from '../AccountManagers/AccountManager.entity'
 import { Author } from '../Authors/Author.entity'
-import { Contact } from '../Contacts/Contact.entity'
-import { ContactTag } from '../Contacts/ContactTag.entity'
-import { ContactNote } from '../Contacts/ContactNote.entity'
-import { Tag } from '../Contacts/Tag.entity'
+import { Manuscript } from '../Manuscripts/Manuscript.entity'
+import { ManuscriptTag } from '../Manuscripts/ManuscriptTag.entity'
+import { ManuscriptNote } from '../Manuscripts/ManuscriptNote.entity'
+import { Tag } from '../Manuscripts/Tag.entity'
 
 config()
 export const entities = [
   Author,
-  Contact,
-  ContactNote,
+  Manuscript,
+  ManuscriptNote,
   Tag,
-  ContactTag,
-  DealContact,
+  ManuscriptTag,
+  DealManuscript,
   AccountManager,
   Deal
 ]

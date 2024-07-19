@@ -10,15 +10,15 @@ import {
   Typography
 } from '@mui/material'
 import { useState } from 'react'
-import { ContactNote } from './ContactNote.entity'
+import { ManuscriptNote } from './ManuscriptNote.entity'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import { remult } from 'remult'
-const contactNoteRepo = remult.repo(ContactNote)
+const contactNoteRepo = remult.repo(ManuscriptNote)
 
 export const Note: React.FC<{
-  note: ContactNote
-  onDelete: (note: ContactNote) => void
+  note: ManuscriptNote
+  onDelete: (note: ManuscriptNote) => void
 }> = ({ note, onDelete }) => {
   const [isHover, setHover] = useState(false)
   const [isEditing, setEditing] = useState(false)

@@ -13,53 +13,53 @@ import {
   alpha
 } from '@mui/material'
 import React, { useState } from 'react'
-import { Contact } from './Contact.entity'
+import { Manuscript } from './Manuscript.entity'
 import AddIcon from '@mui/icons-material/Add'
-import { ContactEdit } from './ContactEdit'
+import { ManuscriptEdit } from './ManuscriptEdit'
 import { Author } from '../Authors/Author.entity'
 import { formatDistance } from 'date-fns'
 import { Link } from 'react-router-dom'
 import { StatusIndicator } from './StatusIndicator'
 import { useIsDesktop } from '../utils/useIsDesktop'
 
-export const ContactsList: React.FC<{
-  contacts: Contact[]
-  setContacts: (contacts: Contact[]) => void
+export const ManuscriptsList: React.FC<{
+  contacts: Manuscript[]
+  setManuscripts: (contacts: Manuscript[]) => void
   defaultAuthor?: Author
   loading: boolean
   itemsPerPage?: number
-  addedContacts?: Contact[]
-  setAddedContacts?: (contacts: Contact[]) => void
+  addedManuscripts?: Manuscript[]
+  setAddedManuscripts?: (contacts: Manuscript[]) => void
 }> = ({
   contacts,
-  setContacts,
+  setManuscripts,
   defaultAuthor,
   loading,
   children,
   itemsPerPage = 10,
-  addedContacts = [] as Contact[],
-  setAddedContacts = (c: Contact[]) => {}
+  addedManuscripts = [] as Manuscript[],
+  setAddedManuscripts = (c: Manuscript[]) => {}
 }) => {
-  const [editContact, setEditContact] = useState<Contact>()
-  // const deleteContact = async (deletedContact: Contact) => {
-  //     await amRepo.delete(deletedContact);
-  //     setContacts(contacts.filter(contact => deletedContact.id !== contact.id));
+  const [editManuscript, setEditManuscript] = useState<Manuscript>()
+  // const deleteManuscript = async (deletedManuscript: Manuscript) => {
+  //     await amRepo.delete(deletedManuscript);
+  //     setManuscripts(contacts.filter(contact => deletedManuscript.id !== contact.id));
   // }
-  const editContactSaved = (afterEditContact: Contact) => {
-    if (!editContact?.id) {
-      setContacts([afterEditContact, ...contacts])
-      setAddedContacts([afterEditContact, ...addedContacts])
+  const editManuscriptSaved = (afterEditManuscript: Manuscript) => {
+    if (!editManuscript?.id) {
+      setManuscripts([afterEditManuscript, ...contacts])
+      setAddedManuscripts([afterEditManuscript, ...addedManuscripts])
     } else
-      setContacts(
+      setManuscripts(
         contacts.map((contact) =>
-          contact.id === afterEditContact.id ? afterEditContact : contact
+          contact.id === afterEditManuscript.id ? afterEditManuscript : contact
         )
       )
   }
   const create = () => {
-    const newContact = new Contact()
-    newContact.author = defaultAuthor
-    setEditContact(newContact)
+    const newManuscript = new Manuscript()
+    newManuscript.author = defaultAuthor
+    setEditManuscript(newManuscript)
   }
   const now = Date.now()
   const isDesktop = useIsDesktop()
@@ -75,7 +75,7 @@ export const ContactsList: React.FC<{
               onClick={create}
               startIcon={<AddIcon />}
             >
-              Add Contact
+              Add Manuscript
             </Button>
           ) : (
             <Button onClick={create} variant="contained">
@@ -106,7 +106,7 @@ export const ContactsList: React.FC<{
               key={contact.id}
               sx={{
                 backgroundColor: (theme) =>
-                  addedContacts?.includes(contact)
+                  addedManuscripts?.includes(contact)
                     ? alpha(theme.palette.secondary.light, 0.1)
                     : undefined
               }}
@@ -159,12 +159,12 @@ export const ContactsList: React.FC<{
           ))}
       </List>
 
-      {editContact && (
-        <ContactEdit
-          contact={editContact}
-          onClose={() => setEditContact(undefined)}
+      {editManuscript && (
+        <ManuscriptEdit
+          contact={editManuscript}
+          onClose={() => setEditManuscript(undefined)}
           onSaved={(contact) => {
-            editContactSaved(contact)
+            editManuscriptSaved(contact)
           }}
         />
       )}

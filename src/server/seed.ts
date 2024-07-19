@@ -14,13 +14,13 @@ import {
 import { Author } from '../Authors/Author.entity'
 import { sectors } from '../Authors/Sectors'
 import { AuthorSize } from '../Authors/AuthorSize'
-import { Contact } from '../Contacts/Contact.entity'
-import { Gender } from '../Contacts/Gender'
-import { Acquisition } from '../Contacts/Acquisition'
-import { Status } from '../Contacts/Status'
-import { ContactNote } from '../Contacts/ContactNote.entity'
-import { Tag } from '../Contacts/Tag.entity'
-import { Deal, DealContact } from '../Deals/Deal.entity'
+import { Manuscript } from '../Manuscripts/Manuscript.entity'
+import { Gender } from '../Manuscripts/Gender'
+import { Acquisition } from '../Manuscripts/Acquisition'
+import { Status } from '../Manuscripts/Status'
+import { ManuscriptNote } from '../Manuscripts/ManuscriptNote.entity'
+import { Tag } from '../Manuscripts/Tag.entity'
+import { Deal, DealManuscript } from '../Deals/Deal.entity'
 import { DealStages } from '../Deals/DealStage'
 import { DealTypes } from '../Deals/DealType'
 
@@ -58,28 +58,28 @@ export async function seed() {
       const accountManagers = await remult.repo(AccountManager).find()
       if ((await authorRepo.count()) == 0) {
         console.log('Start seed author')
-        Contact.disableLastSeenUpdate = true
+        Manuscript.disableLastSeenUpdate = true
         const dealRepo = remult.repo(Deal)
-        const dealContactRepo = remult.repo(DealContact)
+        const dealManuscriptRepo = remult.repo(DealManuscript)
 
         const tags = await remult.repo(Tag).find()
         // delete related data
         {
-          for (const c of await repo(Contact).find()) {
-            await repo(Contact).delete(c)
+          for (const c of await repo(Manuscript).find()) {
+            await repo(Manuscript).delete(c)
           }
-          for (const c of await repo(ContactNote).find()) {
-            await repo(ContactNote).delete(c)
+          for (const c of await repo(ManuscriptNote).find()) {
+            await repo(ManuscriptNote).delete(c)
           }
 
-          for (const c of await repo(ContactNote).find()) {
-            await repo(ContactNote).delete(c)
+          for (const c of await repo(ManuscriptNote).find()) {
+            await repo(ManuscriptNote).delete(c)
           }
           for (const c of await dealRepo.find()) {
             await dealRepo.delete(c)
           }
-          for (const c of await dealContactRepo.find()) {
-            await dealContactRepo.delete(c)
+          for (const c of await dealManuscriptRepo.find()) {
+            await dealManuscriptRepo.delete(c)
           }
         }
         // Start create Authors
@@ -103,13 +103,13 @@ export async function seed() {
             createdAt: date.recent(500)
           })
           const compRel = authorRepo.relations(author)
-          const contacts: Contact[] = []
+          const contacts: Manuscript[] = []
           console.log(index + ': ' + author.name)
           // Create contact
           {
-            let numOfContacts = datatype.number(author.size.id / 10)
-            if (numOfContacts < 1) numOfContacts = 1
-            for (let index = 0; index < numOfContacts; index++) {
+            let numOfManuscripts = datatype.number(author.size.id / 10)
+            if (numOfManuscripts < 1) numOfManuscripts = 1
+            for (let index = 0; index < numOfManuscripts; index++) {
               const firstName = nameFaker.firstName()
               const lastName = nameFaker.lastName()
               const title = authorFaker.bsAdjective()
@@ -130,7 +130,7 @@ export async function seed() {
               })
               contacts.push(contact)
               const contactRel = compRel.contacts.relations(contact)
-              // Create Contact Notes
+              // Create Manuscript Notes
               for (let index = 0; index < datatype.number(20) + 1; index++) {
                 const note = await contactRel.notes.insert({
                   text: lorem.paragraphs(3),
@@ -145,7 +145,7 @@ export async function seed() {
                   contact.createdAt = note.createdAt
                 }
               }
-              // Create Contact Tags
+              // Create Manuscript Tags
               await contactRel.tags.insert(
                 random
                   .arrayElements(tags, datatype.number(3))
@@ -187,6 +187,6 @@ export async function seed() {
   } catch (err) {
     console.log({ err })
   } finally {
-    Contact.disableLastSeenUpdate = false
+    Manuscript.disableLastSeenUpdate = false
   }
 }

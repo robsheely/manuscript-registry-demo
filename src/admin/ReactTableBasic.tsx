@@ -3,7 +3,7 @@ import styled from '@emotion/styled'
 import { useTable, usePagination, useFilters } from 'react-table'
 import { useRemultReactTable } from './remult-react-table'
 import { remult } from 'remult'
-import { Contact } from '../Contacts/Contact.entity'
+import { Manuscript } from '../Manuscripts/Manuscript.entity'
 
 const Styles = styled.div`
   padding: 1rem;
@@ -42,7 +42,7 @@ const Styles = styled.div`
 // new data when pagination state changes
 // We can also add a loading state to let our table know it's loading new data
 function Table() {
-  const options = useRemultReactTable(remult.repo(Contact))
+  const options = useRemultReactTable(remult.repo(Manuscript))
   const { loading, count, pageCount } = options
   const {
     getTableProps,

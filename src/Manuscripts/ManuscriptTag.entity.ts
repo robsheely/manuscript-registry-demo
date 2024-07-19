@@ -1,16 +1,16 @@
 import { Allow, Entity, Field, Fields, Relations } from 'remult'
-import { Contact } from './Contact.entity'
+import { Manuscript } from './Manuscript.entity'
 import { Tag } from './Tag.entity'
 
-@Entity<ContactTag>('contactTag', {
+@Entity<ManuscriptTag>('contactTag', {
   allowApiCrud: Allow.authenticated,
   id: { contactId: true, tag: true }
 })
-export class ContactTag {
+export class ManuscriptTag {
   @Fields.string({ dbName: 'contact' })
   contactId = ''
-  @Relations.toOne<ContactTag, Contact>(() => Contact, 'contactId')
-  contact!: Contact
+  @Relations.toOne<ManuscriptTag, Manuscript>(() => Manuscript, 'contactId')
+  contact!: Manuscript
 
   @Relations.toOne(() => Tag, {
     defaultIncluded: true

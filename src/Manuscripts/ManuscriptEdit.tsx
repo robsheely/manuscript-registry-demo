@@ -31,13 +31,13 @@ import { Status } from './Status'
 const contactRepo = remult.repo(Manuscript)
 
 interface IProps {
-  manuscript: Manuscript
+  contact: Manuscript
   onClose: () => void
-  onSaved: (manuscript: Manuscript) => void
+  onSaved: (contact: Manuscript) => void
 }
 
 export const ManuscriptEdit: React.FC<IProps> = ({
-  manuscript,
+  contact,
   onSaved,
   onClose
 }) => {
@@ -54,7 +54,7 @@ export const ManuscriptEdit: React.FC<IProps> = ({
       .then((x) => setAuthors(x))
   }, [authorSearch])
 
-  const [state, setState] = useState(manuscript)
+  const [state, setState] = useState(contact)
 
   const [errors, setErrors] = useState<ErrorInfo<Manuscript>>()
   const handleClose = () => {
@@ -63,8 +63,8 @@ export const ManuscriptEdit: React.FC<IProps> = ({
   const handleSave = async () => {
     try {
       setErrors(undefined)
-      let newContact = await contactRepo.save(state)
-      onSaved(newContact)
+      let newManuscript = await contactRepo.save(state)
+      onSaved(newManuscript)
       handleClose()
     } catch (err: any) {
       setErrors(err)
@@ -73,9 +73,9 @@ export const ManuscriptEdit: React.FC<IProps> = ({
 
   return (
     <div>
-      <Dialog open={Boolean(manuscript)} onClose={handleClose}>
+      <Dialog open={Boolean(contact)} onClose={handleClose}>
         <DialogTitle>
-          {!manuscript.id ? 'Create ' : 'Update '} Manuscript
+          {!contact.id ? 'Create ' : 'Update '} Manuscript
         </DialogTitle>
         <DialogContent>
           <Box component="form" sx={{ pt: 1 }} noValidate autoComplete="off">

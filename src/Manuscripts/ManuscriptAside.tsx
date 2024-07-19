@@ -15,44 +15,44 @@ import {
 } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit'
 import { FormEvent, useEffect, useState } from 'react'
-import { Contact } from './Contact.entity'
-import { ContactEdit } from './ContactEdit'
+import { Manuscript } from './Manuscript.entity'
+import { ManuscriptEdit } from './ManuscriptEdit'
 import { Gender } from './Gender'
 import ControlPointIcon from '@mui/icons-material/ControlPoint'
 import { colors, Tag } from './Tag.entity'
-import { ContactTag } from './ContactTag.entity'
+import { ManuscriptTag } from './ManuscriptTag.entity'
 import { remult } from 'remult'
 import { useIsDesktop } from '../utils/useIsDesktop'
 
 const tagsRepo = remult.repo(Tag)
-const contactTagsRepo = remult.repo(ContactTag)
-export const ContactAside = ({
+const contactTagsRepo = remult.repo(ManuscriptTag)
+export const ManuscriptAside = ({
   contact,
-  setContact,
+  setManuscript,
   link = 'edit'
 }: {
-  contact: Contact
-  setContact: (author: Contact) => void
+  contact: Manuscript
+  setManuscript: (author: Manuscript) => void
   link?: string
 }) => {
-  const [editContact, setEditContact] = useState<Contact>()
+  const [editManuscript, setEditManuscript] = useState<Manuscript>()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const [contactTags, setContactTags] = useState<ContactTag[]>([])
+  const [contactTags, setManuscriptTags] = useState<ManuscriptTag[]>([])
   const [allTags, setAllTags] = useState<Tag[]>([])
   const unselectedTagIds: Tag[] = allTags.filter(
     (t) => !contactTags.find((ct) => ct.tag.tag === t.tag)
   )
   useEffect(() => {
-    contactTagsRepo.find({ where: { contact } }).then(setContactTags)
+    contactTagsRepo.find({ where: { contact } }).then(setManuscriptTags)
     tagsRepo.find().then(setAllTags)
   }, [contact])
 
-  const handleDeleteTag = async (contactTagToDelete: ContactTag) => {
+  const handleDeleteTag = async (contactTagToDelete: ManuscriptTag) => {
     await contactTagsRepo.delete(contactTagToDelete)
-    setContactTags(contactTags.filter((t) => t !== contactTagToDelete))
+    setManuscriptTags(contactTags.filter((t) => t !== contactTagToDelete))
   }
   const handleAddTag = async (tag: Tag) => {
-    setContactTags([
+    setManuscriptTags([
       ...contactTags,
       await contactTagsRepo.insert({ contact, tag })
     ])
@@ -97,12 +97,12 @@ export const ContactAside = ({
           {link === 'edit' ? (
             <Button
               startIcon={<EditIcon />}
-              onClick={() => setEditContact(contact)}
+              onClick={() => setEditManuscript(contact)}
             >
-              Edit Contact
+              Edit Manuscript
             </Button>
           ) : (
-            <Button>Show Contact</Button>
+            <Button>Show Manuscript</Button>
           )}
         </Box>
 
@@ -252,12 +252,12 @@ export const ContactAside = ({
           </form>
         </Dialog>
       </Box>
-      {editContact && (
-        <ContactEdit
-          contact={editContact}
-          onClose={() => setEditContact(undefined)}
+      {editManuscript && (
+        <ManuscriptEdit
+          contact={editManuscript}
+          onClose={() => setEditManuscript(undefined)}
           onSaved={(contact) => {
-            setContact(contact)
+            setManuscript(contact)
           }}
         />
       )}

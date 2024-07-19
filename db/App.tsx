@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react'
 import { Link, Route, Routes } from 'react-router-dom'
 import { AccountManagersList } from './AccountManagers/AccountManagersList'
 import { AuthorsList } from './Authors/AuthorsList'
-import { ContactsPage } from './Contacts/ContactsPage'
+import { ManuscriptsPage } from './Manuscripts/ManuscriptsPage'
 import { AuthorShow } from './Authors/AuthorShow'
 import {
   AppBar,
@@ -25,7 +25,7 @@ import {
   Tooltip,
   Typography
 } from '@mui/material'
-import { ContactShow } from './Contacts/ContactShow'
+import { ManuscriptShow } from './Manuscripts/ManuscriptShow'
 
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
@@ -51,7 +51,7 @@ function App({ signOut }: { signOut: VoidFunction }) {
   )
   const routes = useMemo(
     () => [
-      { path: '/', caption: 'Contacts' },
+      { path: '/', caption: 'Manuscripts' },
       { path: `/authors`, caption: 'Authors' },
       { path: `/accountManagers`, caption: 'Account Managers' },
       { path: `/deals`, caption: 'Deals' }
@@ -218,7 +218,7 @@ function App({ signOut }: { signOut: VoidFunction }) {
           </AppBar>
           <Box sx={{ p: 1 }}>
             <Routes>
-              <Route path="/" element={<ContactsPage />} />
+              <Route path="/" element={<ManuscriptsPage />} />
               <Route path="/kanban" element={<DealsAuthor />} />
               <Route path="/authors" element={<AuthorsList />} />
               <Route path="/authors/:id" element={<AuthorShow />} />
@@ -227,7 +227,7 @@ function App({ signOut }: { signOut: VoidFunction }) {
                 path="/accountManagers"
                 element={<AccountManagersList />}
               />
-              <Route path="/contacts/:id" element={<ContactShow />} />
+              <Route path="/contacts/:id" element={<ManuscriptShow />} />
               <Route path="/admin" element={<AdminPage />} />
               <Route path="/react-table" element={<ReactTable />} />
               <Route path="/form" element={<PlayForm />} />
