@@ -101,7 +101,7 @@ export async function seed() {
             createdAt: date.recent(500)
           })
           const compRel = authorRepo.relations(author)
-          const contacts: Manuscript[] = []
+          const manuscripts: Manuscript[] = []
           console.log(index + ': ' + author.name)
           // Create contact
           {
@@ -111,7 +111,7 @@ export async function seed() {
               const firstName = nameFaker.firstName()
               const lastName = nameFaker.lastName()
               const title = authorFaker.bsAdjective()
-              const contact = await compRel.contacts.insert({
+              const contact = await compRel.manuscripts.insert({
                 firstName,
                 lastName,
                 title,
@@ -124,8 +124,8 @@ export async function seed() {
                 status: random.arrayElement(getValueList(Status)),
                 accountManager: random.arrayElement(accountManagers)
               })
-              contacts.push(contact)
-              const contactRel = compRel.contacts.relations(contact)
+              manuscripts.push(contact)
+              const contactRel = compRel.manuscripts.relations(contact)
               // Create Manuscript Notes
               for (let index = 0; index < datatype.number(20) + 1; index++) {
                 const note = await contactRel.notes.insert({
@@ -147,7 +147,7 @@ export async function seed() {
                   .arrayElements(tags, datatype.number(3))
                   .map((tag) => ({ tag }))
               )
-              await compRel.contacts.save(contact)
+              await compRel.manuscripts.save(contact)
             }
           }
           {
@@ -167,9 +167,9 @@ export async function seed() {
                 updatedAt: date.between(created_at, new Date())
               })
 
-              dealRepo.relations(deal).contacts.insert(
+              dealRepo.relations(deal).manuscripts.insert(
                 random
-                  .arrayElements(contacts, datatype.number(4) + 1)
+                  .arrayElements(manuscripts, datatype.number(4) + 1)
                   .map((contact) => ({
                     contact
                   }))

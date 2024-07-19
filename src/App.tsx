@@ -148,7 +148,7 @@ function App({ signOut }: { signOut: VoidFunction }) {
               <Route path="/" element={<ManuscriptsPage />} />
               <Route path="/authors" element={<AuthorsList />} />
               <Route path="/authors/:id" element={<AuthorShow />} />
-              <Route path="/contacts/:id" element={<ManuscriptShow />} />
+              <Route path="/manuscripts/:id" element={<ManuscriptShow />} />
             </Routes>
           </Box>
         </LocalizationProvider>

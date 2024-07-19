@@ -49,17 +49,19 @@ export const DealEdit: React.FC<IProps> = ({ deal, onSaved, onClose }) => {
     if (deal.id)
       repo(Deal)
         .relations(deal)
-        .contacts.find({
+        .manuscripts.find({
           include: {
             contact: true
           }
         })
         .then((dc) => {
-          const contacts = dc.filter((dc) => dc.contact).map((dc) => dc.contact)
+          const manuscripts = dc
+            .filter((dc) => dc.contact)
+            .map((dc) => dc.contact)
           setAuthorManuscripts((authorManuscripts) =>
-            authorManuscripts.length === 0 ? contacts : authorManuscripts
+            authorManuscripts.length === 0 ? manuscripts : authorManuscripts
           )
-          setSelectedManuscripts(contacts)
+          setSelectedManuscripts(manuscripts)
         })
   }, [deal])
   const [authorSearch, setAuthorSearch] = useState('')

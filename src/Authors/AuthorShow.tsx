@@ -27,7 +27,7 @@ import { Logo } from './Logo'
 export const AuthorShow: React.FC<{}> = () => {
   let params = useParams()
   const [author, setAuthor] = useState<Author>()
-  const [contacts, setManuscripts] = useState<Manuscript[]>([])
+  const [manuscripts, setManuscripts] = useState<Manuscript[]>([])
   const [deals, setDeals] = useState<Deal[]>([])
 
   const [loading, setLoading] = useState(true)
@@ -40,7 +40,7 @@ export const AuthorShow: React.FC<{}> = () => {
       const author = await remult.repo(Author).findId(params.id!, {
         include: {
           accountManager: true,
-          contacts: {
+          manuscripts: {
             include: {
               tags: true
             }
@@ -51,7 +51,7 @@ export const AuthorShow: React.FC<{}> = () => {
       setAuthor(author)
       setLoading(false)
       if (author) {
-        setManuscripts(author.contacts!)
+        setManuscripts(author.manuscripts!)
         setDeals(author.deals!)
       }
     })()
@@ -86,7 +86,7 @@ export const AuthorShow: React.FC<{}> = () => {
                   </Box>
                   <TabPanel value="1">
                     <ManuscriptsList
-                      contacts={contacts}
+                      manuscripts={manuscripts}
                       setManuscripts={setManuscripts}
                       defaultAuthor={author}
                       loading={false}

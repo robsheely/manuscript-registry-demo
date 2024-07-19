@@ -23,15 +23,15 @@ import { StatusIndicator } from './StatusIndicator'
 import { useIsDesktop } from '../utils/useIsDesktop'
 
 export const ManuscriptsList: React.FC<{
-  contacts: Manuscript[]
-  setManuscripts: (contacts: Manuscript[]) => void
+  manuscripts: Manuscript[]
+  setManuscripts: (manuscripts: Manuscript[]) => void
   defaultAuthor?: Author
   loading: boolean
   itemsPerPage?: number
   addedManuscripts?: Manuscript[]
-  setAddedManuscripts?: (contacts: Manuscript[]) => void
+  setAddedManuscripts?: (manuscripts: Manuscript[]) => void
 }> = ({
-  contacts,
+  manuscripts,
   setManuscripts,
   defaultAuthor,
   loading,
@@ -43,15 +43,15 @@ export const ManuscriptsList: React.FC<{
   const [editManuscript, setEditManuscript] = useState<Manuscript>()
   // const deleteManuscript = async (deletedManuscript: Manuscript) => {
   //     await amRepo.delete(deletedManuscript);
-  //     setManuscripts(contacts.filter(contact => deletedManuscript.id !== contact.id));
+  //     setManuscripts(manuscripts.filter(contact => deletedManuscript.id !== contact.id));
   // }
   const editManuscriptSaved = (afterEditManuscript: Manuscript) => {
     if (!editManuscript?.id) {
-      setManuscripts([afterEditManuscript, ...contacts])
+      setManuscripts([afterEditManuscript, ...manuscripts])
       setAddedManuscripts([afterEditManuscript, ...addedManuscripts])
     } else
       setManuscripts(
-        contacts.map((contact) =>
+        manuscripts.map((contact) =>
           contact.id === afterEditManuscript.id ? afterEditManuscript : contact
         )
       )
@@ -100,7 +100,7 @@ export const ManuscriptsList: React.FC<{
             </ListItem>
           ))}
         {!loading &&
-          contacts.map((contact, index) => (
+          manuscripts.map((contact, index) => (
             <ListItem
               disablePadding
               key={contact.id}
@@ -111,7 +111,10 @@ export const ManuscriptsList: React.FC<{
                     : undefined
               }}
             >
-              <ListItemButton component={Link} to={`/contacts/${contact.id}`}>
+              <ListItemButton
+                component={Link}
+                to={`/manuscripts/${contact.id}`}
+              >
                 <ListItemAvatar>
                   <Avatar src={contact.avatar} />
                 </ListItemAvatar>

@@ -39,7 +39,7 @@ export class Deal {
   @Fields.integer()
   index = 0
   @Relations.toMany(() => DealManuscript)
-  contacts?: DealManuscript[]
+  manuscripts?: DealManuscript[]
 
   @BackendMethod({ allowed: Allow.authenticated })
   static async DealDroppedOnKanban(
@@ -101,12 +101,12 @@ export class Deal {
     }
   }
   @BackendMethod({ allowed: Allow.authenticated })
-  async saveWithManuscripts?(contacts: string[]) {
+  async saveWithManuscripts?(manuscripts: string[]) {
     const isNew = !this.id
     console.log('#### 0')
     const deal = await repo(Deal).save(this)
     console.log('#### 1')
-    const dealManuscriptRepo = repo(Deal).relations(deal).contacts
+    const dealManuscriptRepo = repo(Deal).relations(deal).manuscripts
     const existingManuscripts = isNew
       ? []
       : await dealManuscriptRepo.find({
@@ -114,22 +114,22 @@ export class Deal {
             contact: false
           }
         })
-    const contactsToDelete = existingManuscripts.filter(
-      (c) => !contacts.includes(c.contactId)
+    const manuscriptsToDelete = existingManuscripts.filter(
+      (c) => !manuscripts.includes(c.contactId)
     )
-    const contactsToAdd = contacts.filter(
+    const manuscriptsToAdd = manuscripts.filter(
       (c) => !existingManuscripts.find((e) => e.contactId == c)
     )
     console.log('#### 2', {
       existingManuscripts,
-      contactsToDelete,
-      contactsToAdd
+      manuscriptsToDelete,
+      manuscriptsToAdd
     })
     await Promise.all(
-      contactsToDelete.map((dc) => dealManuscriptRepo.delete(dc))
+      manuscriptsToDelete.map((dc) => dealManuscriptRepo.delete(dc))
     )
     await dealManuscriptRepo.insert(
-      contactsToAdd.map((contactId) => ({ contactId }))
+      manuscriptsToAdd.map((contactId) => ({ contactId }))
     )
   }
 }

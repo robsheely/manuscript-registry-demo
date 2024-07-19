@@ -39,18 +39,18 @@ export const ManuscriptsPage: React.FC<{}> = () => {
     setSearchParams({ ...filter, ...f })
     setOpenDrawer(false)
   }
-  const [contacts, setManuscripts] = useState<Manuscript[]>([])
+  const [manuscripts, setManuscripts] = useState<Manuscript[]>([])
   const [tags, setTags] = useState<Tag[]>([])
   const [loading, setLoading] = useState(false)
   const [loadingTags, setLoadingTags] = useState(false)
 
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(25)
-  const [contactsCount, setManuscriptsCount] = useState(0)
+  const [manuscriptsCount, setManuscriptsCount] = useState(0)
 
   const [addedManuscripts, setAddedManuscripts] = useState<Manuscript[]>([])
 
-  const contactsQuery = useMemo(() => {
+  const manuscriptsQuery = useMemo(() => {
     const query = amRepo.query({
       where: {
         $or: [
@@ -76,13 +76,13 @@ export const ManuscriptsPage: React.FC<{}> = () => {
       const ref = ++fetchRef.current
       try {
         setLoading(true)
-        const contacts = await contactsQuery.getPage(page)
-        if (ref === fetchRef.current) setManuscripts(contacts)
+        const manuscripts = await manuscriptsQuery.getPage(page)
+        if (ref === fetchRef.current) setManuscripts(manuscripts)
       } finally {
         if (ref === fetchRef.current) setLoading(false)
       }
     })()
-  }, [contactsQuery, page])
+  }, [manuscriptsQuery, page])
 
   useEffect(() => {
     ;(async () => {
@@ -174,7 +174,7 @@ export const ManuscriptsPage: React.FC<{}> = () => {
       )}
       <Grid item xs={isDesktop ? 10 : 12}>
         <ManuscriptsList
-          contacts={contacts}
+          manuscripts={manuscripts}
           setManuscripts={setManuscripts}
           loading={loading}
           itemsPerPage={rowsPerPage}
@@ -196,7 +196,7 @@ export const ManuscriptsPage: React.FC<{}> = () => {
 
         <TablePagination
           component="div"
-          count={contactsCount}
+          count={manuscriptsCount}
           page={page}
           onPageChange={(_, newPage) => {
             setPage(newPage)

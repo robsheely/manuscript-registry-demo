@@ -31,12 +31,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 
 import { remult } from 'remult'
-import { DealsList } from './Deals/DealList'
-import { DealsAuthor } from './Deals/DealsAuthor'
-import { AdminPage } from './admin/AdminPage'
 import MenuIcon from '@mui/icons-material/Menu'
-import ReactTable from './admin/ReactTable'
-import { PlayForm } from './admin/form'
 import { useIsDesktop } from './utils/useIsDesktop'
 
 const theme = createTheme()
@@ -52,9 +47,7 @@ function App({ signOut }: { signOut: VoidFunction }) {
   const routes = useMemo(
     () => [
       { path: '/', caption: 'Manuscripts' },
-      { path: `/authors`, caption: 'Authors' },
-      { path: `/accountManagers`, caption: 'Account Managers' },
-      { path: `/deals`, caption: 'Deals' }
+      { path: `/authors`, caption: 'Authors' }
     ],
     []
   )
@@ -219,18 +212,9 @@ function App({ signOut }: { signOut: VoidFunction }) {
           <Box sx={{ p: 1 }}>
             <Routes>
               <Route path="/" element={<ManuscriptsPage />} />
-              <Route path="/kanban" element={<DealsAuthor />} />
               <Route path="/authors" element={<AuthorsList />} />
               <Route path="/authors/:id" element={<AuthorShow />} />
-              <Route path="/deals" element={<DealsList />} />
-              <Route
-                path="/accountManagers"
-                element={<AccountManagersList />}
-              />
-              <Route path="/contacts/:id" element={<ManuscriptShow />} />
-              <Route path="/admin" element={<AdminPage />} />
-              <Route path="/react-table" element={<ReactTable />} />
-              <Route path="/form" element={<PlayForm />} />
+              <Route path="/manuscripts/:id" element={<ManuscriptShow />} />
             </Routes>
           </Box>
         </LocalizationProvider>
