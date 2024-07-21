@@ -15,12 +15,11 @@ import AddIcon from '@mui/icons-material/Add'
 import { ManuscriptEdit } from './ManuscriptEdit'
 import { Author } from '../Authors/Author.entity'
 import { Link } from 'react-router-dom'
-import { useIsDesktop } from '../utils/useIsDesktop'
 
 export const ManuscriptsList: React.FC<{
   manuscripts: Manuscript[]
   setManuscripts: (manuscripts: Manuscript[]) => void
-  defaultAuthor: Author
+  defaultAuthor?: Author
   loading: boolean
   itemsPerPage?: number
   addedManuscripts?: Manuscript[]
@@ -54,31 +53,22 @@ export const ManuscriptsList: React.FC<{
       )
   }
   const create = () => {
-    const newManuscript = new Manuscript()
-    newManuscript.author = defaultAuthor
-    setEditManuscript(newManuscript)
+    if (defaultAuthor) {
+      const newManuscript = new Manuscript()
+      newManuscript.author = defaultAuthor
+      setEditManuscript(newManuscript)
+    }
   }
-  const isDesktop = useIsDesktop()
 
   return (
     <>
       <Box display="flex" justifyContent="space-between">
         {children}
-        <div>
-          {isDesktop ? (
-            <Button
-              variant="contained"
-              onClick={create}
-              startIcon={<AddIcon />}
-            >
-              Add Manuscript
-            </Button>
-          ) : (
-            <Button onClick={create} variant="contained">
-              <AddIcon />
-            </Button>
-          )}
-        </div>
+        {defaultAuthor && (
+          <Button variant="contained" onClick={create} startIcon={<AddIcon />}>
+            Add Manuscript
+          </Button>
+        )}
       </Box>
       <List>
         {loading &&
@@ -116,22 +106,6 @@ export const ManuscriptsList: React.FC<{
                   secondary={
                     <>
                       {manuscript.title} at {manuscript.author?.firstName}{' '}
-                      {manuscript.tags?.map((tag) => (
-                        <span
-                          key={tag.tag.id}
-                          style={{
-                            color: 'InfoText',
-                            backgroundColor: tag.tag.color,
-                            padding: 4,
-                            paddingLeft: 8,
-                            paddingRight: 8,
-                            margin: 4,
-                            borderRadius: 20
-                          }}
-                        >
-                          {tag.tag.tag}
-                        </span>
-                      ))}
                     </>
                   }
                 />

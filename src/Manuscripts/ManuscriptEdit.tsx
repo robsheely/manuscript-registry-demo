@@ -24,21 +24,7 @@ import { ErrorInfo, getValueList } from 'remult'
 import { Genre } from '../Authors/Genre'
 import { AgeGroup } from '../Authors/AgeGroup'
 import NumberInput from '../utils/NumberInput'
-import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-import { styled } from '@mui/material/styles'
-import FileUpload from '../FileUpload'
-
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1
-})
+import FileUpload from './FileUpload'
 
 const manuscriptRepo = remult.repo(Manuscript)
 
@@ -216,8 +202,8 @@ export const ManuscriptEdit: React.FC<IProps> = ({
               />
             </Stack>
             <FileUpload
-              onChange={(file: File) =>
-                setState({ ...state, published: e.target.checked })
+              onChange={(file: { name: string; image: string }) =>
+                setState({ ...state, script: file })
               }
             />
           </Box>

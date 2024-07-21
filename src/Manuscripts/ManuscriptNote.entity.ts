@@ -22,11 +22,7 @@ import { Status } from './Status'
         .repo(AccountManager)
         .findId(remult.user!.id)
     }
-  },
-  saved: async (_, { relations }) =>
-    Manuscript.updateLastSeen((await relations.contact.findOne())!),
-  deleted: async (_, { relations }) =>
-    Manuscript.updateLastSeen((await relations.contact.findOne())!)
+  }
 })
 export class ManuscriptNote {
   @Fields.uuid()

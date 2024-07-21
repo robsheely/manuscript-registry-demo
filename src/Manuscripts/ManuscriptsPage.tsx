@@ -52,20 +52,8 @@ export const ManuscriptsPage: React.FC<{}> = () => {
 
   const manuscriptsQuery = useMemo(() => {
     const query = amRepo.query({
-      where: {
-        $or: [
-          { firstName: { $contains: filter.search } },
-          { lastName: { $contains: filter.search } }
-        ],
-        status: filter.status
-          ? getValueList(Status).find((s) => s.id === filter.status)
-          : undefined,
-        $and: [filter.tag ? Manuscript.filterTag(filter.tag) : undefined!]
-      },
-      pageSize: rowsPerPage,
-      include: {
-        tags: true
-      }
+      where: { title: { $contains: filter.search } },
+      pageSize: rowsPerPage
     })
     query.count().then((count) => setManuscriptsCount(count))
     return query
@@ -130,43 +118,11 @@ export const ManuscriptsPage: React.FC<{}> = () => {
           </ListItem>
         ))}
       </List>
-      <List dense={true}>
-        <ListItem>
-          <ListItemText>TAGS</ListItemText>
-        </ListItem>
-        {loadingTags
-          ? Array.from(Array(5).keys()).map((i) => <Skeleton key={i} />)
-          : tags.map((tag: Tag) => (
-              <Box mt={1} mb={1} key={tag.id}>
-                <Chip
-                  onClick={() => {
-                    patchFilter({ tag: tag.tag })
-                  }}
-                  size="small"
-                  variant="outlined"
-                  onDelete={
-                    tag.tag === filter.tag
-                      ? () => patchFilter({ tag: '' })
-                      : undefined
-                  }
-                  label={tag.tag}
-                  style={{ backgroundColor: tag.color, border: 1 }}
-                />
-              </Box>
-            ))}
-      </List>
     </>
   )
 
   return (
     <Grid container spacing={2}>
-      <Drawer
-        anchor="left"
-        open={openDrawer}
-        onClose={() => setOpenDrawer(false)}
-      >
-        <FilterElement />
-      </Drawer>
       {isDesktop && (
         <Grid item xs={2}>
           <FilterElement />
@@ -181,32 +137,26 @@ export const ManuscriptsPage: React.FC<{}> = () => {
           addedManuscripts={addedManuscripts}
           setAddedManuscripts={setAddedManuscripts}
         >
-          {!isDesktop && (
-            <IconButton onClick={() => setOpenDrawer(true)}>
-              <FilterAltIcon />
-            </IconButton>
-          )}
           <TextField
             label="Search"
-            variant="filled"
             value={filter.search}
             onChange={(e) => patchFilter({ search: e.target.value })}
           />
-        </ManuscriptsList>
 
-        <TablePagination
-          component="div"
-          count={manuscriptsCount}
-          page={page}
-          onPageChange={(_, newPage) => {
-            setPage(newPage)
-          }}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={(e) => {
-            setRowsPerPage(parseInt(e.target.value, 10))
-            setPage(0)
-          }}
-        />
+          <TablePagination
+            component="div"
+            count={manuscriptsCount}
+            page={page}
+            onPageChange={(_, newPage) => {
+              setPage(newPage)
+            }}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={(e) => {
+              setRowsPerPage(parseInt(e.target.value, 10))
+              setPage(0)
+            }}
+          />
+        </ManuscriptsList>
       </Grid>
     </Grid>
   )

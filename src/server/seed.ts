@@ -12,8 +12,6 @@ import {
   date
 } from 'faker'
 import { Author } from '../Authors/Author.entity'
-import { sectors } from '../Authors/Sectors'
-import { AuthorSize } from '../Authors/AuthorSize'
 import { Manuscript } from '../Manuscripts/Manuscript.entity'
 import { Status } from '../Manuscripts/Status'
 import { ManuscriptNote } from '../Manuscripts/ManuscriptNote.entity'
@@ -73,7 +71,6 @@ export async function seed() {
         for (let index = 0; index < 100; index++) {
           const name = authorFaker.companyName()
           const author = await authorRepo.insert({
-            accountManager: random.arrayElement(accountManagers),
             address: address.streetAddress(),
             city: address.city(),
             linkedIn: `https://www.linkedin.com/author/${name
@@ -82,8 +79,6 @@ export async function seed() {
             logo: `https://picsum.photos/id/${datatype.number(1000)}/200/200`,
             name,
             phoneNumber: phone.phoneNumber(),
-            sector: random.arrayElement(sectors),
-            size: random.arrayElement(getValueList(AuthorSize)),
             stateAbbr: address.stateAbbr(),
             website: internet.url(),
             zipcode: address.zipCode(),
@@ -145,7 +140,5 @@ export async function seed() {
     }
   } catch (err) {
     console.log({ err })
-  } finally {
-    Manuscript.disableLastSeenUpdate = false
   }
 }

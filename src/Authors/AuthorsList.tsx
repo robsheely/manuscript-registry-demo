@@ -18,11 +18,10 @@ import { AuthorEdit } from './AuthorEdit'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { useSearchParams } from 'react-router-dom'
-import { AuthorSize } from './AuthorSize'
 import { Link } from 'react-router-dom'
 import InfiniteLoader from 'react-window-infinite-loader'
 import { FixedSizeList } from 'react-window'
-import { getValueList, Paginator } from 'remult'
+import { Paginator } from 'remult'
 import { useIsDesktop } from '../utils/useIsDesktop'
 
 const amRepo = remult.repo(Author)

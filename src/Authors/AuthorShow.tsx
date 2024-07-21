@@ -22,19 +22,11 @@ export const AuthorShow: React.FC<{}> = () => {
 
   useEffect(() => {
     ;(async () => {
-      const author = await remult.repo(Author).findId(params.id!, {
-        include: {
-          manuscripts: {
-            include: {
-              tags: true
-            }
-          }
-        }
-      })
+      const author = await remult.repo(Author).findId(params.id!)
       setAuthor(author)
       setLoading(false)
-      if (author) {
-        setManuscripts(author.manuscripts!)
+      if (author?.manuscripts) {
+        setManuscripts(author.manuscripts)
       }
     })()
   }, [params.id])

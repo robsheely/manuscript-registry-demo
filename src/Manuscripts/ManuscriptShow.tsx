@@ -1,32 +1,18 @@
 import {
-  Avatar,
   Box,
   Card,
   CardContent,
   Typography,
   TextField,
-  Button,
-  Select,
-  MenuItem,
   Link,
-  Stack,
-  FormControl,
-  InputLabel
+  Stack
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { useParams, Link as RouterLink } from 'react-router-dom'
-import { remult, repo } from 'remult'
+import { repo } from 'remult'
 import { Manuscript } from '../Manuscripts/Manuscript.entity'
-import { ManuscriptNote } from './ManuscriptNote.entity'
-import { ManuscriptAside } from './ManuscriptAside'
-import { Logo } from '../Authors/Logo'
-import { StatusIndicator } from './StatusIndicator'
-
-import { Status } from './Status'
-import { Note } from './Note'
-import { getValueList } from 'remult'
-import { useIsDesktop } from '../utils/useIsDesktop'
 import { Author } from '../Authors/Author.entity'
+import ScriptDisplay from './ScriptDisplay'
 
 export const ManuscriptShow: React.FC<{}> = () => {
   let params = useParams()
@@ -47,8 +33,6 @@ export const ManuscriptShow: React.FC<{}> = () => {
 
   if (loading) return <span>Loading</span>
   if (!manuscript) return <span>not found</span>
-
-  console.log('manuscript:', manuscript)
 
   return (
     <Box mt={2} display="flex">
@@ -81,6 +65,7 @@ export const ManuscriptShow: React.FC<{}> = () => {
                 label="Has been published"
                 value={manuscript.published.toString()}
               />
+              <ScriptDisplay file={manuscript.script} />
             </Stack>
           </CardContent>
         </Card>

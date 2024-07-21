@@ -1,11 +1,9 @@
 import React from 'react'
 import { Box, styled, Typography } from '@mui/material'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-import { Buffer } from 'buffer'
 
 export type FileUploadProps = {
   imageButton?: boolean
-  accept: string
   hoverLabel?: string
   dropLabel?: string
   width?: string
@@ -18,7 +16,7 @@ export type FileUploadProps = {
       height?: string
     }
   }
-  onChange: (file: File) => void
+  onChange: (file: { name: string; image: string }) => void
 }
 
 const HiddenInput = styled('input')({
@@ -108,62 +106,37 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     }
   }
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setImageUrl(URL.createObjectURL(event.target.files[0]))
-    }
-    if (event.target.files !== null && event.target?.files?.length > 0) {
-      const file: File = event.target.files[0]
-      if (file.type == DOCX_TYPE) {
-        onChange(file)
-      }
-    }
-  }
-
-  const dataUrlToFile = (
-    dataUrl: string,
-    filename: string
-  ): File | undefined => {
-    const arr = dataUrl.split(',')
-    if (arr.length < 2) {
-      console.log('too short')
-      return undefined
-    }
-    const mimeArr = arr[0]
-    if (!mimeArr || mimeArr.length < 2) {
-      console.log('wring type', mimeArr)
-      return undefined
-    }
-    const buff = Buffer.from(arr[1], 'base64')
-    return new File([buff], filename, { type: mimeArr })
-  }
-
-  const handleDrop = async (event: React.DragEvent<HTMLElement>) => {
-    const file: File = event.dataTransfer.files[0]
+  const sendFile = async (file: File) => {
     const buffer = await file.arrayBuffer()
-    var base64 = btoa(
+    const base64 = btoa(
       new Uint8Array(buffer).reduce(
         (data, byte) => data + String.fromCharCode(byte),
         ''
       )
     )
-
     if (file.type == DOCX_TYPE) {
-      //onChange(file)
-    }
-    const href = DOCX_TYPE + ',' + base64
-    let data = dataUrlToFile(href, file.name)
-    if (data) {
-      let element = document.createElement('a')
-      window.URL = window.URL || window.webkitURL
-      element.setAttribute('href', URL.createObjectURL(data))
-      element.setAttribute('download', file.name)
-      element.style.display = 'none'
-      document.body.appendChild(element)
-      element.click()
-      document.body.removeChild(element)
+      setImageUrl(file.name)
+      onChange({ name: file.name, image: base64 })
     }
   }
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files !== null && event.target?.files?.length > 0) {
+      const file: File = event.target.files[0]
+      sendFile(file)
+    }
+  }
+
+  const handleDrop = async (event: React.DragEvent<HTMLElement>) => {
+    if (
+      event.dataTransfer.files !== null &&
+      event.dataTransfer?.files?.length > 0
+    ) {
+      const file: File = event.dataTransfer.files[0]
+      sendFile(file)
+    }
+  }
+
   return (
     <>
       <HiddenInput
@@ -184,3 +157,5 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     </>
   )
 }
+
+export default FileUpload
