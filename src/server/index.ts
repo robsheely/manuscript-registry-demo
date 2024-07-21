@@ -8,6 +8,7 @@ import { auth } from './auth'
 import { remult } from 'remult'
 import { remultGraphql } from 'remult/graphql'
 import { createSchema, createYoga } from 'graphql-yoga'
+import multer from 'multer'
 
 const app = express()
 app.use(sslRedirect())
@@ -29,6 +30,24 @@ app.use(
   swaggerUi.serve,
   swaggerUi.setup(api.openApiDoc({ title: 'remult-react-todo' }))
 )
+
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    cb(null, 'uploads/')
+  },
+  filename: (_req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname)
+  }
+})
+
+// Create the multer instance
+const upload = multer({ storage: storage })
+
+// Set up a route for file uploads
+app.post('/upload', upload.single('file'), (_req, res) => {
+  // Handle the uploaded file
+  res.json({ message: 'File uploaded successfully!' })
+})
 
 const { typeDefs, resolvers } = remultGraphql({
   entities,

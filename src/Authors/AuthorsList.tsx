@@ -45,18 +45,14 @@ export const AuthorsList: React.FC<{}> = () => {
     authors: []
   })
 
+  console.log('authors:', authors)
+
   useEffect(() => {
     ;(async () => {
       const paginator = await amRepo
         .query({
           where: {
-            name: { $contains: filter.search },
-            size: filter.size
-              ? getValueList(AuthorSize).find(
-                  (item) => item.id === +filter.size
-                )
-              : undefined,
-            sector: filter.sector ? filter.sector : undefined
+            lastName: { $contains: filter.search }
           },
           pageSize: 50
         })
@@ -184,7 +180,24 @@ export const AuthorsList: React.FC<{}> = () => {
                               component={Link}
                               to={`/authors/${author.id}`}
                             >
-                              <ListItemText primary={author.name} />
+                              <ListItemText
+                                primary={
+                                  <div>
+                                    {author.firstName +
+                                      ' ' +
+                                      author.lastName +
+                                      ' ' +
+                                      author.city +
+                                      ', ' +
+                                      author.stateAbbr +
+                                      ' ' +
+                                      (author.manuscripts?.length === undefined
+                                        ? 0
+                                        : author.manuscripts?.length) +
+                                      ' manuscripts'}
+                                  </div>
+                                }
+                              />
                             </ListItemButton>
                           </ListItem>
                         </div>

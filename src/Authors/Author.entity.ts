@@ -1,9 +1,7 @@
-import { Allow, Entity, Field, Fields, Relations } from 'remult'
-import { AccountManager } from '../AccountManagers/AccountManager.entity'
-import { AuthorSize } from './AuthorSize'
+import { Allow, Entity, Fields, Relations } from 'remult'
 import { Manuscript } from '../Manuscripts/Manuscript.entity'
 
-@Entity('companies', {
+@Entity('authors', {
   allowApiCrud: Allow.authenticated,
   allowApiDelete: false
 })
@@ -11,19 +9,19 @@ export class Author {
   @Fields.uuid()
   id?: string
   @Fields.string()
-  name = ''
+  firstName = ''
   @Fields.string()
-  logo = ''
+  lastName = ''
   @Fields.string()
-  sector = ''
-  @Field(() => AuthorSize)
-  size = AuthorSize.s1
+  email = ''
   @Fields.string()
-  linkedIn = ''
+  phoneNumber = ''
   @Fields.string()
   website = ''
   @Fields.string()
-  phoneNumber = ''
+  blog = ''
+  @Fields.string()
+  twitter = ''
   @Fields.string()
   address = ''
   @Fields.string()
@@ -32,8 +30,16 @@ export class Author {
   city = ''
   @Fields.string()
   stateAbbr = ''
-  @Relations.toOne(() => AccountManager)
-  accountManager?: AccountManager
+  @Fields.boolean()
+  published = false
+  @Fields.boolean()
+  agented = false
+  @Fields.string()
+  formerAgent = ''
+  @Fields.string()
+  pronouns = ''
+  @Fields.string()
+  bio = ''
   @Fields.date({ allowApiUpdate: false })
   createdAt = new Date()
   @Relations.toMany(() => Manuscript)

@@ -31,5 +31,5 @@ export const api = remultExpress({
   },
   initApi: seed,
   entities,
-  admin: true
+  admin: false
 })

@@ -9,18 +9,14 @@ import {
   Stack,
   Divider,
   FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  FormHelperText
+  FormHelperText,
+  FormControlLabel,
+  Switch
 } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Author } from './Author.entity'
 import { remult } from 'remult'
-import { ErrorInfo, getValueList } from 'remult'
-import { sectors } from './Sectors'
-import { AuthorSize } from './AuthorSize'
-import { AccountManager } from '../AccountManagers/AccountManager.entity'
+import { ErrorInfo } from 'remult'
 
 const authorRepo = remult.repo(Author)
 
@@ -31,11 +27,6 @@ interface IProps {
 }
 
 export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
-  const [accountManagers, setAccountManagers] = useState<AccountManager[]>([])
-  useEffect(() => {
-    remult.repo(AccountManager).find().then(setAccountManagers)
-  }, [])
-
   const [state, setState] = useState(author)
 
   const [errors, setErrors] = useState<ErrorInfo<Author>>()
@@ -60,15 +51,33 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
         <DialogContent>
           <Box component="form" sx={{ pt: 1 }} noValidate autoComplete="off">
             <Stack spacing={2}>
-              <TextField
-                autoFocus
-                label="Name"
-                error={Boolean(errors?.modelState?.name)}
-                helperText={errors?.modelState?.name}
-                fullWidth
-                value={state.name}
-                onChange={(e) => setState({ ...state, name: e.target.value })}
-              />
+              <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                justifyContent="space-between"
+                spacing={2}
+              >
+                <TextField
+                  autoFocus
+                  label="First name"
+                  error={Boolean(errors?.modelState?.firstName)}
+                  helperText={errors?.modelState?.firstName}
+                  fullWidth
+                  value={state.firstName}
+                  onChange={(e) =>
+                    setState({ ...state, firstName: e.target.value })
+                  }
+                />
+                <TextField
+                  label="Last name"
+                  error={Boolean(errors?.modelState?.lastName)}
+                  helperText={errors?.modelState?.lastName}
+                  fullWidth
+                  value={state.lastName}
+                  onChange={(e) =>
+                    setState({ ...state, lastName: e.target.value })
+                  }
+                />
+              </Stack>
               <Stack
                 direction={{ xs: 'column', sm: 'row' }}
                 justifyContent="space-between"
@@ -76,55 +85,49 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
               >
                 <FormControl
                   sx={{ flexGrow: 1 }}
-                  error={Boolean(errors?.modelState?.sector)}
+                  error={Boolean(errors?.modelState?.email)}
                 >
-                  <InputLabel id="sector-label">Sector</InputLabel>
-                  <Select
-                    labelId="sector-label"
-                    label="Sector"
-                    value={state.sector}
+                  <TextField
+                    label="Email"
+                    error={Boolean(errors?.modelState?.email)}
+                    helperText={errors?.modelState?.email}
+                    fullWidth
+                    value={state.email}
                     onChange={(e) =>
-                      setState({ ...state, sector: e.target.value })
+                      setState({ ...state, email: e.target.value })
                     }
-                  >
-                    <MenuItem value={''}>None</MenuItem>
-                    {sectors.map((s) => (
-                      <MenuItem key={s} value={s}>
-                        {s}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                  <FormHelperText>{errors?.modelState?.sector}</FormHelperText>
+                  />
+                  <FormHelperText>{errors?.modelState?.email}</FormHelperText>
                 </FormControl>
-
                 <FormControl
                   sx={{ flexGrow: 1 }}
-                  error={Boolean(errors?.modelState?.size)}
+                  error={Boolean(errors?.modelState?.phoneNumber)}
                 >
-                  <InputLabel id="size-label">Size</InputLabel>
-                  <Select
-                    labelId="size-label"
-                    label="Size"
-                    value={state.size?.id}
+                  <TextField
+                    sx={{ flexGrow: 1 }}
+                    label="Phone number"
+                    error={Boolean(errors?.modelState?.phoneNumber)}
+                    helperText={errors?.modelState?.phoneNumber}
+                    value={state.phoneNumber}
                     onChange={(e) =>
-                      setState({
-                        ...state,
-                        size: getValueList(AuthorSize).find(
-                          (item) => item.id === e.target.value
-                        )!
-                      })
+                      setState({ ...state, phoneNumber: e.target.value })
                     }
-                  >
-                    <MenuItem value={''}></MenuItem>
-                    {getValueList(AuthorSize).map((s) => (
-                      <MenuItem key={s.id} value={s.id}>
-                        {s.caption}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                  <FormHelperText>{errors?.modelState?.size}</FormHelperText>
+                  />
+                  <FormHelperText>
+                    {errors?.modelState?.phoneNumber}
+                  </FormHelperText>
                 </FormControl>
               </Stack>
+              <TextField
+                label="Pronouns"
+                error={Boolean(errors?.modelState?.pronouns)}
+                helperText={errors?.modelState?.pronouns}
+                fullWidth
+                value={state.pronouns}
+                onChange={(e) =>
+                  setState({ ...state, pronouns: e.target.value })
+                }
+              />
               <Divider />
               <TextField
                 label="Address"
@@ -144,17 +147,7 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
                   fullWidth
                   value={state.city}
                   onChange={(e) => setState({ ...state, city: e.target.value })}
-                />{' '}
-                <TextField
-                  label="Zipcode"
-                  error={Boolean(errors?.modelState?.zipcode)}
-                  helperText={errors?.modelState?.zipcode}
-                  fullWidth
-                  value={state.zipcode}
-                  onChange={(e) =>
-                    setState({ ...state, zipcode: e.target.value })
-                  }
-                />{' '}
+                />
                 <TextField
                   label="State abbr"
                   error={Boolean(errors?.modelState?.stateAbbr)}
@@ -163,6 +156,16 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
                   value={state.stateAbbr}
                   onChange={(e) =>
                     setState({ ...state, stateAbbr: e.target.value })
+                  }
+                />
+                <TextField
+                  label="Zip code"
+                  error={Boolean(errors?.modelState?.zipcode)}
+                  helperText={errors?.modelState?.zipcode}
+                  fullWidth
+                  value={state.zipcode}
+                  onChange={(e) =>
+                    setState({ ...state, zipcode: e.target.value })
                   }
                 />
               </Stack>
@@ -176,69 +179,97 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
                 onChange={(e) =>
                   setState({ ...state, website: e.target.value })
                 }
-              />{' '}
+              />
               <TextField
-                label="Linked in"
-                error={Boolean(errors?.modelState?.linkedIn)}
-                helperText={errors?.modelState?.linkedIn}
+                label="Blog"
+                error={Boolean(errors?.modelState?.blog)}
+                helperText={errors?.modelState?.blog}
                 fullWidth
-                value={state.linkedIn}
+                value={state.blog}
+                onChange={(e) => setState({ ...state, blog: e.target.value })}
+              />
+              <TextField
+                label="Twitter"
+                error={Boolean(errors?.modelState?.twitter)}
+                helperText={errors?.modelState?.twitter}
+                fullWidth
+                value={state.twitter}
                 onChange={(e) =>
-                  setState({ ...state, linkedIn: e.target.value })
+                  setState({ ...state, twitter: e.target.value })
                 }
-              />{' '}
-              <TextField
-                label="Logo"
-                error={Boolean(errors?.modelState?.logo)}
-                helperText={errors?.modelState?.logo}
-                fullWidth
-                value={state.logo}
-                onChange={(e) => setState({ ...state, logo: e.target.value })}
               />
               <Divider />
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                <TextField
-                  sx={{ flexGrow: 1 }}
-                  label="Phone number"
-                  error={Boolean(errors?.modelState?.phoneNumber)}
-                  helperText={errors?.modelState?.phoneNumber}
-                  value={state.phoneNumber}
-                  onChange={(e) =>
-                    setState({ ...state, phoneNumber: e.target.value })
-                  }
-                />
-                <FormControl
-                  sx={{ flexGrow: 1 }}
-                  error={Boolean(errors?.modelState?.accountManager)}
+                <Stack
+                  direction={{ xs: 'column', sm: 'row' }}
+                  justifyContent="space-between"
+                  spacing={2}
                 >
-                  <InputLabel id="accountManager-label">
-                    Account Manager
-                  </InputLabel>
-                  <Select
-                    labelId="accountManager-label"
-                    label="Account Manager"
-                    value={state.accountManager?.id || ''}
-                    onChange={(e) =>
-                      setState({
-                        ...state,
-                        accountManager: accountManagers.find(
-                          (x) => x.id === e.target.value
-                        )!
-                      })
-                    }
+                  <FormControl
+                    sx={{ flexGrow: 1 }}
+                    error={Boolean(errors?.modelState?.published)}
                   >
-                    <MenuItem value={''}></MenuItem>
-                    {accountManagers?.map((s) => (
-                      <MenuItem key={s.id} value={s.id}>
-                        {s.lastName + ' ' + s.firstName}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                  <FormHelperText>
-                    {errors?.modelState?.accountManager}
-                  </FormHelperText>
-                </FormControl>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={state.published}
+                          onChange={(e) =>
+                            setState({
+                              ...state,
+                              published: e.target.checked
+                            })
+                          }
+                        />
+                      }
+                      label="I've been published before."
+                    />
+                    <FormHelperText>
+                      {errors?.modelState?.published}
+                    </FormHelperText>
+                  </FormControl>
+                  <FormControl
+                    sx={{ flexGrow: 1 }}
+                    error={Boolean(errors?.modelState?.agented)}
+                  >
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={state.agented}
+                          onChange={(e) =>
+                            setState({
+                              ...state,
+                              agented: e.target.checked
+                            })
+                          }
+                        />
+                      }
+                      label="I've had an agent before."
+                    />
+                    <FormHelperText>
+                      {errors?.modelState?.agented}
+                    </FormHelperText>
+                  </FormControl>
+                </Stack>
               </Stack>
+              <TextField
+                label="Name of former agent (if applicable)"
+                error={Boolean(errors?.modelState?.formerAgent)}
+                helperText={errors?.modelState?.formerAgent}
+                fullWidth
+                value={state.formerAgent}
+                onChange={(e) =>
+                  setState({ ...state, formerAgent: e.target.value })
+                }
+              />
+              <TextField
+                label="Bio"
+                multiline
+                error={Boolean(errors?.modelState?.bio)}
+                helperText={errors?.modelState?.bio}
+                fullWidth
+                value={state.bio}
+                onChange={(e) => setState({ ...state, bio: e.target.value })}
+              />
             </Stack>
           </Box>
         </DialogContent>

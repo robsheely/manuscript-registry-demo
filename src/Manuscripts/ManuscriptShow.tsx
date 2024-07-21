@@ -26,194 +26,65 @@ import { Status } from './Status'
 import { Note } from './Note'
 import { getValueList } from 'remult'
 import { useIsDesktop } from '../utils/useIsDesktop'
+import { Author } from '../Authors/Author.entity'
 
 export const ManuscriptShow: React.FC<{}> = () => {
   let params = useParams()
-  const [contact, setManuscript] = useState<Manuscript>()
-  const [notes, setNotes] = useState<ManuscriptNote[]>([])
+  const [manuscript, setManuscript] = useState<Manuscript>()
+  const [author, setAuthor] = useState<Author>()
 
   const [loading, setLoading] = useState(true)
 
-  const [newNote, setNewNote] = useState(new ManuscriptNote())
-
-  const submitNewNote = async () => {
-    const submittedNote = await repo(Manuscript)
-      .relations(contact!)
-      .notes.insert(newNote)
-    setNotes([submittedNote, ...notes])
-    setNewNote(new ManuscriptNote())
-  }
-
   useEffect(() => {
     ;(async () => {
-      const contact = await repo(Manuscript).findId(params.id!, {
-        include: {
-          notes: true
-        }
-      })
-      setManuscript(contact)
-      if (contact) {
-        setNotes(contact.notes!)
-      }
+      const manuscript = await repo(Manuscript).findId(params.id!)
+      setManuscript(manuscript)
+      const author = await repo(Author).findId(manuscript.authorId)
+      setAuthor(author)
       setLoading(false)
     })()
   }, [params.id])
-  const isDesktop = useIsDesktop()
 
   if (loading) return <span>Loading</span>
-  if (!contact) return <span>not found</span>
+  if (!manuscript) return <span>not found</span>
+
+  console.log('manuscript:', manuscript)
 
   return (
     <Box mt={2} display="flex">
       <Box flex="1">
         <Card>
           <CardContent>
-            <Box display="flex">
-              <Avatar src={contact.avatar} />
-              <Box ml={2} flex="1">
-                <Typography variant="h4">
-                  {contact.firstName} {contact.lastName}
-                </Typography>
-                <Typography variant="body1">
-                  {contact.title} at{' '}
-                  <Link
-                    component={RouterLink}
-                    to={`/authors/${contact.author?.id}`}
-                  >
-                    {contact.author?.name}
-                  </Link>
-                </Typography>
-              </Box>
-              <Box>
-                {contact.author && (
-                  <Logo
-                    url={contact.author!.logo}
-                    title={contact.author!.name}
-                    sizeInPixels={20}
-                  />
-                )}
-              </Box>
-            </Box>
-            {!isDesktop && (
-              <Box>
-                <ManuscriptAside
-                  contact={contact}
-                  setManuscript={setManuscript}
-                ></ManuscriptAside>
-              </Box>
-            )}
-
-            <Box mt={2}>
+            <Stack spacing={2}>
+              <Typography variant="h4">{manuscript.title}</Typography>
+              <Typography>
+                <Link component={RouterLink} to={`/authors/${author?.id}`}>
+                  {author?.firstName} {author?.lastName}
+                </Link>
+              </Typography>
+              <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                justifyContent="space-between"
+                spacing={2}
+              >
+                <TextField label="Genre" value={manuscript.genre.caption} />
+                <TextField label="Age" value={manuscript.ageGroup.caption} />
+                <TextField label="Word count" value={manuscript.wordCount} />
+              </Stack>
               <TextField
-                label="Add a note"
-                size="small"
                 fullWidth
-                multiline
-                value={newNote.text}
-                variant="filled"
-                onChange={(e: any) =>
-                  setNewNote({ ...newNote, text: e.target.value })
-                }
-                rows={3}
+                label="Target audience"
+                value={manuscript.target}
               />
-
-              <Box mt={1} display="flex">
-                <Stack direction="row" spacing={1} flex={1}>
-                  <FormControl
-                    sx={{
-                      flexGrow: 1,
-                      visibility: newNote.text ? 'visible' : 'hidden'
-                    }}
-                    size="small"
-                    variant="filled"
-                  >
-                    <InputLabel id="status-label">Status</InputLabel>
-                    <Select
-                      labelId="status-label"
-                      label="Status"
-                      value={newNote.status?.id}
-                      onChange={(e) =>
-                        setNewNote({
-                          ...newNote,
-                          status: getValueList(Status).find(
-                            (item) => item.id === e.target.value
-                          )!
-                        })
-                      }
-                      disabled={!newNote.text || loading}
-                    >
-                      {getValueList(Status).map((s) => (
-                        <MenuItem key={s.id} value={s.id}>
-                          {' '}
-                          <Box component="span" sx={{ mr: 1 }}>
-                            {s.caption}{' '}
-                          </Box>{' '}
-                          <StatusIndicator status={s} />
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  {isDesktop && (
-                    <TextField
-                      variant="filled"
-                      sx={{
-                        flexGrow: 1,
-                        visibility: newNote.text ? 'visible' : 'hidden'
-                      }}
-                      size="small"
-                      type="datetime-local"
-                      disabled={!newNote.text || loading}
-                      value={newNote.createdAt
-                        .toLocaleString('sv-SE', {
-                          year: 'numeric',
-                          month: '2-digit',
-                          day: '2-digit',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                          second: '2-digit'
-                        })
-                        .replace(' ', 'T')}
-                      onChange={(e) =>
-                        setNewNote({
-                          ...newNote,
-                          createdAt: new Date(e.target.value)
-                        })
-                      }
-                    />
-                  )}
-
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    disabled={!newNote.text || loading}
-                    onClick={() => submitNewNote()}
-                  >
-                    Add this note
-                  </Button>
-                </Stack>
-              </Box>
-            </Box>
-
-            {notes.map((note) => (
-              <Box key={note.id} mt={2}>
-                {note.accountManager?.firstName} added a note on{' '}
-                {note.createdAt.toLocaleString()}{' '}
-                <StatusIndicator status={note.status} />
-                <Note
-                  note={note}
-                  onDelete={(note) => setNotes(notes.filter((n) => n !== note))}
-                />
-              </Box>
-            ))}
+              <TextField fullWidth label="Blurb" value={manuscript.blurb} />
+              <TextField
+                label="Has been published"
+                value={manuscript.published.toString()}
+              />
+            </Stack>
           </CardContent>
         </Card>
       </Box>
-      {isDesktop && (
-        <ManuscriptAside
-          contact={contact}
-          setManuscript={setManuscript}
-        ></ManuscriptAside>
-      )}
     </Box>
   )
 }

@@ -1,0 +1,16 @@
+[
+  {
+    "id": "f1de1002-9093-434a-a45f-0d0afbe0eb4e",
+    "title": "Foo",
+    "author": "dcc3023d-d6bb-46cf-b7c0-938ff3b79ca8",
+    "genre": "F1",
+    "ageGroup": "adult",
+    "wordCount": 1,
+    "target": "me",
+    "blurb": "yow",
+    "pitch": "pitch",
+    "synopsis": "really yow",
+    "published": false,
+    "createdAt": "2024-07-20T20:51:42.037Z"
+  }
+]

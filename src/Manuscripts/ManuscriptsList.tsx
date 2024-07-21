@@ -1,15 +1,12 @@
 import {
-  Avatar,
   Box,
   Button,
   List,
   ListItem,
   ListItemAvatar,
   ListItemButton,
-  ListItemSecondaryAction,
   ListItemText,
   Skeleton,
-  Typography,
   alpha
 } from '@mui/material'
 import React, { useState } from 'react'
@@ -17,15 +14,13 @@ import { Manuscript } from './Manuscript.entity'
 import AddIcon from '@mui/icons-material/Add'
 import { ManuscriptEdit } from './ManuscriptEdit'
 import { Author } from '../Authors/Author.entity'
-import { formatDistance } from 'date-fns'
 import { Link } from 'react-router-dom'
-import { StatusIndicator } from './StatusIndicator'
 import { useIsDesktop } from '../utils/useIsDesktop'
 
 export const ManuscriptsList: React.FC<{
   manuscripts: Manuscript[]
   setManuscripts: (manuscripts: Manuscript[]) => void
-  defaultAuthor?: Author
+  defaultAuthor: Author
   loading: boolean
   itemsPerPage?: number
   addedManuscripts?: Manuscript[]
@@ -51,8 +46,10 @@ export const ManuscriptsList: React.FC<{
       setAddedManuscripts([afterEditManuscript, ...addedManuscripts])
     } else
       setManuscripts(
-        manuscripts.map((contact) =>
-          contact.id === afterEditManuscript.id ? afterEditManuscript : contact
+        manuscripts.map((manuscript) =>
+          manuscript.id === afterEditManuscript.id
+            ? afterEditManuscript
+            : manuscript
         )
       )
   }
@@ -61,7 +58,6 @@ export const ManuscriptsList: React.FC<{
     newManuscript.author = defaultAuthor
     setEditManuscript(newManuscript)
   }
-  const now = Date.now()
   const isDesktop = useIsDesktop()
 
   return (
@@ -100,31 +96,27 @@ export const ManuscriptsList: React.FC<{
             </ListItem>
           ))}
         {!loading &&
-          manuscripts.map((contact, index) => (
+          manuscripts.map((manuscript) => (
             <ListItem
               disablePadding
-              key={contact.id}
+              key={manuscript.id}
               sx={{
                 backgroundColor: (theme) =>
-                  addedManuscripts?.includes(contact)
+                  addedManuscripts?.includes(manuscript)
                     ? alpha(theme.palette.secondary.light, 0.1)
                     : undefined
               }}
             >
               <ListItemButton
                 component={Link}
-                to={`/manuscripts/${contact.id}`}
+                to={`/manuscripts/${manuscript.id}`}
               >
-                <ListItemAvatar>
-                  <Avatar src={contact.avatar} />
-                </ListItemAvatar>
                 <ListItemText
-                  primary={`${contact.firstName} ${contact.lastName}`}
+                  primary={manuscript.title}
                   secondary={
                     <>
-                      {contact.title} at {contact.author?.name}{' '}
-                      {`- ${contact.nbNotes} notes `}
-                      {contact.tags?.map((tag) => (
+                      {manuscript.title} at {manuscript.author?.firstName}{' '}
+                      {manuscript.tags?.map((tag) => (
                         <span
                           key={tag.tag.id}
                           style={{
@@ -143,20 +135,6 @@ export const ManuscriptsList: React.FC<{
                     </>
                   }
                 />
-                {isDesktop && (
-                  <ListItemSecondaryAction>
-                    <Typography variant="body1" color="textSecondary">
-                      last activity{' '}
-                      {contact.lastSeen
-                        ? formatDistance(contact.lastSeen, now)
-                        : ''}{' '}
-                      ago{' '}
-                      <StatusIndicator
-                        status={contact.status}
-                      ></StatusIndicator>
-                    </Typography>
-                  </ListItemSecondaryAction>
-                )}
               </ListItemButton>
             </ListItem>
           ))}
@@ -164,10 +142,10 @@ export const ManuscriptsList: React.FC<{
 
       {editManuscript && (
         <ManuscriptEdit
-          contact={editManuscript}
+          manuscript={editManuscript}
           onClose={() => setEditManuscript(undefined)}
-          onSaved={(contact) => {
-            editManuscriptSaved(contact)
+          onSaved={(manuscript) => {
+            editManuscriptSaved(manuscript)
           }}
         />
       )}
