@@ -1,5 +1,6 @@
-import { Allow, Entity, Fields, Relations } from 'remult'
+import { Allow, BackendMethod, Entity, Fields, Relations, repo } from 'remult'
 import { Manuscript } from '../Manuscripts/Manuscript.entity'
+import { AuthorManuscript } from './AuthorManuscript.entity'
 
 @Entity('authors', {
   allowApiCrud: Allow.authenticated,
@@ -42,6 +43,39 @@ export class Author {
   bio = ''
   @Fields.date({ allowApiUpdate: false })
   createdAt = new Date()
-  @Relations.toMany(() => Manuscript)
-  manuscripts: Manuscript[] = []
+  @Relations.toMany(() => AuthorManuscript)
+  manuscripts: AuthorManuscript[] = []
+
+  @BackendMethod({ allowed: Allow.authenticated })
+  async saveWithManuscripts?(manuscripts: string[]) {
+    const isNew = !this.id
+    console.log('#### 0')
+    const author = await repo(Author).save(this)
+    console.log('#### 1')
+    const authorManuscriptsRepo = repo(Author).relations(author).manuscripts
+    const existingManuscripts = isNew
+      ? []
+      : await authorManuscriptsRepo.find({
+          include: {
+            manuscript: false
+          }
+        })
+    const manuscriptsToDelete = existingManuscripts.filter(
+      (c) => !manuscripts.includes(c.manuscriptId)
+    )
+    const manuscriptsToAdd = manuscripts.filter(
+      (c) => !existingManuscripts.find((e) => e.manuscriptId == c)
+    )
+    console.log('#### 2', {
+      existingManuscripts,
+      manuscriptsToDelete,
+      manuscriptsToAdd
+    })
+    await Promise.all(
+      manuscriptsToDelete.map((dc) => authorManuscriptsRepo.delete(dc))
+    )
+    await authorManuscriptsRepo.insert(
+      manuscriptsToAdd.map((manuscriptId) => ({ manuscriptId }))
+    )
+  }
 }

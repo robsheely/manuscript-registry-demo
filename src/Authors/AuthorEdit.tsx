@@ -16,16 +16,14 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { Author } from './Author.entity'
-import { remult, repo } from 'remult'
+import { remult } from 'remult'
 import { ErrorInfo } from 'remult'
 import { ManuscriptsList } from '../Manuscripts/ManuscriptsList'
 import { Manuscript } from '../Manuscripts/Manuscript.entity'
 import { ManuscriptEdit } from '../Manuscripts/ManuscriptEdit'
 import AddIcon from '@mui/icons-material/Add'
-import { AuthorManuscript } from './AuthorManuscript.entity'
 
 const authorRepo = remult.repo(Author)
-const authorManuscriptsRepo = remult.repo(AuthorManuscript)
 const manuscriptsRepo = remult.repo(Manuscript)
 
 interface IProps {
@@ -37,56 +35,40 @@ interface IProps {
 export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
   const [state, setState] = useState(author)
   const [errors, setErrors] = useState<ErrorInfo<Author>>()
-  const [authorManuscripts, setAuthorManuscripts] = useState<
-    AuthorManuscript[]
-  >([])
-  const [allManuscripts, setAllManuscripts] = useState<Manuscript[]>([])
-
-  const [manuscripts, setManuscripts] = useState<AuthorManuscript[]>([])
-  const [editManuscript, setEditManuscript] = useState(new Manuscript())
+  const [manuscripts, setManuscripts] = useState<Manuscript[]>([])
+  const [editManuscript, setEditManuscript] = useState<Manuscript | undefined>()
 
   useEffect(() => {
-    authorManuscriptsRepo.find({ where: { author } }).then(setAuthorManuscripts)
-    manuscriptsRepo.find().then(setAllManuscripts)
+    authorRepo
+      .relations(author)
+      .manuscripts.find({
+        include: {
+          manuscript: true
+        }
+      })
+      .then((authorManuscript) => {
+        const manuscripts = authorManuscript
+          .filter((authorManuscript) => authorManuscript.manuscript)
+          .map((authorManuscript) => authorManuscript.manuscript)
+        setManuscripts(manuscripts)
+      })
   }, [author])
 
   const handleClose = () => {
     onClose()
   }
 
-  const handleAddManuscript = async (manuscript: Manuscript) => {
-    setAuthorManuscripts([
-      ...authorManuscripts,
-      await authorManuscriptsRepo.insert({ author, manuscript })
-    ])
-  }
-
-  const submitNewManuscript = async (manuscript: Manuscript) => {
-    const submittedManuscript = await repo(Author)
-      .relations(author!)
-      .manuscripts.insert(manuscript)
-    setManuscripts([submittedManuscript, ...manuscripts])
-    setEditManuscript(new AuthorManuscript())
-  }
-
   const handleSave = async () => {
+    const ref = authorRepo.getEntityRef(author)
     try {
       setErrors(undefined)
-      let newAuthor = await authorRepo.save(state)
-      onSaved(newAuthor)
+      author = Object.assign(author, state)
+      await author.saveWithManuscripts!(manuscripts.map((c) => c.id!))
+      onSaved(author)
       handleClose()
     } catch (err: any) {
       setErrors(err)
-    }
-  }
-
-  const handleCreateTag = async (manuscript: Manuscript) => {
-    try {
-      const newManuscript = await manuscriptsRepo.insert(manuscript)
-      setAllManuscripts([...allManuscripts, newManuscript])
-      handleAddManuscript(newManuscript)
-    } finally {
-      setIsSaving(false)
+      ref.undoChanges()
     }
   }
 
@@ -94,20 +76,13 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
   //     await amRepo.delete(deletedManuscript);
   //     setManuscripts(manuscripts.filter(contact => deletedManuscript.id !== contact.id));
   // }
-  const editManuscriptSaved = (afterEditManuscript: Manuscript) => {
-    if (!editManuscript?.id) {
-      setManuscripts([afterEditManuscript, ...manuscripts])
-    } else
-      setManuscripts(
-        manuscripts.map((manuscript) =>
-          manuscript.id === afterEditManuscript.id
-            ? afterEditManuscript
-            : manuscript
-        )
-      )
+
+  const editManuscriptSaved = async (afterEditManuscript: Manuscript) => {
+    await manuscriptsRepo.insert(afterEditManuscript)
+    setManuscripts([afterEditManuscript, ...manuscripts])
   }
 
-  const create = () => {
+  const createManuscript = () => {
     const newManuscript = new Manuscript()
     newManuscript.author = author
     setEditManuscript(newManuscript)
@@ -342,13 +317,13 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
             </Stack>
             <Typography>Manuscripts:</Typography>
             <ManuscriptsList
-              manuscripts={author.manuscripts}
+              manuscripts={manuscripts}
               defaultAuthor={author}
               loading={false}
             />
             <Button
               variant="contained"
-              onClick={create}
+              onClick={createManuscript}
               startIcon={<AddIcon />}
             >
               Add Manuscript
@@ -358,7 +333,7 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
               <ManuscriptEdit
                 manuscript={editManuscript}
                 onClose={() => setEditManuscript(undefined)}
-                onSaved={(manuscript) => {
+                onSaved={(manuscript: Manuscript) => {
                   editManuscriptSaved(manuscript)
                 }}
               />
