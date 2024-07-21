@@ -9,14 +9,12 @@ import {
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { remult } from 'remult'
-import { Manuscript } from '../Manuscripts/Manuscript.entity'
 import { ManuscriptsList } from '../Manuscripts/ManuscriptsList'
 import { Author } from './Author.entity'
 
 export const AuthorShow: React.FC<{}> = () => {
   let params = useParams()
   const [author, setAuthor] = useState<Author>()
-  const [manuscripts, setManuscripts] = useState<Manuscript[]>([])
 
   const [loading, setLoading] = useState(true)
 
@@ -25,9 +23,6 @@ export const AuthorShow: React.FC<{}> = () => {
       const author = await remult.repo(Author).findId(params.id!)
       setAuthor(author)
       setLoading(false)
-      if (author?.manuscripts) {
-        setManuscripts(author.manuscripts)
-      }
     })()
   }, [params.id])
 
@@ -104,9 +99,7 @@ export const AuthorShow: React.FC<{}> = () => {
               <Typography variant="h5">Manuscripts:</Typography>
               <Box sx={{ width: '100%', typography: 'body1' }}>
                 <ManuscriptsList
-                  manuscripts={manuscripts}
-                  setManuscripts={setManuscripts}
-                  defaultAuthor={author}
+                  manuscripts={author.manuscripts}
                   loading={false}
                 />
               </Box>

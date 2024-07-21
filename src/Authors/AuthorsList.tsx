@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Grid,
   IconButton,
   List,
   ListItem,
@@ -43,8 +42,6 @@ export const AuthorsList: React.FC<{}> = () => {
   }>({
     authors: []
   })
-
-  console.log('authors:', authors)
 
   useEffect(() => {
     ;(async () => {
@@ -101,123 +98,121 @@ export const AuthorsList: React.FC<{}> = () => {
   const isDesktop = useIsDesktop()
 
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={12} sm={10}>
-        <Box display="flex" justifyContent="space-between">
-          <TextField
-            label="Search"
-            variant="filled"
-            value={filter.search}
-            onChange={(e) => patchFilter({ search: e.target.value })}
-          />
-          <div>
-            {isDesktop ? (
-              <Button
-                variant="contained"
-                onClick={() => setEditAuthor(new Author())}
-                startIcon={<AddIcon />}
-              >
-                Add Author
-              </Button>
-            ) : (
-              <Button
-                onClick={() => setEditAuthor(new Author())}
-                variant="contained"
-              >
-                <AddIcon />
-              </Button>
-            )}
-          </div>
-        </Box>
-        <List>
-          {authors.paginator ? (
-            <InfiniteLoader
-              isItemLoaded={isItemLoaded}
-              itemCount={itemCount}
-              loadMoreItems={loadMoreItems}
+    <div>
+      <Box display="flex" justifyContent="space-between">
+        <TextField
+          label="Search"
+          variant="filled"
+          value={filter.search}
+          onChange={(e) => patchFilter({ search: e.target.value })}
+        />
+        <div>
+          {isDesktop ? (
+            <Button
+              variant="contained"
+              onClick={() => setEditAuthor(new Author())}
+              startIcon={<AddIcon />}
             >
-              {({ onItemsRendered, ref }) => (
-                <FixedSizeList
-                  className="List"
-                  height={1000}
-                  itemCount={itemCount}
-                  itemSize={50}
-                  onItemsRendered={onItemsRendered}
-                  ref={ref}
-                  width={'100%'}
-                >
-                  {({ index, style }) => {
-                    if (!isItemLoaded(index)) {
-                      return <div style={style}>Loading...</div>
-                    } else {
-                      const author = authors.authors[index]
-                      return (
-                        <div style={style}>
-                          <ListItem
-                            disablePadding
-                            key={author.id}
-                            secondaryAction={
-                              <Stack direction="row" spacing={2}>
-                                <IconButton
-                                  edge="end"
-                                  aria-label="edit"
-                                  onClick={() => deleteAuthor(author)}
-                                >
-                                  <DeleteIcon />
-                                </IconButton>
-                                <IconButton
-                                  edge="end"
-                                  aria-label="edit"
-                                  onClick={() => setEditAuthor(author)}
-                                >
-                                  <EditIcon />
-                                </IconButton>
-                              </Stack>
-                            }
+              Add Author
+            </Button>
+          ) : (
+            <Button
+              onClick={() => setEditAuthor(new Author())}
+              variant="contained"
+            >
+              <AddIcon />
+            </Button>
+          )}
+        </div>
+      </Box>
+      <List>
+        {authors.paginator ? (
+          <InfiniteLoader
+            isItemLoaded={isItemLoaded}
+            itemCount={itemCount}
+            loadMoreItems={loadMoreItems}
+          >
+            {({ onItemsRendered, ref }) => (
+              <FixedSizeList
+                className="List"
+                height={1000}
+                itemCount={itemCount}
+                itemSize={50}
+                onItemsRendered={onItemsRendered}
+                ref={ref}
+                width={'100%'}
+              >
+                {({ index, style }) => {
+                  if (!isItemLoaded(index)) {
+                    return <div style={style}>Loading...</div>
+                  } else {
+                    const author = authors.authors[index]
+                    return (
+                      <div style={style}>
+                        <ListItem
+                          disablePadding
+                          key={author.id}
+                          secondaryAction={
+                            <Stack direction="row" spacing={2}>
+                              <IconButton
+                                edge="end"
+                                aria-label="edit"
+                                onClick={() => deleteAuthor(author)}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                              <IconButton
+                                edge="end"
+                                aria-label="edit"
+                                onClick={() => setEditAuthor(author)}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            </Stack>
+                          }
+                        >
+                          <ListItemButton
+                            component={Link}
+                            to={`/authors/${author.id}`}
                           >
-                            <ListItemButton
-                              component={Link}
-                              to={`/authors/${author.id}`}
-                            >
-                              <ListItemText
-                                primary={
-                                  <div>
-                                    {author.firstName +
-                                      ' ' +
-                                      author.lastName +
-                                      ' ' +
-                                      author.city +
-                                      ', ' +
-                                      author.stateAbbr +
-                                      ' ' +
-                                      (author.manuscripts?.length === undefined
-                                        ? 0
-                                        : author.manuscripts?.length) +
-                                      ' manuscripts'}
-                                  </div>
-                                }
-                              />
-                            </ListItemButton>
-                          </ListItem>
-                        </div>
-                      )
-                    }
-                  }}
-                </FixedSizeList>
-              )}
-            </InfiniteLoader>
-          ) : null}
-        </List>
-        {editAuthor && (
-          <AuthorEdit
-            author={editAuthor}
-            onClose={() => setEditAuthor(undefined)}
-            onSaved={(author) => {
-              editAuthorSaved(author)
-            }}
-          />
-        )}
-      </Grid>
-    </Grid>
+                            <ListItemText
+                              primary={
+                                <div>
+                                  {author.firstName +
+                                    ' ' +
+                                    author.lastName +
+                                    ' ' +
+                                    author.city +
+                                    ', ' +
+                                    author.stateAbbr +
+                                    ' ' +
+                                    (author.manuscripts?.length === undefined
+                                      ? 0
+                                      : author.manuscripts?.length) +
+                                    ' manuscripts'}
+                                </div>
+                              }
+                            />
+                          </ListItemButton>
+                        </ListItem>
+                      </div>
+                    )
+                  }
+                }}
+              </FixedSizeList>
+            )}
+          </InfiniteLoader>
+        ) : null}
+      </List>
+      {editAuthor && (
+        <AuthorEdit
+          author={editAuthor}
+          onClose={() => setEditAuthor(undefined)}
+          onSaved={(author) => {
+            editAuthorSaved(author)
+          }}
+        />
+      )}
+    </div>
   )
 }

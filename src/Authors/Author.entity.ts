@@ -43,5 +43,5 @@ export class Author {
   @Fields.date({ allowApiUpdate: false })
   createdAt = new Date()
   @Relations.toMany(() => Manuscript)
-  manuscripts?: Manuscript[]
+  manuscripts: Manuscript[] = []
 }
