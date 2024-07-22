@@ -27,7 +27,7 @@ export class Manuscript {
   @Field(() => Status)
   status = Status.unread
   @Fields.number({ validate: Validators.required })
-  wordCount: number | null = null
+  wordCount: number = 0
   @Fields.string({ validate: Validators.required })
   target = ''
   @Fields.string({ validate: Validators.required })

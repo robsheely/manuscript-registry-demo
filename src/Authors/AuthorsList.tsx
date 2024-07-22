@@ -7,8 +7,15 @@ import { AuthorEdit } from './AuthorEdit'
 import { Link } from 'react-router-dom'
 import { Paginator } from 'remult'
 import { DataGrid, GridColDef, GridRow } from '@mui/x-data-grid'
+import { AuthorFilterEdit, AuthorFilterState } from './AuthorFilterEdit'
 
 const authorRepo = remult.repo(Author)
+
+const initialFilterState = {
+  name: '',
+  published: false,
+  agented: false
+}
 
 export const AuthorsList: React.FC<{}> = () => {
   const [authors, setAuthors] = useState<{
@@ -17,6 +24,10 @@ export const AuthorsList: React.FC<{}> = () => {
   }>({
     authors: []
   })
+  const [filterState, setFilterState] =
+    useState<AuthorFilterState>(initialFilterState)
+  const [showFilterDialog, setShowFilterDialog] = useState(false)
+  const [editAuthor, setEditAuthor] = useState<Author>()
 
   useEffect(() => {
     ;(async () => {
@@ -32,7 +43,10 @@ export const AuthorsList: React.FC<{}> = () => {
     })()
   }, [])
 
-  const [editAuthor, setEditAuthor] = useState<Author>()
+  const handleFiltersSaved = (filters: AuthorFilterState) => {
+    setFilterState(filters)
+    setShowFilterDialog(false)
+  }
 
   const editAuthorSaved = (editAuthor: Author) => {
     const isExisting = authors.authors.find((a) => a.id === editAuthor.id)
@@ -48,6 +62,20 @@ export const AuthorsList: React.FC<{}> = () => {
       paginator: authors.paginator
     })
   }
+
+  const filteredAuthors = authors.authors.filter((author) => {
+    return (
+      (!filterState.name ||
+        author.firstName
+          .toLowerCase()
+          .includes(filterState.name.toLowerCase()) ||
+        author.lastName
+          .toLowerCase()
+          .includes(filterState.name.toLowerCase())) &&
+      (!filterState.published || author.published) &&
+      (!filterState.agented || author.agented)
+    )
+  })
 
   const columns: GridColDef[] = [
     { field: 'firstName', headerName: 'FIRST NAME', flex: 100 },
@@ -85,13 +113,36 @@ export const AuthorsList: React.FC<{}> = () => {
           day: 'numeric'
         })
       }
+    },
+    {
+      field: 'id',
+      headerName: '',
+      headerAlign: 'center',
+      flex: 60,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => {
+        return (
+          <Button
+            variant="contained"
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              setEditAuthor(params.row)
+            }}
+            style={{ marginLeft: '10px' }}
+          >
+            Edit
+          </Button>
+        )
+      }
     }
   ]
 
   const Row = ({ ...props }) => {
     return (
       <Link
-        to={`/authors/${props.row.id}`}
+        to={editAuthor ? `/authors/${props.row.id}` : '#'}
         style={{ color: 'black', textDecoration: 'none' }}
       >
         <GridRow {...props} />
@@ -112,8 +163,17 @@ export const AuthorsList: React.FC<{}> = () => {
         AUTHORS
       </Typography>
       <div style={{ padding: '20px' }}>
+        <Box
+          display="flex"
+          justifyContent="flex-end"
+          style={{ marginBottom: '20px' }}
+        >
+          <Button variant="contained" onClick={() => setShowFilterDialog(true)}>
+            Filter Authors
+          </Button>
+        </Box>
         <DataGrid
-          rows={authors.authors}
+          rows={filteredAuthors}
           columns={columns}
           slots={{
             // @ts-ignore
@@ -148,6 +208,13 @@ export const AuthorsList: React.FC<{}> = () => {
             onSaved={(author) => {
               editAuthorSaved(author)
             }}
+          />
+        )}
+        {showFilterDialog && (
+          <AuthorFilterEdit
+            state={filterState}
+            onClose={() => setShowFilterDialog(false)}
+            onSaved={handleFiltersSaved}
           />
         )}
       </div>

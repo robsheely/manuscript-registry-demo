@@ -23,12 +23,12 @@ import { AgeGroup } from '../Authors/AgeGroup'
 import NumberInput from '../utils/NumberInput'
 
 type Props = {
-  state: FilterState
+  state: ManuscriptFilterState
   onClose: () => void
-  onSaved: (newState: FilterState) => void
+  onSaved: (newState: ManuscriptFilterState) => void
 }
 
-export type FilterState = {
+export type ManuscriptFilterState = {
   title: string
   author: string
   genres: Genre[]
@@ -120,9 +120,9 @@ export const ManuscriptFilterEdit: React.FC<Props> = ({
                 </InputLabel>
                 {getValueList(Genre).map((genre) => (
                   <FormControlLabel
-                    control={<Checkbox sx={{ height: 14 }} />}
+                    control={<Checkbox sx={{ height: 13 }} />}
                     label={
-                      <Typography sx={{ fontSize: 14 }}>
+                      <Typography sx={{ fontSize: 13 }}>
                         {genre.caption}
                       </Typography>
                     }
@@ -139,9 +139,9 @@ export const ManuscriptFilterEdit: React.FC<Props> = ({
                 </InputLabel>
                 {getValueList(AgeGroup).map((ageGroup) => (
                   <FormControlLabel
-                    control={<Checkbox sx={{ height: 14 }} />}
+                    control={<Checkbox sx={{ height: 13 }} />}
                     label={
-                      <Typography sx={{ fontSize: 14, marginRight: 10 }}>
+                      <Typography sx={{ fontSize: 13, marginRight: 10 }}>
                         {ageGroup.caption}
                       </Typography>
                     }

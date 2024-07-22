@@ -4,7 +4,10 @@ import { remult } from 'remult'
 import { Manuscript } from './Manuscript.entity'
 
 import { ManuscriptsList } from './ManuscriptsList'
-import { FilterState, ManuscriptFilterEdit } from './ManuscriptFilterEdit'
+import {
+  ManuscriptFilterState,
+  ManuscriptFilterEdit
+} from './ManuscriptFilterEdit'
 
 const amRepo = remult.repo(Manuscript)
 
@@ -23,7 +26,7 @@ export const ManuscriptsPage: React.FC<{}> = () => {
   const [showFilterDialog, setShowFilterDialog] = useState(false)
 
   const [filterState, setFilterState] =
-    useState<FilterState>(initialFilterState)
+    useState<ManuscriptFilterState>(initialFilterState)
 
   const page = 0
   const rowsPerPage = 100
@@ -49,10 +52,30 @@ export const ManuscriptsPage: React.FC<{}> = () => {
     })()
   }, [manuscriptsQuery, page])
 
-  const handleFiltersSaved = (filters: FilterState) => {
+  const handleFiltersSaved = (filters: ManuscriptFilterState) => {
     setFilterState(filters)
     setShowFilterDialog(false)
   }
+
+  const filteredManuscripts = manuscripts.filter((manuscript) => {
+    return (
+      (!filterState.title || manuscript.title.includes(filterState.title)) &&
+      (!filterState.author ||
+        `${manuscript.author?.firstName} ${manuscript.author?.lastName}`.includes(
+          filterState.author
+        )) &&
+      (!filterState.genres.length ||
+        filterState.genres.some((genre) => manuscript.genre.id === genre.id)) &&
+      (!filterState.ageGroups.length ||
+        filterState.ageGroups.some(
+          (ageGroup) => manuscript.ageGroup.id === ageGroup.id
+        )) &&
+      (!filterState.minWordCount ||
+        manuscript.wordCount >= filterState.minWordCount) &&
+      (!filterState.maxWordCount ||
+        manuscript.wordCount <= filterState.maxWordCount)
+    )
+  })
 
   return (
     <div style={{ padding: '20px', textAlign: 'center' }}>
@@ -91,7 +114,7 @@ export const ManuscriptsPage: React.FC<{}> = () => {
             </Button>
           </Box>
 
-          <ManuscriptsList manuscripts={manuscripts} />
+          <ManuscriptsList manuscripts={filteredManuscripts} />
           {showFilterDialog && (
             <ManuscriptFilterEdit
               state={filterState}
