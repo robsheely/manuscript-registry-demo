@@ -25,7 +25,7 @@ export class Manuscript {
   @Field(() => AgeGroup)
   ageGroup = AgeGroup.adult
   @Field(() => Status)
-  status = Status.cold
+  status = Status.unread
   @Fields.number({ validate: Validators.required })
   wordCount: number | null = null
   @Fields.string({ validate: Validators.required })

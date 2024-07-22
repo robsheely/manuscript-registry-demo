@@ -1,6 +1,5 @@
 import { remultExpress } from 'remult/remult-express'
 import { createPostgresConnection } from 'remult/postgres'
-import { seed } from './seed'
 import { config } from 'dotenv'
 import { AuthorManuscript } from '../Authors/AuthorManuscript.entity'
 import { Author } from '../Authors/Author.entity'
@@ -19,7 +18,6 @@ export const api = remultExpress({
       })
     return undefined
   },
-  initApi: seed,
   entities,
   admin: false
 })

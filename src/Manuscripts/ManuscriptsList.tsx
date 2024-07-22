@@ -69,6 +69,7 @@ export const ManuscriptsList: React.FC<{
         rows={rows}
         columns={columns}
         slots={{
+          // @ts-ignore
           row: Row as DataGridProps['slots']['row'],
           footer: () => <div />
         }}

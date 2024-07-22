@@ -63,10 +63,10 @@ export class Author {
     console.log('existingManuscripts:', existingManuscripts)
 
     const manuscriptsToDelete = existingManuscripts.filter(
-      (c) => !manuscripts.includes(c.manuscriptId)
+      (c) => !manuscripts.includes(c.manuscript.id!)
     )
     const manuscriptsToAdd = manuscripts.filter(
-      (c) => !existingManuscripts.find((e) => e.manuscriptId == c)
+      (c) => !existingManuscripts.find((e) => e.manuscript.id == c)
     )
     console.log('#### 2', {
       existingManuscripts,
@@ -77,7 +77,10 @@ export class Author {
       manuscriptsToDelete.map((dc) => authorManuscriptsRepo.delete(dc))
     )
     await authorManuscriptsRepo.insert(
-      manuscriptsToAdd.map((manuscriptId) => ({ manuscriptId }))
+      manuscriptsToAdd.map((manuscriptId) => ({
+        authorId: this.id,
+        manuscriptId
+      }))
     )
   }
 }
