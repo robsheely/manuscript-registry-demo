@@ -11,17 +11,33 @@ import { useParams } from 'react-router-dom'
 import { remult } from 'remult'
 import { ManuscriptsList } from '../Manuscripts/ManuscriptsList'
 import { Author } from './Author.entity'
+import { Manuscript } from '../Manuscripts/Manuscript.entity'
+
+const authorRepo = remult.repo(Author)
 
 export const AuthorShow: React.FC<{}> = () => {
   let params = useParams()
   const [author, setAuthor] = useState<Author>()
-
   const [loading, setLoading] = useState(true)
+  const [manuscripts, setManuscripts] = useState<Manuscript[]>([])
 
   useEffect(() => {
     ;(async () => {
-      const author = await remult.repo(Author).findId(params.id!)
+      const author = await authorRepo.findId(params.id!)
       setAuthor(author)
+      authorRepo
+        .relations(author)
+        .manuscripts.find({
+          include: {
+            manuscript: true
+          }
+        })
+        .then((authorManuscript) => {
+          const manuscripts = authorManuscript
+            .filter((authorManuscript) => authorManuscript.manuscript)
+            .map((authorManuscript) => authorManuscript.manuscript)
+          setManuscripts(manuscripts)
+        })
       setLoading(false)
     })()
   }, [params.id])
@@ -98,10 +114,7 @@ export const AuthorShow: React.FC<{}> = () => {
             <Stack spacing={5}>
               <Typography variant="h5">Manuscripts:</Typography>
               <Box sx={{ width: '100%', typography: 'body1' }}>
-                <ManuscriptsList
-                  manuscripts={author.manuscripts}
-                  loading={false}
-                />
+                <ManuscriptsList manuscripts={manuscripts} />
               </Box>
             </Stack>
           </CardContent>

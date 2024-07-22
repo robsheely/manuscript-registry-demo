@@ -1,14 +1,14 @@
 import { ValueListFieldType } from 'remult'
 @ValueListFieldType({
   getValues: () => [
-    Status.cold,
-    new Status('warm', '#e8cb7d'),
-    new Status('hot', '#e88b7d'),
-    new Status('in-contract', '#a4e87d')
+    Status.unread,
+    new Status('rejected', '#e8cb7d', 'Rejected'),
+    new Status('interested', '#e88b7d', 'Interested'),
+    new Status('contacted', '#a4e87d', 'Contacted')
   ]
 })
 export class Status {
-  static cold = new Status('cold', '#7dbde8')
+  static unread = new Status('unread', '#7dbde8')
   constructor(
     public id: string,
     public color: string,

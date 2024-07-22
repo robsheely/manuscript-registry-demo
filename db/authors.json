@@ -18,7 +18,10 @@
     "pronouns": "",
     "notes": "",
     "createdAt": "2024-06-05T09:32:46.527Z",
-    "bio": ""
+    "bio": "",
+    "manuscripts": [
+      "1052ce18-6ef9-4d95-b354-ab59b1d250d1"
+    ]
   },
   {
     "id": "dcc3023d-d6bb-46cf-b7c0-938ff3b79ca8",
@@ -39,6 +42,7 @@
     "pronouns": "he/him",
     "notes": "",
     "createdAt": "2024-07-19T23:54:39.399Z",
-    "bio": "BOO"
+    "bio": "BOO",
+    "manuscripts": []
   }
 ]

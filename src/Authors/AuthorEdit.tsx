@@ -316,18 +316,21 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
               />
             </Stack>
             <Typography>Manuscripts:</Typography>
-            <ManuscriptsList
-              manuscripts={manuscripts}
-              defaultAuthor={author}
-              loading={false}
-            />
-            <Button
-              variant="contained"
-              onClick={createManuscript}
-              startIcon={<AddIcon />}
+            <ManuscriptsList manuscripts={manuscripts} />
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              justifyContent="flex-end"
+              spacing={2}
+              sx={{ marginTop: 1 }}
             >
-              Add Manuscript
-            </Button>
+              <Button
+                variant="contained"
+                onClick={createManuscript}
+                startIcon={<AddIcon />}
+              >
+                Add Manuscript
+              </Button>
+            </Stack>
 
             {editManuscript && (
               <ManuscriptEdit

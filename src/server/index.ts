@@ -8,7 +8,6 @@ import { auth } from './auth'
 import { remult } from 'remult'
 import { remultGraphql } from 'remult/graphql'
 import { createSchema, createYoga } from 'graphql-yoga'
-import multer from 'multer'
 
 const app = express()
 app.use(sslRedirect())
@@ -21,7 +20,7 @@ app.use(
 )
 app.use(auth)
 
-app.get('/api/test', (req, res) => res.send('ok'))
+app.get('/api/test', (_req, res) => res.send('ok'))
 //@ts-ignore
 app.use(api)
 
@@ -31,23 +30,33 @@ app.use(
   swaggerUi.setup(api.openApiDoc({ title: 'remult-react-todo' }))
 )
 
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
-    cb(null, 'uploads/')
-  },
-  filename: (_req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname)
-  }
-})
+// const storage = multer.diskStorage({
+//   destination: (_req, _file, cb) => {
+//     cb(null, 'uploads/')
+//   },
+//   filename: (_req, file, cb) => {
+//     cb(null, Date.now() + '-' + file.originalname)
+//   }
+// })
 
-// Create the multer instance
-const upload = multer({ storage: storage })
+// // Create the multer instance
+// const upload = multer({ storage: storage })
 
-// Set up a route for file uploads
-app.post('/upload', upload.single('file'), (_req, res) => {
-  // Handle the uploaded file
-  res.json({ message: 'File uploaded successfully!' })
-})
+// // Set up a route for file uploads
+// app.post('/upload', upload.single('file'), (_req, res) => {
+//   // Handle the uploaded file
+//   res.json({ message: 'File uploaded successfully!' })
+// })
+
+// var bodyParser = require('body-parser')
+// app.use(bodyParser.json({ limit: '50mb' }))
+// app.use(
+//   bodyParser.urlencoded({
+//     limit: '50mb',
+//     extended: true,
+//     parameterLimit: 50000
+//   })
+// )
 
 const { typeDefs, resolvers } = remultGraphql({
   entities,
@@ -61,13 +70,16 @@ const yoga = createYoga({
     resolvers
   })
 })
+
 app.use(yoga.graphqlEndpoint, api.withRemult, (req, res) => {
   remult.user = { id: 'admin', avatar: '' } //this is a hack to make sure the admin user is logged in
   yoga(req, res)
 })
 
 app.use(express.static('dist'))
-app.use('/*', async (req, res) => {
+
+app.use('/*', async (_req, res) => {
   res.sendFile(process.cwd() + '/dist/index.html')
 })
+
 app.listen(process.env.PORT || 3002, () => console.log('Server started'))

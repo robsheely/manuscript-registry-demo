@@ -4,19 +4,15 @@ import { Manuscript } from '../Manuscripts/Manuscript.entity'
 
 @Entity<AuthorManuscript>('authorManuscript', {
   allowApiCrud: Allow.authenticated,
-  id: { manuscriptId: true, author: true }
+  id: { authorId: true, manuscript: true }
 })
 export class AuthorManuscript {
-  @Fields.string({ dbName: 'manuscript' })
-  manuscriptId = ''
-  @Relations.toOne<AuthorManuscript, Manuscript>(
-    () => Manuscript,
-    'manuscriptId'
-  )
-  manuscript!: Manuscript
-
-  @Relations.toOne(() => Author, {
+  @Fields.string({ dbName: 'author' })
+  authorId = ''
+  @Relations.toOne<AuthorManuscript, Author>(() => Author, 'authorId')
+  author!: Author
+  @Relations.toOne(() => Manuscript, {
     defaultIncluded: true
   })
-  author!: Author
+  manuscript!: Manuscript
 }

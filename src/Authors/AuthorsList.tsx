@@ -6,7 +6,6 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  Stack,
   TextField
 } from '@mui/material'
 import { useEffect, useState } from 'react'
@@ -15,7 +14,6 @@ import { Author } from './Author.entity'
 import AddIcon from '@mui/icons-material/Add'
 import { AuthorEdit } from './AuthorEdit'
 import EditIcon from '@mui/icons-material/Edit'
-import DeleteIcon from '@mui/icons-material/Delete'
 import { useSearchParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import InfiniteLoader from 'react-window-infinite-loader'
@@ -23,7 +21,7 @@ import { FixedSizeList } from 'react-window'
 import { Paginator } from 'remult'
 import { useIsDesktop } from '../utils/useIsDesktop'
 
-const amRepo = remult.repo(Author)
+const authorRepo = remult.repo(Author)
 
 export const AuthorsList: React.FC<{}> = () => {
   let [searchParams, setSearchParams] = useSearchParams()
@@ -45,7 +43,7 @@ export const AuthorsList: React.FC<{}> = () => {
 
   useEffect(() => {
     ;(async () => {
-      const paginator = await amRepo
+      const paginator = await authorRepo
         .query({
           where: {
             lastName: { $contains: filter.search }
@@ -79,7 +77,7 @@ export const AuthorsList: React.FC<{}> = () => {
 
   const [editAuthor, setEditAuthor] = useState<Author>()
   const deleteAuthor = async (deletedAuthor: Author) => {
-    await amRepo.delete(deletedAuthor)
+    await authorRepo.delete(deletedAuthor)
     setAuthors({
       authors: authors.authors.filter(
         (author) => deletedAuthor.id !== author.id
@@ -153,22 +151,13 @@ export const AuthorsList: React.FC<{}> = () => {
                           disablePadding
                           key={author.id}
                           secondaryAction={
-                            <Stack direction="row" spacing={2}>
-                              <IconButton
-                                edge="end"
-                                aria-label="edit"
-                                onClick={() => deleteAuthor(author)}
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                              <IconButton
-                                edge="end"
-                                aria-label="edit"
-                                onClick={() => setEditAuthor(author)}
-                              >
-                                <EditIcon />
-                              </IconButton>
-                            </Stack>
+                            <IconButton
+                              edge="end"
+                              aria-label="edit"
+                              onClick={() => setEditAuthor(author)}
+                            >
+                              <EditIcon />
+                            </IconButton>
                           }
                         >
                           <ListItemButton

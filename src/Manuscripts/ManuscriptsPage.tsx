@@ -1,63 +1,45 @@
 import {
-  Box,
-  Chip,
-  Grid,
-  IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  Skeleton,
   TextField,
   TablePagination,
-  Drawer
+  Stack,
+  Divider,
+  Box,
+  CircularProgress
 } from '@mui/material'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { remult } from 'remult'
 import { Manuscript } from './Manuscript.entity'
 
 import { useSearchParams } from 'react-router-dom'
-import CancelIcon from '@mui/icons-material/Cancel'
-import { Status } from './Status'
 import { ManuscriptsList } from './ManuscriptsList'
-import { Tag } from './Tag.entity'
-import { getValueList } from 'remult'
-import { useIsDesktop } from '../utils/useIsDesktop'
-import FilterAltIcon from '@mui/icons-material/FilterAlt'
 
 const amRepo = remult.repo(Manuscript)
 
 export const ManuscriptsPage: React.FC<{}> = () => {
   let [searchParams, setSearchParams] = useSearchParams()
   const filter = {
-    search: searchParams.get('search') || '',
-    status: searchParams.get('status') || '',
-    tag: searchParams.get('tag') || ''
+    search: searchParams.get('search') || ''
   }
-  const [openDrawer, setOpenDrawer] = useState(false)
   const patchFilter = (f: Partial<typeof filter>) => {
     setSearchParams({ ...filter, ...f })
-    setOpenDrawer(false)
   }
   const [manuscripts, setManuscripts] = useState<Manuscript[]>([])
-  const [tags, setTags] = useState<Tag[]>([])
   const [loading, setLoading] = useState(false)
-  const [loadingTags, setLoadingTags] = useState(false)
 
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(25)
   const [manuscriptsCount, setManuscriptsCount] = useState(0)
 
-  const [addedManuscripts, setAddedManuscripts] = useState<Manuscript[]>([])
-
   const manuscriptsQuery = useMemo(() => {
     const query = amRepo.query({
       where: { title: { $contains: filter.search } },
+
       pageSize: rowsPerPage
     })
     query.count().then((count) => setManuscriptsCount(count))
     return query
-  }, [filter.search, filter.status, filter.tag, rowsPerPage])
+  }, [filter.search, rowsPerPage])
+
   const fetchRef = useRef(0)
   useEffect(() => {
     ;(async () => {
@@ -72,92 +54,41 @@ export const ManuscriptsPage: React.FC<{}> = () => {
     })()
   }, [manuscriptsQuery, page])
 
-  useEffect(() => {
-    ;(async () => {
-      try {
-        setLoadingTags(true)
-        await remult.repo(Tag).find().then(setTags)
-      } finally {
-        setLoadingTags(false)
-      }
-    })()
-  }, [])
-  const isDesktop = useIsDesktop()
-
-  const FilterElement = () => (
-    <>
-      {' '}
-      <List dense={true}>
-        <ListItem>
-          <ListItemText>STATUS</ListItemText>
-        </ListItem>
-        {getValueList(Status).map((s: Status) => (
-          <ListItem
-            key={s.id}
-            secondaryAction={
-              s.id.toString() === filter.status && (
-                <IconButton
-                  edge="end"
-                  aria-label="cancel"
-                  onClick={() => {
-                    patchFilter({ status: '' })
-                  }}
-                >
-                  <CancelIcon />
-                </IconButton>
-              )
-            }
-          >
-            <ListItemButton
-              onClick={() => {
-                patchFilter({ status: s.id.toString() })
-              }}
-            >
-              <ListItemText primary={s.caption} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-    </>
-  )
-
   return (
-    <Grid container spacing={2}>
-      {isDesktop && (
-        <Grid item xs={2}>
-          <FilterElement />
-        </Grid>
+    <div style={{ padding: '20px' }}>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        style={{ marginBottom: 10 }}
+        justifyContent="space-between"
+        spacing={2}
+      >
+        <TextField
+          label="Search"
+          value={filter.search}
+          onChange={(e) => patchFilter({ search: e.target.value })}
+        />
+        <TablePagination
+          component="div"
+          count={manuscriptsCount}
+          page={page}
+          onPageChange={(_, newPage) => {
+            setPage(newPage)
+          }}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={(e) => {
+            setRowsPerPage(parseInt(e.target.value, 10))
+            setPage(0)
+          }}
+        />
+      </Stack>
+      <Divider />
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', padding: 30 }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <ManuscriptsList manuscripts={manuscripts} />
       )}
-      <Grid item xs={isDesktop ? 10 : 12}>
-        <ManuscriptsList
-          manuscripts={manuscripts}
-          setManuscripts={setManuscripts}
-          loading={loading}
-          itemsPerPage={rowsPerPage}
-          addedManuscripts={addedManuscripts}
-          setAddedManuscripts={setAddedManuscripts}
-        >
-          <TextField
-            label="Search"
-            value={filter.search}
-            onChange={(e) => patchFilter({ search: e.target.value })}
-          />
-
-          <TablePagination
-            component="div"
-            count={manuscriptsCount}
-            page={page}
-            onPageChange={(_, newPage) => {
-              setPage(newPage)
-            }}
-            rowsPerPage={rowsPerPage}
-            onRowsPerPageChange={(e) => {
-              setRowsPerPage(parseInt(e.target.value, 10))
-              setPage(0)
-            }}
-          />
-        </ManuscriptsList>
-      </Grid>
-    </Grid>
+    </div>
   )
 }

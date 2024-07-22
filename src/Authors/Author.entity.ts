@@ -1,5 +1,4 @@
 import { Allow, BackendMethod, Entity, Fields, Relations, repo } from 'remult'
-import { Manuscript } from '../Manuscripts/Manuscript.entity'
 import { AuthorManuscript } from './AuthorManuscript.entity'
 
 @Entity('authors', {
@@ -57,9 +56,12 @@ export class Author {
       ? []
       : await authorManuscriptsRepo.find({
           include: {
-            manuscript: false
+            manuscript: true
           }
         })
+
+    console.log('existingManuscripts:', existingManuscripts)
+
     const manuscriptsToDelete = existingManuscripts.filter(
       (c) => !manuscripts.includes(c.manuscriptId)
     )

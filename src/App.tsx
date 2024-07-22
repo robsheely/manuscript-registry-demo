@@ -81,17 +81,21 @@ function App({ signOut }: { signOut: VoidFunction }) {
           </Drawer>
           <AppBar position="static" sx={{ mb: 1 }}>
             <Toolbar>
-              {!isDesktop && (
-                <IconButton
-                  aria-label="menu"
-                  color="inherit"
-                  onClick={() => setOpenDrawer(true)}
-                >
-                  <MenuIcon />
-                </IconButton>
-              )}
-              <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                MANUSCRIPT REGISTRY
+              <Box>
+                <img
+                  src="MSWLAcademylogofinal.webp"
+                  style={{
+                    filter: 'drop-shadow(3px 3px 4px #333333)',
+                    marginRight: 10
+                  }}
+                />
+              </Box>
+              <Typography
+                variant="h5"
+                component="div"
+                sx={{ flexGrow: 1, filter: 'drop-shadow(3px 3px 4px #333333)' }}
+              >
+                <strong>MANUSCRIPT REGISTRY</strong>
               </Typography>
 
               {isDesktop &&
@@ -106,11 +110,11 @@ function App({ signOut }: { signOut: VoidFunction }) {
                   </Button>
                 ))}
 
-              <Box sx={{ flexGrow: 0 }}>
+              <Box sx={{ flexGrow: 0, marginLeft: 1 }}>
                 <Tooltip title={remult.user!.name!}>
                   <IconButton
                     onClick={(e) => setAnchorElUser(e.currentTarget)}
-                    sx={{ p: 0 }}
+                    sx={{ p: 0, filter: 'drop-shadow(3px 3px 4px #333333)' }}
                   >
                     <Avatar alt={remult.user?.name} src={remult.user!.avatar} />
                   </IconButton>

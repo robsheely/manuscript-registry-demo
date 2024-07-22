@@ -2,6 +2,7 @@ import { Allow, Entity, Field, Fields, Validators, Relations } from 'remult'
 import { Author } from '../Authors/Author.entity'
 import { Genre } from '../Authors/Genre'
 import { AgeGroup } from '../Authors/AgeGroup'
+import { Status } from './Status'
 
 @Entity<Manuscript>('manuscripts', {
   allowApiCrud: Allow.authenticated,
@@ -23,6 +24,8 @@ export class Manuscript {
   genre = Genre.F1
   @Field(() => AgeGroup)
   ageGroup = AgeGroup.adult
+  @Field(() => Status)
+  status = Status.cold
   @Fields.number({ validate: Validators.required })
   wordCount: number | null = null
   @Fields.string({ validate: Validators.required })
