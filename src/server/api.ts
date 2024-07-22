@@ -1,5 +1,5 @@
 import { remultExpress } from 'remult/remult-express'
-import { createPostgresConnection } from 'remult/postgres'
+import { createPostgresDataProvider } from 'remult/postgres'
 import { config } from 'dotenv'
 import { AuthorManuscript } from '../Authors/AuthorManuscript.entity'
 import { Author } from '../Authors/Author.entity'
@@ -10,14 +10,9 @@ export const entities = [Author, Manuscript, AuthorManuscript]
 
 export const api = remultExpress({
   getUser: (req) => req.session!['user'],
-  dataProvider: async () => {
-    if (process.env.NODE_ENV === 'production')
-      return createPostgresConnection({
-        configuration: 'heroku',
-        caseInsensitiveIdentifiers: true
-      })
-    return undefined
-  },
+  dataProvider: createPostgresDataProvider({
+    connectionString: 'postgres://postgres:dempsey@localhost/postgres'
+  }),
   entities,
   admin: false
 })

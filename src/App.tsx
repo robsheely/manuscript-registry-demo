@@ -5,7 +5,6 @@ import { ManuscriptsPage } from './Manuscripts/ManuscriptsPage'
 import { AuthorShow } from './Authors/AuthorShow'
 import {
   AppBar,
-  Avatar,
   Box,
   Button,
   createTheme,
@@ -30,13 +29,10 @@ import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 
 import { remult } from 'remult'
-import MenuIcon from '@mui/icons-material/Menu'
-import { useIsDesktop } from './utils/useIsDesktop'
 
 const theme = createTheme()
 
 function App({ signOut }: { signOut: VoidFunction }) {
-  const isDesktop = useIsDesktop()
   const [openDrawer, setOpenDrawer] = useState(false)
 
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
@@ -98,26 +94,23 @@ function App({ signOut }: { signOut: VoidFunction }) {
                 <strong>MANUSCRIPT REGISTRY</strong>
               </Typography>
 
-              {isDesktop &&
-                routes.map((route) => (
-                  <Button
-                    color="inherit"
-                    key={route.path}
-                    component={Link}
-                    to={route.path}
-                  >
-                    {route.caption}
-                  </Button>
-                ))}
+              {routes.map((route) => (
+                <Button
+                  color="inherit"
+                  key={route.path}
+                  component={Link}
+                  to={route.path}
+                >
+                  {route.caption}
+                </Button>
+              ))}
 
               <Box sx={{ flexGrow: 0, marginLeft: 1 }}>
                 <Tooltip title={remult.user!.name!}>
                   <IconButton
                     onClick={(e) => setAnchorElUser(e.currentTarget)}
                     sx={{ p: 0, filter: 'drop-shadow(3px 3px 4px #333333)' }}
-                  >
-                    <Avatar alt={remult.user?.name} src={remult.user!.avatar} />
-                  </IconButton>
+                  ></IconButton>
                 </Tooltip>
                 <Menu
                   sx={{ mt: '45px' }}

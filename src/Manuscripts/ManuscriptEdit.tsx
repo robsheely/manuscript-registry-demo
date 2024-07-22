@@ -46,15 +46,13 @@ export const ManuscriptEdit: React.FC<IProps> = ({
   const [state, setState] = useState(manuscript)
 
   const handleSave = async () => {
-    console.log('handleSave:', state)
     try {
       setErrors(undefined)
       let newManuscript = await manuscriptRepo.save(state)
-      console.log('newManuscript:', newManuscript)
       onSaved(newManuscript)
       handleClose()
     } catch (err: any) {
-      console.log('err:', err)
+      console.log('ManuscriptEdit err:', err)
       setErrors(err)
     }
   }

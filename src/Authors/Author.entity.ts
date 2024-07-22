@@ -1,4 +1,12 @@
-import { Allow, BackendMethod, Entity, Fields, Relations, repo } from 'remult'
+import {
+  Allow,
+  BackendMethod,
+  Entity,
+  Fields,
+  Relations,
+  repo,
+  Validators
+} from 'remult'
 import { AuthorManuscript } from './AuthorManuscript.entity'
 
 @Entity('authors', {
@@ -8,13 +16,13 @@ import { AuthorManuscript } from './AuthorManuscript.entity'
 export class Author {
   @Fields.uuid()
   id?: string
-  @Fields.string()
+  @Fields.string({ validate: Validators.required })
   firstName = ''
-  @Fields.string()
+  @Fields.string({ validate: Validators.required })
   lastName = ''
-  @Fields.string()
+  @Fields.string({ validate: Validators.required })
   email = ''
-  @Fields.string()
+  @Fields.string({ validate: Validators.required })
   phoneNumber = ''
   @Fields.string()
   website = ''
@@ -22,13 +30,13 @@ export class Author {
   blog = ''
   @Fields.string()
   twitter = ''
-  @Fields.string()
+  @Fields.string({ validate: Validators.required })
   address = ''
-  @Fields.string()
+  @Fields.string({ validate: Validators.required })
   zipcode = ''
-  @Fields.string()
+  @Fields.string({ validate: Validators.required })
   city = ''
-  @Fields.string()
+  @Fields.string({ validate: Validators.required })
   stateAbbr = ''
   @Fields.boolean()
   published = false
@@ -38,7 +46,7 @@ export class Author {
   formerAgent = ''
   @Fields.string()
   pronouns = ''
-  @Fields.string()
+  @Fields.string({ validate: Validators.required })
   bio = ''
   @Fields.date({ allowApiUpdate: false })
   createdAt = new Date()
@@ -46,13 +54,12 @@ export class Author {
   manuscripts: AuthorManuscript[] = []
 
   @BackendMethod({ allowed: Allow.authenticated })
-  async saveWithManuscripts?(manuscripts: string[]) {
+  async saveWithManuscripts?(manuscriptIds: string[]) {
     const isNew = !this.id
     console.log('#### 0')
-    const author = await repo(Author).save(this)
-    console.log('#### 1')
-    const authorManuscriptsRepo = repo(Author).relations(author).manuscripts
-    const existingManuscripts = isNew
+    console.log('#### 1', this)
+    const authorManuscriptsRepo = repo(Author).relations(this).manuscripts
+    const existingAuthorManuscripts = isNew
       ? []
       : await authorManuscriptsRepo.find({
           include: {
@@ -60,16 +67,21 @@ export class Author {
           }
         })
 
-    console.log('existingManuscripts:', existingManuscripts)
+    console.log('manuscripts:', manuscriptIds, existingAuthorManuscripts)
 
-    const manuscriptsToDelete = existingManuscripts.filter(
-      (c) => !manuscripts.includes(c.manuscript.id!)
+    const manuscriptsToDelete = existingAuthorManuscripts.filter(
+      (existing) => !manuscriptIds.includes(existing.manuscriptId!)
     )
-    const manuscriptsToAdd = manuscripts.filter(
-      (c) => !existingManuscripts.find((e) => e.manuscript.id == c)
-    )
+
+    const manuscriptsToAdd = manuscriptIds.filter((id) => {
+      return !existingAuthorManuscripts.find((existing) => {
+        console.log('foooooo-id:', id, existing)
+        return existing.manuscriptId == id
+      })
+    })
+
     console.log('#### 2', {
-      existingManuscripts,
+      existingAuthorManuscripts,
       manuscriptsToDelete,
       manuscriptsToAdd
     })
@@ -77,10 +89,13 @@ export class Author {
       manuscriptsToDelete.map((dc) => authorManuscriptsRepo.delete(dc))
     )
     await authorManuscriptsRepo.insert(
-      manuscriptsToAdd.map((manuscriptId) => ({
+      manuscriptsToAdd.map((manuscript) => ({
         authorId: this.id,
-        manuscriptId
+        manuscriptId: manuscript
       }))
     )
+    const author = await repo(Author).save(this)
+
+    console.log('#### 3', author)
   }
 }

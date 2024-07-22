@@ -46,7 +46,7 @@ export const AuthorShow: React.FC<{}> = () => {
   if (!author) return <span>not found</span>
 
   return (
-    <Stack direction={{ xs: 'column', sm: 'row' }}>
+    <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ width: '100%' }}>
       <Box flex="1">
         <Stack spacing={5}>
           <Card>
@@ -58,6 +58,7 @@ export const AuthorShow: React.FC<{}> = () => {
                   </Typography>
                   <Stack
                     direction={{ xs: 'column', sm: 'row' }}
+                    sx={{ mt: 1 }}
                     justifyContent="space-between"
                     spacing={2}
                   >
@@ -66,7 +67,7 @@ export const AuthorShow: React.FC<{}> = () => {
                     <Typography>{author.pronouns}</Typography>
                   </Stack>
                   <Divider />
-                  <Typography>{author.address}</Typography>
+                  <Typography sx={{ mt: 1 }}>{author.address}</Typography>
                   <Stack
                     direction={{ xs: 'column', sm: 'row' }}
                     justifyContent="space-between"
@@ -81,6 +82,7 @@ export const AuthorShow: React.FC<{}> = () => {
                     direction={{ xs: 'column', sm: 'row' }}
                     justifyContent="space-between"
                     spacing={2}
+                    sx={{ mt: 1 }}
                   >
                     <Typography>Website: {author.website}</Typography>
                     <Typography>Blog: {author.blog}</Typography>
@@ -90,6 +92,7 @@ export const AuthorShow: React.FC<{}> = () => {
                     direction={{ xs: 'column', sm: 'row' }}
                     justifyContent="space-between"
                     spacing={2}
+                    sx={{ mt: 1 }}
                   >
                     <Typography>{`${
                       author.published ? 'Has' : "hasn't"
@@ -103,7 +106,7 @@ export const AuthorShow: React.FC<{}> = () => {
                       <Typography>{author.formerAgent}</Typography>
                     )}
                   </Stack>
-                  <Typography>Bio: {author.bio}</Typography>
+                  <Typography sx={{ mt: 1 }}>{author.bio}</Typography>
                 </Stack>
               </Stack>
             </CardContent>

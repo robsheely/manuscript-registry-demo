@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Avatar,
   Box,
@@ -13,7 +13,6 @@ import {
 import LockIcon from '@mui/icons-material/Lock'
 import { remult, UserInfo } from 'remult'
 import App from '../App'
-import { AccountManager } from '../AccountManagers/AccountManager.entity'
 
 function Auth() {
   const [signInUsername, setSignInUsername] = useState('')
@@ -53,9 +52,7 @@ function Auth() {
         if (r.ok) {
           try {
             setCurrentUser(await r.json())
-          } catch {
-            setSignInUsername(await AccountManager.getValidUserName())
-          }
+          } catch {}
         } else {
           if (tryCounter++ < 10)
             // retry if dev server is not yet ready
@@ -67,6 +64,7 @@ function Auth() {
     }
     getCurrentUser()
   }, [])
+
   if (!currentUser)
     return (
       <Box

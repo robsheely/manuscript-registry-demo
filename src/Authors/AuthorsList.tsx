@@ -1,39 +1,16 @@
-import {
-  Box,
-  Button,
-  IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  TextField
-} from '@mui/material'
+import { Box, Button, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { remult } from 'remult'
 import { Author } from './Author.entity'
 import AddIcon from '@mui/icons-material/Add'
 import { AuthorEdit } from './AuthorEdit'
-import EditIcon from '@mui/icons-material/Edit'
-import { useSearchParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
-import InfiniteLoader from 'react-window-infinite-loader'
-import { FixedSizeList } from 'react-window'
 import { Paginator } from 'remult'
-import { useIsDesktop } from '../utils/useIsDesktop'
+import { DataGrid, GridColDef, GridRow } from '@mui/x-data-grid'
 
 const authorRepo = remult.repo(Author)
 
 export const AuthorsList: React.FC<{}> = () => {
-  let [searchParams, setSearchParams] = useSearchParams()
-  const filter = {
-    search: searchParams.get('search') || '',
-    size: searchParams.get('size') || '',
-    sector: searchParams.get('sector') || ''
-  }
-  const patchFilter = (f: Partial<typeof filter>) => {
-    setSearchParams({ ...filter, ...f })
-  }
-
   const [authors, setAuthors] = useState<{
     authors: Author[]
     paginator?: Paginator<Author>
@@ -45,67 +22,116 @@ export const AuthorsList: React.FC<{}> = () => {
     ;(async () => {
       const paginator = await authorRepo
         .query({
-          where: {
-            lastName: { $contains: filter.search }
-          },
-          pageSize: 50
+          pageSize: 50,
+          include: {
+            manuscripts: true
+          }
         })
         .paginator()
       setAuthors({ authors: paginator.items, paginator: paginator })
     })()
-  }, [filter.search, filter.size, filter.sector])
-
-  const itemCount = authors.paginator
-    ? authors.paginator.hasNextPage
-      ? authors.authors.length + 1
-      : authors.authors.length
-    : 0
-
-  const loadMoreItems = async () => {
-    if (authors.paginator) {
-      const newPaginator = await authors.paginator.nextPage()
-      setAuthors({
-        authors: [...authors.authors, ...newPaginator.items],
-        paginator: newPaginator
-      })
-    }
-  }
-
-  const isItemLoaded = (index: number) =>
-    !!authors.paginator &&
-    (!authors.paginator.hasNextPage || index < authors.authors.length)
+  }, [])
 
   const [editAuthor, setEditAuthor] = useState<Author>()
-  const deleteAuthor = async (deletedAuthor: Author) => {
-    await authorRepo.delete(deletedAuthor)
+
+  const editAuthorSaved = (editAuthor: Author) => {
+    const isExisting = authors.authors.find((a) => a.id === editAuthor.id)
+
+    const newAuthors = isExisting
+      ? authors.authors.map((author) =>
+          author.id === editAuthor.id ? editAuthor : author
+        )
+      : [...authors.authors, editAuthor]
+
     setAuthors({
-      authors: authors.authors.filter(
-        (author) => deletedAuthor.id !== author.id
-      ),
+      authors: newAuthors,
       paginator: authors.paginator
     })
   }
-  const editAuthorSaved = (editAuthor: Author) =>
-    setAuthors({
-      authors: authors.authors.map((author) =>
-        author.id === editAuthor.id ? editAuthor : author
-      ),
-      paginator: authors.paginator
-    })
 
-  const isDesktop = useIsDesktop()
+  const columns: GridColDef[] = [
+    { field: 'firstName', headerName: 'FIRST NAME', flex: 100 },
+    { field: 'lastName', headerName: 'LAST NAME', flex: 100 },
+    {
+      field: 'city',
+      headerName: 'CITY',
+      flex: 130
+    },
+    {
+      field: 'stateAbbr',
+      headerName: 'STATE',
+      flex: 50
+    },
+    {
+      field: 'manuscripts',
+      headerName: 'MANUSCRIPTS',
+      flex: 60,
+      headerAlign: 'center',
+      align: 'center',
+      valueGetter: (_value, row) => {
+        return row.manuscripts?.length === undefined
+          ? 0
+          : row.manuscripts?.length
+      }
+    },
+    {
+      field: 'createdAt',
+      headerName: 'ADDED',
+      flex: 60,
+      valueGetter: (_value, row) => {
+        return new Date(row.createdAt).toLocaleDateString('en-us', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        })
+      }
+    }
+  ]
+
+  const Row = ({ ...props }) => {
+    return (
+      <Link
+        to={`/authors/${props.row.id}`}
+        style={{ color: 'black', textDecoration: 'none' }}
+      >
+        <GridRow {...props} />
+      </Link>
+    )
+  }
 
   return (
-    <div>
-      <Box display="flex" justifyContent="space-between">
-        <TextField
-          label="Search"
-          variant="filled"
-          value={filter.search}
-          onChange={(e) => patchFilter({ search: e.target.value })}
+    <div style={{ padding: '20px', textAlign: 'center' }}>
+      <Typography
+        variant="h4"
+        sx={{
+          color: 'rgb(25, 118, 210)',
+          filter: 'drop-shadow(3px 3px 4px #AAAAAA)',
+          fontWeight: 'bold'
+        }}
+      >
+        AUTHORS
+      </Typography>
+      <div style={{ padding: '20px' }}>
+        <DataGrid
+          rows={authors.authors}
+          columns={columns}
+          slots={{
+            // @ts-ignore
+            row: Row as DataGridProps['slots']['row'],
+            footer: () => <div />
+          }}
+          paginationMode="server"
+          initialState={{}}
         />
-        <div>
-          {isDesktop ? (
+        <Box display="flex" justifyContent="space-between">
+          <div
+            style={{
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'flex-end',
+              marginTop: 20
+            }}
+          >
             <Button
               variant="contained"
               onClick={() => setEditAuthor(new Author())}
@@ -113,95 +139,18 @@ export const AuthorsList: React.FC<{}> = () => {
             >
               Add Author
             </Button>
-          ) : (
-            <Button
-              onClick={() => setEditAuthor(new Author())}
-              variant="contained"
-            >
-              <AddIcon />
-            </Button>
-          )}
-        </div>
-      </Box>
-      <List>
-        {authors.paginator ? (
-          <InfiniteLoader
-            isItemLoaded={isItemLoaded}
-            itemCount={itemCount}
-            loadMoreItems={loadMoreItems}
-          >
-            {({ onItemsRendered, ref }) => (
-              <FixedSizeList
-                className="List"
-                height={1000}
-                itemCount={itemCount}
-                itemSize={50}
-                onItemsRendered={onItemsRendered}
-                ref={ref}
-                width={'100%'}
-              >
-                {({ index, style }) => {
-                  if (!isItemLoaded(index)) {
-                    return <div style={style}>Loading...</div>
-                  } else {
-                    const author = authors.authors[index]
-                    return (
-                      <div style={style}>
-                        <ListItem
-                          disablePadding
-                          key={author.id}
-                          secondaryAction={
-                            <IconButton
-                              edge="end"
-                              aria-label="edit"
-                              onClick={() => setEditAuthor(author)}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                          }
-                        >
-                          <ListItemButton
-                            component={Link}
-                            to={`/authors/${author.id}`}
-                          >
-                            <ListItemText
-                              primary={
-                                <div>
-                                  {author.firstName +
-                                    ' ' +
-                                    author.lastName +
-                                    ' ' +
-                                    author.city +
-                                    ', ' +
-                                    author.stateAbbr +
-                                    ' ' +
-                                    (author.manuscripts?.length === undefined
-                                      ? 0
-                                      : author.manuscripts?.length) +
-                                    ' manuscripts'}
-                                </div>
-                              }
-                            />
-                          </ListItemButton>
-                        </ListItem>
-                      </div>
-                    )
-                  }
-                }}
-              </FixedSizeList>
-            )}
-          </InfiniteLoader>
-        ) : null}
-      </List>
-      {editAuthor && (
-        <AuthorEdit
-          author={editAuthor}
-          onClose={() => setEditAuthor(undefined)}
-          onSaved={(author) => {
-            editAuthorSaved(author)
-          }}
-        />
-      )}
+          </div>
+        </Box>
+        {editAuthor && (
+          <AuthorEdit
+            author={editAuthor}
+            onClose={() => setEditAuthor(undefined)}
+            onSaved={(author) => {
+              editAuthorSaved(author)
+            }}
+          />
+        )}
+      </div>
     </div>
   )
 }

@@ -37,21 +37,24 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
   const [errors, setErrors] = useState<ErrorInfo<Author>>()
   const [manuscripts, setManuscripts] = useState<Manuscript[]>([])
   const [editManuscript, setEditManuscript] = useState<Manuscript | undefined>()
+  console.log('AuthorEdit:', author)
 
   useEffect(() => {
-    authorRepo
-      .relations(author)
-      .manuscripts.find({
-        include: {
-          manuscript: true
-        }
-      })
-      .then((authorManuscript) => {
-        const manuscripts = authorManuscript
-          .filter((authorManuscript) => authorManuscript.manuscript)
-          .map((authorManuscript) => authorManuscript.manuscript)
-        setManuscripts(manuscripts)
-      })
+    if (author.firstName !== '') {
+      authorRepo
+        .relations(author)
+        .manuscripts.find({
+          include: {
+            manuscript: true
+          }
+        })
+        .then((authorManuscript) => {
+          const manuscripts = authorManuscript
+            .filter((authorManuscript) => authorManuscript.manuscript)
+            .map((authorManuscript) => authorManuscript.manuscript)
+          setManuscripts(manuscripts)
+        })
+    }
   }, [author])
 
   const handleClose = () => {
@@ -63,7 +66,9 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
     try {
       setErrors(undefined)
       author = Object.assign(author, state)
-      await author.saveWithManuscripts!(manuscripts.map((c) => c.id!))
+      await author.saveWithManuscripts!(
+        manuscripts.map((manuscript) => manuscript.id!)
+      )
       onSaved(author)
       handleClose()
     } catch (err: any) {
@@ -78,8 +83,9 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
   // }
 
   const editManuscriptSaved = async (afterEditManuscript: Manuscript) => {
+    const newManuscripts = [afterEditManuscript, ...manuscripts]
+    setManuscripts(newManuscripts)
     await manuscriptsRepo.insert(afterEditManuscript)
-    setManuscripts([afterEditManuscript, ...manuscripts])
   }
 
   const createManuscript = () => {
@@ -337,6 +343,7 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
                 manuscript={editManuscript}
                 onClose={() => setEditManuscript(undefined)}
                 onSaved={(manuscript: Manuscript) => {
+                  console.log('onSaved:', manuscript)
                   editManuscriptSaved(manuscript)
                 }}
               />

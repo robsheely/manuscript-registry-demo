@@ -36,7 +36,8 @@ const ScriptDisplay = ({ file }: Props) => {
         docx
           .renderAsync(template, ref.current, ref.current, {
             ignoreWidth: true,
-            inWrapper: false
+            inWrapper: false,
+            renderHeaders: false
           })
           .then(() => console.log('docx: finished'))
         console.log('buffer: ', template)

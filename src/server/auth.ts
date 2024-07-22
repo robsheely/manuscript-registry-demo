@@ -1,34 +1,26 @@
+// src/server/auth.ts
+
 import express, { Router } from 'express'
-import { remult, UserInfo } from 'remult'
-import { AccountManager } from '../AccountManagers/AccountManager.entity'
-import { api } from './api'
+import type { UserInfo } from 'remult'
+
+const validUsers: UserInfo[] = [
+  { id: '1', name: 'Jane', roles: ['admin'] },
+  { id: '2', name: 'Steve' }
+]
 
 export const auth = Router()
-auth.use(express.json())
-auth.post(
-  '/api/signIn',
-  //@ts-ignore
-  api.withRemult,
-  async (req, res) => {
-    const accountManager = await remult.repo(AccountManager).findFirst({
-      firstName: req.body.username
-    })
-    if (accountManager) {
-      const user: UserInfo = {
-        id: accountManager.id!,
-        name: accountManager.firstName + ' ' + accountManager.lastName,
-        roles: [],
-        avatar: accountManager.avatar
-      }
-      req.session!['user'] = user
-      res.json(user)
-    } else {
-      res
-        .status(404)
-        .json('Invalid User, Try: ' + (await AccountManager.getValidUserName()))
-    }
+
+auth.use(express.json({ limit: '10mb' }))
+
+auth.post('/api/signIn', (req, res) => {
+  const user = validUsers.find((user) => user.name === req.body.username)
+  if (user) {
+    req.session!['user'] = user
+    res.json(user)
+  } else {
+    res.status(404).json("Invalid user, try 'Steve' or 'Jane'")
   }
-)
+})
 
 auth.post('/api/signOut', (req, res) => {
   req.session!['user'] = null

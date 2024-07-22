@@ -20,11 +20,11 @@ app.use(
   session({ secret: process.env['TOKEN_SIGN_KEY'] || 'my secret' })
 )
 app.use(auth)
-console.log('process.env-2', process.env.PORT)
 
 app.get('/api/test', (_req, res) => res.send('ok'))
 //@ts-ignore
 app.use(api)
+console.log('process.env-2', process.env.PORT)
 
 app.use(
   '/api/docs',
@@ -74,7 +74,7 @@ const yoga = createYoga({
 })
 
 app.use(yoga.graphqlEndpoint, api.withRemult, (req, res) => {
-  remult.user = { id: 'admin', avatar: '' } //this is a hack to make sure the admin user is logged in
+  remult.user = { id: 'admin' } //this is a hack to make sure the admin user is logged in
   yoga(req, res)
 })
 console.log('process.env-4', process.env.PORT)
