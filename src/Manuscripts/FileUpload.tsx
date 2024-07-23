@@ -51,7 +51,6 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   } = {},
   onChange
 }) => {
-  const [imageUrl, setImageUrl] = React.useState(url)
   const [labelText, setLabelText] = React.useState<string>(hoverLabel)
   const [isDragOver, setIsDragOver] = React.useState<boolean>(false)
 
@@ -98,9 +97,6 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       stopDefaults(event)
       setLabelText(hoverLabel)
       setIsDragOver(false)
-      if (event.dataTransfer.files) {
-        setImageUrl(URL.createObjectURL(event.dataTransfer.files[0]))
-      }
       handleDrop(event)
     }
   }
@@ -114,7 +110,6 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       )
     )
     if (file.type == DOCX_TYPE) {
-      setImageUrl(file.name)
       onChange({ name: file.name, image: base64 })
     }
   }
