@@ -15,7 +15,7 @@ import { Author } from '../Authors/Author.entity'
 
 type Props = {
   manuscript: Manuscript
-  author: Author
+  author?: Author
 }
 
 export const ManuscriptDetails: React.FC<Props> = ({
@@ -27,20 +27,24 @@ export const ManuscriptDetails: React.FC<Props> = ({
       <Box flex="1">
         <Card>
           <CardContent>
-            <Typography variant="h4">Details</Typography>
-            <Divider sx={{ marginBottom: 3 }} />
             <Stack spacing={2}>
-              <Typography variant="h6">
-                <Link component={RouterLink} to={`/authors/${author?.id}`}>
-                  {`By ${author?.firstName} ${author?.lastName}`}
-                </Link>
-              </Typography>
+              <div style={{ textAlign: 'center', marginBottom: 3 }}>
+                <Typography variant="h6">
+                  <Link component={RouterLink} to={`/authors/${author?.id}`}>
+                    {`By ${author?.firstName} ${author?.lastName}`}
+                  </Link>
+                </Typography>
+              </div>
               <Stack
-                direction={{ xs: 'column', sm: 'row' }}
+                direction={{ sm: 'row' }}
                 justifyContent="space-between"
                 spacing={2}
               >
-                <TextField label="Genre" value={manuscript.genre.caption} />
+                <TextField
+                  sx={{ flexGrow: 5 }}
+                  label="Genre"
+                  value={manuscript.genre.caption}
+                />
                 <TextField label="Age" value={manuscript.ageGroup.caption} />
                 <TextField label="Word count" value={manuscript.wordCount} />
               </Stack>

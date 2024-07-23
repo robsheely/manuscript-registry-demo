@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Typography, Divider } from '@mui/material'
+import { Box, Card, CardContent } from '@mui/material'
 import React from 'react'
 import { Manuscript } from './Manuscript.entity'
 import ScriptDisplay from './ScriptDisplay'
@@ -13,8 +13,6 @@ export const ManuscriptScript: React.FC<Props> = ({ manuscript }: Props) => {
       <Box flex="1">
         <Card>
           <CardContent>
-            <Typography variant="h4">Manuscript</Typography>
-            <Divider />
             <ScriptDisplay file={manuscript.script} />
           </CardContent>
         </Card>

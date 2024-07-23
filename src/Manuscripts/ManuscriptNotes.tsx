@@ -2,7 +2,6 @@ import {
   Box,
   Card,
   CardContent,
-  Typography,
   TextField,
   Stack,
   Button,
@@ -39,8 +38,6 @@ export const ManuscriptNotes: React.FC<Props> = ({ manuscript }: Props) => {
       <Box flex="1">
         <Card>
           <CardContent>
-            <Typography variant="h4">Notes</Typography>
-            <Divider />
             <Box mt={2}>
               <TextField
                 label="Add a note"

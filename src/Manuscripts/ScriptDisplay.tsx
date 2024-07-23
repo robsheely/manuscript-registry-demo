@@ -32,6 +32,7 @@ const ScriptDisplay = ({ file }: Props) => {
         const template = fileData.arrayBuffer()
         docx
           .renderAsync(template, ref.current, ref.current, {
+            ignoreHeight: true,
             ignoreWidth: true,
             inWrapper: false,
             renderHeaders: false
@@ -42,7 +43,7 @@ const ScriptDisplay = ({ file }: Props) => {
   }, [])
 
   return (
-    <div className="App">
+    <div>
       <div
         ref={ref}
         id="panel-section"
