@@ -77,12 +77,15 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
   }
 
   // const deleteManuscript = async (deletedManuscript: Manuscript) => {
-  //     await amRepo.delete(deletedManuscript);
+  //     await manuscriptsRepo.delete(deletedManuscript);
   //     setManuscripts(manuscripts.filter(contact => deletedManuscript.id !== contact.id));
   // }
 
   const editManuscriptSaved = async (afterEditManuscript: Manuscript) => {
-    const newManuscripts = [afterEditManuscript, ...manuscripts]
+    const newManuscripts =
+      editManuscript?.title === ''
+        ? [afterEditManuscript, ...manuscripts]
+        : [...manuscripts]
     setManuscripts(newManuscripts)
     await manuscriptsRepo.insert(afterEditManuscript)
   }
