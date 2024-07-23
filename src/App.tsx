@@ -79,7 +79,7 @@ function App({ signOut }: { signOut: VoidFunction }) {
             <Toolbar>
               <Box>
                 <img
-                  src="MSWLAcademylogofinal.webp"
+                  src="/MSWLAcademylogofinal.webp"
                   style={{
                     filter: 'drop-shadow(3px 3px 4px #333333)',
                     marginRight: 10

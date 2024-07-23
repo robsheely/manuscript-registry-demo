@@ -158,8 +158,8 @@ export const AuthorsList: React.FC<{}> = () => {
     <div style={{ padding: '20px', textAlign: 'center' }}>
       <Typography
         variant="h4"
+        color="primary"
         sx={{
-          color: 'rgb(25, 118, 210)',
           filter: 'drop-shadow(3px 3px 4px #AAAAAA)',
           fontWeight: 'bold'
         }}

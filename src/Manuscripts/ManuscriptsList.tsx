@@ -45,13 +45,14 @@ export const ManuscriptsList: React.FC<{
       headerName: 'STATUS',
       headerAlign: 'center',
       align: 'center',
-      flex: 150,
+      flex: 120,
       renderCell: (params) => {
         return (
           <Select
             size="small"
             autoWidth={true}
             label="Status"
+            sx={{ width: '100%' }}
             value={params.value.id}
             onClick={(e) => {
               e.preventDefault()

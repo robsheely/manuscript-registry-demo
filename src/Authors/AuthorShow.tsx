@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Card,
   CardContent,
   Divider,
@@ -7,11 +8,12 @@ import {
   Typography
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { remult } from 'remult'
 import { ManuscriptsList } from '../Manuscripts/ManuscriptsList'
 import { Author } from './Author.entity'
 import { Manuscript } from '../Manuscripts/Manuscript.entity'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 
 const authorRepo = remult.repo(Author)
 
@@ -48,6 +50,15 @@ export const AuthorShow: React.FC<{}> = () => {
   return (
     <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ width: '100%' }}>
       <Box flex="1">
+        <Button
+          color="primary"
+          component={Link}
+          to={'/authors/'}
+          sx={{ marginBottom: 2 }}
+          startIcon={<ArrowBackIcon />}
+        >
+          Authors
+        </Button>
         <Stack spacing={5}>
           <Card>
             <CardContent>

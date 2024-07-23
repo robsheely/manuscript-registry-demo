@@ -1,6 +1,6 @@
-import { Box, Typography, Tab } from '@mui/material'
+import { Box, Typography, Tab, Button } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { repo } from 'remult'
 import { Manuscript } from './Manuscript.entity'
 import { Author } from '../Authors/Author.entity'
@@ -8,6 +8,7 @@ import { TabContext, TabList, TabPanel } from '@mui/lab'
 import { ManuscriptDetails } from './ManuscriptDetails'
 import { ManuscriptScript } from './ManuscriptScript'
 import { ManuscriptNotes } from './ManuscriptNotes'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 
 export const ManuscriptShow: React.FC<{}> = () => {
   let params = useParams()
@@ -39,8 +40,17 @@ export const ManuscriptShow: React.FC<{}> = () => {
   if (!manuscript) return <span>not found</span>
 
   return (
-    <Box mt={2} display="flex">
+    <Box display="flex">
       <Box flex="1">
+        <Button
+          color="primary"
+          component={Link}
+          to={'/'}
+          sx={{ marginBottom: 1 }}
+          startIcon={<ArrowBackIcon />}
+        >
+          Manuscripts
+        </Button>
         <div style={{ textAlign: 'center' }}>
           <Typography variant="h4">{manuscript.title}</Typography>
         </div>
