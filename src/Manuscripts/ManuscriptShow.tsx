@@ -57,7 +57,6 @@ export const ManuscriptShow: React.FC<{}> = () => {
               </Stack>
               <TextField
                 fullWidth
-                fullWidth
                 label="Target audience"
                 value={manuscript.target}
               />

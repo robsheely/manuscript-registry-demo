@@ -321,7 +321,10 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
               />
             </Stack>
             <Typography>Manuscripts:</Typography>
-            <ManuscriptsList manuscripts={manuscripts} />
+            <ManuscriptsList
+              manuscripts={manuscripts}
+              setStatusForManuscript={() => {}}
+            />
             <Stack
               direction={{ xs: 'column', sm: 'row' }}
               justifyContent="flex-end"
