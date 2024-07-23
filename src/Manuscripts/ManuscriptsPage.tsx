@@ -61,7 +61,7 @@ export const ManuscriptsPage: React.FC<{}> = () => {
 
   const handleSetStatusForManuscript = async (
     manuscript: Manuscript,
-    status: Status
+    status: StatusFilter
   ) => {
     const newMan = await manuscriptRepo.update(manuscript, { status })
     setManuscripts((manuscripts) => {
