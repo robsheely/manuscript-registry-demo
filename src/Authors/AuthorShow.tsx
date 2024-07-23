@@ -117,7 +117,10 @@ export const AuthorShow: React.FC<{}> = () => {
             <Stack spacing={5}>
               <Typography variant="h5">Manuscripts:</Typography>
               <Box sx={{ width: '100%', typography: 'body1' }}>
-                <ManuscriptsList manuscripts={manuscripts} />
+                <ManuscriptsList
+                  manuscripts={manuscripts}
+                  setStatusForManuscript={() => {}}
+                />
               </Box>
             </Stack>
           </CardContent>
