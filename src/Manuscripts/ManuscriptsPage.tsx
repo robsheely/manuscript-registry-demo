@@ -8,7 +8,7 @@ import {
   ManuscriptFilterState,
   ManuscriptFilterEdit
 } from './ManuscriptFilterEdit'
-import { Status } from './Status'
+import { StatusFilter } from './StatusFilter'
 
 const manuscriptRepo = remult.repo(Manuscript)
 
@@ -19,7 +19,7 @@ const initialFilterState = {
   ageGroups: [],
   minWordCount: 0,
   maxWordCount: 0,
-  status: Status.all
+  status: StatusFilter.all
 }
 
 export const ManuscriptsPage: React.FC<{}> = () => {
@@ -92,7 +92,7 @@ export const ManuscriptsPage: React.FC<{}> = () => {
         manuscript.wordCount >= filterState.minWordCount) &&
       (!filterState.maxWordCount ||
         manuscript.wordCount <= filterState.maxWordCount) &&
-      (filterState.status.id === Status.all.id ||
+      (filterState.status.id === StatusFilter.all.id ||
         manuscript.status.id === filterState.status.id)
     )
   })

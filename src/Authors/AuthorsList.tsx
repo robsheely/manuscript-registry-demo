@@ -62,6 +62,7 @@ export const AuthorsList: React.FC<{}> = () => {
       authors: newAuthors,
       paginator: authors.paginator
     })
+    setEditAuthor(undefined)
   }
 
   const filteredAuthors = authors.authors.filter((author) => {
@@ -145,7 +146,7 @@ export const AuthorsList: React.FC<{}> = () => {
   const Row = ({ ...props }) => {
     return (
       <Link
-        to={editAuthor ? `/authors/${props.row.id}` : '#'}
+        to={!editAuthor ? `/authors/${props.row.id}` : '#'}
         style={{ color: 'black', textDecoration: 'none' }}
       >
         <GridRow {...props} />

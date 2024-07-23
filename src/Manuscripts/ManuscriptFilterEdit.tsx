@@ -23,7 +23,7 @@ import { getValueList } from 'remult'
 import { Genre } from '../Authors/Genre'
 import { AgeGroup } from '../Authors/AgeGroup'
 import NumberInput from '../utils/NumberInput'
-import { Status } from './Status'
+import { StatusFilter } from './StatusFilter'
 
 type Props = {
   state: ManuscriptFilterState
@@ -38,7 +38,7 @@ export type ManuscriptFilterState = {
   ageGroups: AgeGroup[]
   minWordCount: number
   maxWordCount: number
-  status: Status
+  status: StatusFilter
 }
 
 export const ManuscriptFilterEdit: React.FC<Props> = ({
@@ -85,7 +85,7 @@ export const ManuscriptFilterEdit: React.FC<Props> = ({
     }
     setNewState({ ...newState, ageGroups })
   }
-  const statuses = getValueList(Status)
+  const statuses = getValueList(StatusFilter)
 
   return (
     <Dialog open={Boolean(state)} onClose={handleClose}>
@@ -116,9 +116,9 @@ export const ManuscriptFilterEdit: React.FC<Props> = ({
                 size="small"
                 label="Status"
                 autoWidth
-                value={newState.status?.id || Status.all.id}
+                value={newState.status?.id || StatusFilter.all.id}
                 onChange={(e) => {
-                  const chosenStatus = getValueList(Status).find(
+                  const chosenStatus = getValueList(StatusFilter).find(
                     (status) => status.id === e.target.value
                   )
                   setNewState({ ...newState, status: chosenStatus! })
