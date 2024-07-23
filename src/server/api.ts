@@ -11,7 +11,7 @@ export const entities = [Author, Manuscript, AuthorManuscript]
 export const api = remultExpress({
   getUser: (req) => req.session!['user'],
   dataProvider: createPostgresDataProvider({
-    connectionString: 'postgres://postgres:dempsey@localhost/postgres'
+    connectionString: process.env.DATABASE_URL
   }),
   entities,
   admin: false
