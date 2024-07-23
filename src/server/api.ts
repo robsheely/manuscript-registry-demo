@@ -4,9 +4,10 @@ import { config } from 'dotenv'
 import { AuthorManuscript } from '../Authors/AuthorManuscript.entity'
 import { Author } from '../Authors/Author.entity'
 import { Manuscript } from '../Manuscripts/Manuscript.entity'
+import { ManuscriptNote } from '../Manuscripts/ManuscriptNote.entity'
 
 config()
-export const entities = [Author, Manuscript, AuthorManuscript]
+export const entities = [Author, Manuscript, AuthorManuscript, ManuscriptNote]
 
 export const api = remultExpress({
   getUser: (req) => req.session!['user'],

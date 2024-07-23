@@ -1,7 +1,7 @@
 import { Allow, Entity, Fields, Relations } from 'remult'
 import { Manuscript } from './Manuscript.entity'
 
-@Entity<ManuscriptNote>('contactNote', {
+@Entity<ManuscriptNote>('manuscriptNote', {
   allowApiCrud: Allow.authenticated,
   defaultOrderBy: {
     createdAt: 'desc'
@@ -10,10 +10,10 @@ import { Manuscript } from './Manuscript.entity'
 export class ManuscriptNote {
   @Fields.uuid()
   id?: string
-  @Fields.string({ dbName: 'contact' })
+  @Fields.string({ dbName: 'manuscript' })
   manuscriptId = ''
   @Relations.toOne<ManuscriptNote, Manuscript>(() => Manuscript, 'manuscriptId')
-  contact?: Manuscript
+  manuscript?: Manuscript
   @Fields.string()
   text = ''
   @Fields.date()
