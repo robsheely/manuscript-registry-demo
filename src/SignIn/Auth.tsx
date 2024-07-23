@@ -31,7 +31,7 @@ function Auth() {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ username: signInUsername })
+      body: JSON.stringify({ username: signInUsername, password })
     })
     if (result.ok) {
       setCurrentUser(await result.json())

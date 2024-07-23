@@ -56,25 +56,6 @@ function App({ signOut }: { signOut: VoidFunction }) {
         />
 
         <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <Drawer
-            anchor="left"
-            open={openDrawer}
-            onClose={() => setOpenDrawer(false)}
-          >
-            <List>
-              {routes.map((route) => (
-                <ListItem key={route.path} disablePadding>
-                  <ListItemButton
-                    component={Link}
-                    to={route.path}
-                    onClick={() => setOpenDrawer(false)}
-                  >
-                    <ListItemText primary={route.caption} />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>
-          </Drawer>
           <AppBar position="static" sx={{ mb: 1 }}>
             <Toolbar>
               <Box>
@@ -106,12 +87,12 @@ function App({ signOut }: { signOut: VoidFunction }) {
               ))}
 
               <Box sx={{ flexGrow: 0, marginLeft: 1 }}>
-                <Tooltip title={remult.user!.name!}>
-                  <IconButton
-                    onClick={(e) => setAnchorElUser(e.currentTarget)}
-                    sx={{ p: 0, filter: 'drop-shadow(3px 3px 4px #333333)' }}
-                  ></IconButton>
-                </Tooltip>
+                <Button
+                  color="inherit"
+                  onClick={(e) => setAnchorElUser(e.currentTarget)}
+                >
+                  {remult.user!.name!}
+                </Button>
                 <Menu
                   sx={{ mt: '45px' }}
                   id="menu-appbar"

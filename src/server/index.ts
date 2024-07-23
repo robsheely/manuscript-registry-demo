@@ -13,7 +13,6 @@ const app = express()
 app.use(sslRedirect())
 //app.use(helmet({ contentSecurityPolicy: false,crossOriginResourcePolicy:false }));//removed because avatar image urls point to a different website
 app.use(compression())
-console.log('BOO BOO')
 
 app.use(
   '/api',
@@ -24,7 +23,6 @@ app.use(auth)
 app.get('/api/test', (_req, res) => res.send('ok'))
 //@ts-ignore
 app.use(api)
-console.log('process.env-2', process.env.PORT)
 
 app.use(
   '/api/docs',
@@ -77,7 +75,6 @@ app.use(yoga.graphqlEndpoint, api.withRemult, (req, res) => {
   remult.user = { id: 'admin' } //this is a hack to make sure the admin user is logged in
   yoga(req, res)
 })
-console.log('process.env-4', process.env.PORT)
 
 app.use(express.static('dist'))
 
@@ -86,5 +83,4 @@ app.use('/*', async (_req, res) => {
 })
 
 app.listen(process.env.PORT || 3002, () => console.log('BE Server started'))
-console.log('process.env-5', process.env.PORT)
 app.listen(5173, () => console.log(' FE Server started'))

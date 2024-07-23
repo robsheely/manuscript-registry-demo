@@ -323,6 +323,7 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
             <Typography>Manuscripts:</Typography>
             <ManuscriptsList
               manuscripts={manuscripts}
+              setEditManuscript={setEditManuscript}
               setStatusForManuscript={() => {}}
             />
             <Stack

@@ -136,6 +136,7 @@ export const ManuscriptsPage: React.FC<{}> = () => {
 
           <ManuscriptsList
             manuscripts={filteredManuscripts}
+            showStatusFilter={true}
             setStatusForManuscript={handleSetStatusForManuscript}
           />
           {showFilterDialog && (

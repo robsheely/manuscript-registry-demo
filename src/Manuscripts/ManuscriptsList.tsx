@@ -5,14 +5,22 @@ import { Link } from 'react-router-dom'
 import { getValueList, remult } from 'remult'
 import { DataGrid, DataGridProps, GridColDef, GridRow } from '@mui/x-data-grid'
 import { Status } from './Status'
-import { MenuItem, Select } from '@mui/material'
+import { IconButton, MenuItem, Select } from '@mui/material'
+import EditIcon from '@mui/icons-material/Edit'
 
 const authorRepo = remult.repo(Author)
 
 export const ManuscriptsList: React.FC<{
   manuscripts: Manuscript[]
   setStatusForManuscript: (manuscript: Manuscript, status: Status) => void
-}> = ({ manuscripts, setStatusForManuscript }) => {
+  showStatusFilter?: boolean
+  setEditManuscript?: (manuscript: Manuscript) => void
+}> = ({
+  manuscripts,
+  setStatusForManuscript,
+  showStatusFilter,
+  setEditManuscript
+}) => {
   const [authors, setAuthors] = useState<Author[]>([])
 
   const statuses = getValueList(Status)
@@ -24,22 +32,7 @@ export const ManuscriptsList: React.FC<{
     })()
   }, [])
 
-  const columns: GridColDef[] = [
-    { field: 'title', headerName: 'TITLE', flex: 200 },
-    { field: 'author', headerName: 'AUTHOR', flex: 130 },
-    {
-      field: 'genre',
-      headerName: 'GENRE',
-      flex: 130,
-      valueGetter: (_value, row) => row.genre.caption
-    },
-    {
-      field: 'age',
-      headerName: 'AGE',
-      flex: 90,
-      valueGetter: (_value, row) => row.ageGroup.caption
-    },
-    { field: 'wordCount', headerName: 'WORDS', flex: 100 },
+  const filterColumns: GridColDef[] = [
     {
       field: 'status',
       headerName: 'STATUS',
@@ -75,7 +68,64 @@ export const ManuscriptsList: React.FC<{
           </Select>
         )
       }
+    },
+    {
+      field: 'createdAt',
+      headerName: 'ADDED',
+      flex: 100,
+      valueGetter: (_value, row) => {
+        return new Date(row.createdAt).toLocaleDateString('en-us', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        })
+      }
     }
+  ]
+
+  const editColumns: GridColDef[] = [
+    {
+      field: 'id',
+      headerName: 'EDIT',
+      headerAlign: 'center',
+      align: 'center',
+      flex: 60,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => {
+        return (
+          <IconButton
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              setEditManuscript && setEditManuscript(params.row)
+            }}
+            style={{ marginLeft: '10px' }}
+          >
+            <EditIcon sx={{ color: '#1976d2' }} />
+          </IconButton>
+        )
+      }
+    }
+  ]
+
+  const columns: GridColDef[] = [
+    { field: 'title', headerName: 'TITLE', flex: 200 },
+    { field: 'author', headerName: 'AUTHOR', flex: 130 },
+    {
+      field: 'genre',
+      headerName: 'GENRE',
+      flex: 130,
+      valueGetter: (_value, row) => row.genre.caption
+    },
+    {
+      field: 'age',
+      headerName: 'AGE',
+      flex: 90,
+      valueGetter: (_value, row) => row.ageGroup.caption
+    },
+    { field: 'wordCount', headerName: 'WORDS', flex: 100 },
+    ...(showStatusFilter ? filterColumns : editColumns)
   ]
 
   const rows = manuscripts.map((manuscript) => {
