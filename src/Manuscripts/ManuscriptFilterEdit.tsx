@@ -13,7 +13,9 @@ import {
   FormControlLabel,
   Checkbox,
   FormGroup,
-  Typography
+  Typography,
+  Select,
+  MenuItem
 } from '@mui/material'
 import { useState } from 'react'
 import { getValueList } from 'remult'
@@ -21,6 +23,7 @@ import { getValueList } from 'remult'
 import { Genre } from '../Authors/Genre'
 import { AgeGroup } from '../Authors/AgeGroup'
 import NumberInput from '../utils/NumberInput'
+import { Status } from './Status'
 
 type Props = {
   state: ManuscriptFilterState
@@ -35,6 +38,7 @@ export type ManuscriptFilterState = {
   ageGroups: AgeGroup[]
   minWordCount: number
   maxWordCount: number
+  status: Status
 }
 
 export const ManuscriptFilterEdit: React.FC<Props> = ({
@@ -81,6 +85,7 @@ export const ManuscriptFilterEdit: React.FC<Props> = ({
     }
     setNewState({ ...newState, ageGroups })
   }
+  const statuses = getValueList(Status)
 
   return (
     <Dialog open={Boolean(state)} onClose={handleClose}>
@@ -107,6 +112,24 @@ export const ManuscriptFilterEdit: React.FC<Props> = ({
                   setNewState({ ...newState, author: e.target.value })
                 }
               />
+              <Select
+                size="small"
+                label="Status"
+                autoWidth
+                value={newState.status?.id || Status.all.id}
+                onChange={(e) => {
+                  const chosenStatus = getValueList(Status).find(
+                    (status) => status.id === e.target.value
+                  )
+                  setNewState({ ...newState, status: chosenStatus! })
+                }}
+              >
+                {statuses.map((status) => (
+                  <MenuItem key={status.id} value={status.id}>
+                    {status.caption}
+                  </MenuItem>
+                ))}
+              </Select>
             </Stack>
             <Divider />
             <Stack

@@ -27,8 +27,7 @@ const IconBox = styled(Box)({
   display: 'flex',
   justifyContent: 'center',
   flexDirection: 'column',
-  alignItems: 'center',
-  position: 'absolute'
+  alignItems: 'center'
 })
 
 const NoMouseBox = styled(Box)({

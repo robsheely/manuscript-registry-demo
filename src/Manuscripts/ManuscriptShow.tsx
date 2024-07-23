@@ -57,10 +57,16 @@ export const ManuscriptShow: React.FC<{}> = () => {
               </Stack>
               <TextField
                 fullWidth
+                fullWidth
                 label="Target audience"
                 value={manuscript.target}
               />
-              <TextField fullWidth label="Blurb" value={manuscript.blurb} />
+              <TextField
+                multiline
+                fullWidth
+                label="Blurb"
+                value={manuscript.blurb}
+              />
               <TextField
                 label="Has been published"
                 value={manuscript.published.toString()}

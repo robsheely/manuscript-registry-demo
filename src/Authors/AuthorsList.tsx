@@ -1,8 +1,9 @@
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Button, IconButton, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { remult } from 'remult'
 import { Author } from './Author.entity'
 import AddIcon from '@mui/icons-material/Add'
+import EditIcon from '@mui/icons-material/Edit'
 import { AuthorEdit } from './AuthorEdit'
 import { Link } from 'react-router-dom'
 import { Paginator } from 'remult'
@@ -88,12 +89,12 @@ export const AuthorsList: React.FC<{}> = () => {
     {
       field: 'stateAbbr',
       headerName: 'STATE',
-      flex: 50
+      flex: 40
     },
     {
       field: 'manuscripts',
-      headerName: 'MANUSCRIPTS',
-      flex: 60,
+      headerName: '# MS',
+      flex: 40,
       headerAlign: 'center',
       align: 'center',
       valueGetter: (_value, row) => {
@@ -106,6 +107,8 @@ export const AuthorsList: React.FC<{}> = () => {
       field: 'createdAt',
       headerName: 'ADDED',
       flex: 60,
+      headerAlign: 'center',
+      align: 'center',
       valueGetter: (_value, row) => {
         return new Date(row.createdAt).toLocaleDateString('en-us', {
           year: 'numeric',
@@ -116,15 +119,15 @@ export const AuthorsList: React.FC<{}> = () => {
     },
     {
       field: 'id',
-      headerName: '',
+      headerName: 'EDIT',
       headerAlign: 'center',
+      align: 'center',
       flex: 60,
       sortable: false,
       filterable: false,
       renderCell: (params) => {
         return (
-          <Button
-            variant="contained"
+          <IconButton
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
@@ -132,8 +135,8 @@ export const AuthorsList: React.FC<{}> = () => {
             }}
             style={{ marginLeft: '10px' }}
           >
-            Edit
-          </Button>
+            <EditIcon sx={{ color: '#1976d2' }} />
+          </IconButton>
         )
       }
     }

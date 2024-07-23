@@ -2,15 +2,20 @@ import React, { useEffect, useState } from 'react'
 import { Manuscript } from './Manuscript.entity'
 import { Author } from '../Authors/Author.entity'
 import { Link } from 'react-router-dom'
-import { remult } from 'remult'
+import { getValueList, remult } from 'remult'
 import { DataGrid, DataGridProps, GridColDef, GridRow } from '@mui/x-data-grid'
+import { Status } from './Status'
+import { MenuItem, Select } from '@mui/material'
 
 const authorRepo = remult.repo(Author)
 
 export const ManuscriptsList: React.FC<{
   manuscripts: Manuscript[]
-}> = ({ manuscripts }) => {
+  setStatusForManuscript: (manuscript: Manuscript, status: Status) => void
+}> = ({ manuscripts, setStatusForManuscript }) => {
   const [authors, setAuthors] = useState<Author[]>([])
+
+  const statuses = getValueList(Status)
 
   useEffect(() => {
     ;(async () => {
@@ -38,8 +43,37 @@ export const ManuscriptsList: React.FC<{
     {
       field: 'status',
       headerName: 'STATUS',
-      flex: 90,
-      valueGetter: (_value, row) => row.status?.caption
+      headerAlign: 'center',
+      align: 'center',
+      flex: 150,
+      renderCell: (params) => {
+        return (
+          <Select
+            size="small"
+            autoWidth={true}
+            label="Status"
+            value={params.value.id}
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+            }}
+            onChange={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              const chosenStatus = getValueList(Status).find(
+                (status) => status.id === e.target.value
+              )
+              setStatusForManuscript(params.row, chosenStatus!)
+            }}
+          >
+            {statuses.map((status) => (
+              <MenuItem key={status.id} value={status.id}>
+                {status.caption}
+              </MenuItem>
+            ))}
+          </Select>
+        )
+      }
     }
   ]
 

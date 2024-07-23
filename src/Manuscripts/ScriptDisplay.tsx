@@ -6,12 +6,10 @@ import { DOCX_TYPE } from './FileUpload'
 const dataUrlToFile = (dataUrl: string, filename: string): File | undefined => {
   const arr = dataUrl.split(',')
   if (arr.length < 2) {
-    console.log('too short')
     return undefined
   }
   const mimeArr = arr[0]
   if (!mimeArr || mimeArr.length < 2) {
-    console.log('no type', mimeArr)
     return undefined
   }
   const buff = Buffer.from(arr[1], 'base64')
@@ -31,7 +29,6 @@ const ScriptDisplay = ({ file }: Props) => {
       const fileData = dataUrlToFile(href, file.name)
 
       if (ref.current && fileData) {
-        console.log('rendering:')
         const template = fileData.arrayBuffer()
         docx
           .renderAsync(template, ref.current, ref.current, {
@@ -40,12 +37,9 @@ const ScriptDisplay = ({ file }: Props) => {
             renderHeaders: false
           })
           .then(() => console.log('docx: finished'))
-        console.log('buffer: ', template)
       }
     }
   }, [])
-
-  console.log('file:', file)
 
   return (
     <div className="App">

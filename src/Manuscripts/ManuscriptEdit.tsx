@@ -16,7 +16,7 @@ import {
   FormControlLabel,
   Switch
 } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Manuscript } from './Manuscript.entity'
 import { remult } from 'remult'
 import { ErrorInfo, getValueList } from 'remult'
@@ -25,6 +25,7 @@ import { Genre } from '../Authors/Genre'
 import { AgeGroup } from '../Authors/AgeGroup'
 import NumberInput from '../utils/NumberInput'
 import FileUpload from './FileUpload'
+import { Status } from './Status'
 
 const manuscriptRepo = remult.repo(Manuscript)
 
@@ -44,6 +45,13 @@ export const ManuscriptEdit: React.FC<IProps> = ({
     onClose()
   }
   const [state, setState] = useState(manuscript)
+
+  useEffect(() => {
+    const statuses = getValueList(Status)
+    if (!state.status) {
+      setState({ ...state, status: statuses[1] })
+    }
+  }, [manuscript])
 
   const handleSave = async () => {
     try {
@@ -144,7 +152,7 @@ export const ManuscriptEdit: React.FC<IProps> = ({
                   labelId="wordCount-label"
                   value={state.wordCount}
                   onChange={(_e, value) =>
-                    setState({ ...state, wordCount: value })
+                    setState({ ...state, wordCount: value || 0 })
                   }
                 />
                 <FormHelperText>{errors?.modelState?.wordCount}</FormHelperText>
@@ -160,6 +168,7 @@ export const ManuscriptEdit: React.FC<IProps> = ({
               />
               <TextField
                 label="Blurb"
+                multiline
                 error={Boolean(errors?.modelState?.blurb)}
                 helperText={errors?.modelState?.blurb}
                 fullWidth
@@ -168,6 +177,7 @@ export const ManuscriptEdit: React.FC<IProps> = ({
               />
               <TextField
                 label="Pitch"
+                multiline
                 error={Boolean(errors?.modelState?.pitch)}
                 helperText={errors?.modelState?.pitch}
                 fullWidth
@@ -198,12 +208,12 @@ export const ManuscriptEdit: React.FC<IProps> = ({
                 }
                 label="Has been published before."
               />
+              <FileUpload
+                onChange={(file: { name: string; image: string }) =>
+                  setState({ ...state, script: file })
+                }
+              />
             </Stack>
-            <FileUpload
-              onChange={(file: { name: string; image: string }) =>
-                setState({ ...state, script: file })
-              }
-            />
           </Box>
         </DialogContent>
         <DialogActions>
