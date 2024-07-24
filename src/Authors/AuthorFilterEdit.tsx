@@ -49,7 +49,6 @@ export const AuthorFilterEdit: React.FC<Props> = ({
               label="Name"
               value={newState.name}
               onChange={(e) => {
-                console.log('Name changed:', e.target.value, newState)
                 setNewState({ ...newState, name: e.target.value })
               }}
             />

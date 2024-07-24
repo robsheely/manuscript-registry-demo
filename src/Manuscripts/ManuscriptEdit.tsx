@@ -14,7 +14,8 @@ import {
   MenuItem,
   FormHelperText,
   FormControlLabel,
-  Switch
+  Switch,
+  Typography
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { Manuscript } from './Manuscript.entity'
@@ -23,9 +24,9 @@ import { ErrorInfo, getValueList } from 'remult'
 
 import { Genre } from '../Authors/Genre'
 import { AgeGroup } from '../Authors/AgeGroup'
-import NumberInput from '../utils/NumberInput'
 import FileUpload from './FileUpload'
 import { Status } from './Status'
+import TextEditor from '../utils/TextEditor'
 
 const manuscriptRepo = remult.repo(Manuscript)
 
@@ -41,10 +42,15 @@ export const ManuscriptEdit: React.FC<IProps> = ({
   onClose
 }) => {
   const [errors, setErrors] = useState<ErrorInfo<Manuscript>>()
+  const [state, _setState] = useState(manuscript)
+
   const handleClose = () => {
     onClose()
   }
-  const [state, setState] = useState(manuscript)
+  const setState = (newState: Manuscript) => {
+    console.log('setState:', state.blurb)
+    _setState(newState)
+  }
 
   useEffect(() => {
     const statuses = getValueList(Status)
@@ -64,100 +70,119 @@ export const ManuscriptEdit: React.FC<IProps> = ({
       setErrors(err)
     }
   }
-
   return (
     <div>
-      <Dialog open={Boolean(manuscript)} onClose={handleClose}>
-        <DialogTitle>
+      <Dialog
+        fullWidth
+        maxWidth="lg"
+        open={Boolean(manuscript)}
+        onClose={handleClose}
+      >
+        <DialogTitle align="center">
           {!manuscript.id ? 'Create ' : 'Update '} Manuscript
         </DialogTitle>
         <DialogContent>
           <Box component="form" sx={{ pt: 1 }} noValidate autoComplete="off">
             <Stack spacing={2}>
+              <TextField
+                label="Title"
+                error={Boolean(errors?.modelState?.title)}
+                helperText={errors?.modelState?.title}
+                value={state.title}
+                onChange={(e) => setState({ ...state, title: e.target.value })}
+              />
+              <Divider />
               <Stack
                 direction={{ xs: 'column', sm: 'row' }}
                 justifyContent="space-between"
                 spacing={2}
               >
-                <TextField
-                  label="Title"
-                  error={Boolean(errors?.modelState?.title)}
-                  helperText={errors?.modelState?.title}
-                  value={state.title}
-                  onChange={(e) =>
-                    setState({ ...state, title: e.target.value })
-                  }
-                />
+                <FormControl
+                  sx={{ flexGrow: 4 }}
+                  error={Boolean(errors?.modelState?.genre)}
+                >
+                  <InputLabel id="genre-label">Genre</InputLabel>
+                  <Select
+                    labelId="genre-label"
+                    label="Genre"
+                    value={state.genre?.id}
+                    onChange={(e) =>
+                      setState({
+                        ...state,
+                        genre: getValueList(Genre).find(
+                          (item) => item.id === e.target.value
+                        )!
+                      })
+                    }
+                  >
+                    {getValueList(Genre).map((s) => (
+                      <MenuItem key={s.id} value={s.id}>
+                        {s.caption}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  <FormHelperText>{errors?.modelState?.genre}</FormHelperText>
+                </FormControl>
+
+                <FormControl
+                  sx={{ flexGrow: 2 }}
+                  error={Boolean(errors?.modelState?.ageGroup)}
+                >
+                  <InputLabel id="ageGroup-label">Age Group</InputLabel>
+                  <Select
+                    labelId="ageGroup-label"
+                    label="Age Group"
+                    value={state.ageGroup?.id}
+                    onChange={(e) =>
+                      setState({
+                        ...state,
+                        ageGroup: getValueList(AgeGroup).find(
+                          (item) => item.id === e.target.value
+                        )!
+                      })
+                    }
+                  >
+                    {getValueList(AgeGroup).map((s) => (
+                      <MenuItem key={s.id} value={s.id}>
+                        {s.caption}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  <FormHelperText>
+                    {errors?.modelState?.ageGroup}
+                  </FormHelperText>
+                </FormControl>
+                <FormControl
+                  sx={{ flexGrow: 1 }}
+                  error={Boolean(errors?.modelState?.wordCount)}
+                >
+                  <TextField
+                    label="Word count"
+                    sx={{
+                      '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button':
+                        {
+                          display: 'none'
+                        },
+                      '& input[type=number]': {
+                        MozAppearance: 'textfield'
+                      }
+                    }}
+                    type="number"
+                    error={Boolean(errors?.modelState?.wordCount)}
+                    helperText={errors?.modelState?.wordCount}
+                    value={state.wordCount}
+                    onChange={(e) =>
+                      setState({
+                        ...state,
+                        wordCount: parseInt(e.target.value)
+                      })
+                    }
+                  />
+                  <FormHelperText>
+                    {errors?.modelState?.wordCount}
+                  </FormHelperText>
+                </FormControl>
               </Stack>
-              <Divider />
-              <FormControl
-                sx={{ flexGrow: 1 }}
-                error={Boolean(errors?.modelState?.genre)}
-              >
-                <InputLabel id="genre-label">Genre</InputLabel>
-                <Select
-                  labelId="genre-label"
-                  label="Genre"
-                  value={state.genre?.id}
-                  onChange={(e) =>
-                    setState({
-                      ...state,
-                      genre: getValueList(Genre).find(
-                        (item) => item.id === e.target.value
-                      )!
-                    })
-                  }
-                >
-                  {getValueList(Genre).map((s) => (
-                    <MenuItem key={s.id} value={s.id}>
-                      {s.caption}
-                    </MenuItem>
-                  ))}
-                </Select>
-                <FormHelperText>{errors?.modelState?.genre}</FormHelperText>
-              </FormControl>
-
-              <FormControl
-                sx={{ flexGrow: 1 }}
-                error={Boolean(errors?.modelState?.ageGroup)}
-              >
-                <InputLabel id="ageGroup-label">Age Group</InputLabel>
-                <Select
-                  labelId="ageGroup-label"
-                  label="Age Group"
-                  value={state.ageGroup?.id}
-                  onChange={(e) =>
-                    setState({
-                      ...state,
-                      ageGroup: getValueList(AgeGroup).find(
-                        (item) => item.id === e.target.value
-                      )!
-                    })
-                  }
-                >
-                  {getValueList(AgeGroup).map((s) => (
-                    <MenuItem key={s.id} value={s.id}>
-                      {s.caption}
-                    </MenuItem>
-                  ))}
-                </Select>
-                <FormHelperText>{errors?.modelState?.ageGroup}</FormHelperText>
-              </FormControl>
-              <FormControl
-                sx={{ flexGrow: 1 }}
-                error={Boolean(errors?.modelState?.wordCount)}
-              >
-                <NumberInput
-                  placeHolder="Word count"
-                  labelId="wordCount-label"
-                  value={state.wordCount}
-                  onChange={(_e, value) =>
-                    setState({ ...state, wordCount: value || 0 })
-                  }
-                />
-                <FormHelperText>{errors?.modelState?.wordCount}</FormHelperText>
-              </FormControl>
-
               <TextField
                 label="Target audience"
                 error={Boolean(errors?.modelState?.target)}
@@ -166,14 +191,15 @@ export const ManuscriptEdit: React.FC<IProps> = ({
                 value={state.target}
                 onChange={(e) => setState({ ...state, target: e.target.value })}
               />
-              <TextField
-                label="Blurb"
-                multiline
-                error={Boolean(errors?.modelState?.blurb)}
-                helperText={errors?.modelState?.blurb}
-                fullWidth
-                value={state.blurb}
-                onChange={(e) => setState({ ...state, blurb: e.target.value })}
+              <Divider />
+              <Typography variant="h6">Blurb:</Typography>
+              <TextEditor
+                placeHolder="Blurb"
+                html={state.blurb}
+                setHtml={(html) => {
+                  console.log('setHtml:', html)
+                  setState({ ...state, blurb: html })
+                }}
               />
               <TextField
                 label="Pitch"
@@ -184,17 +210,22 @@ export const ManuscriptEdit: React.FC<IProps> = ({
                 value={state.pitch}
                 onChange={(e) => setState({ ...state, pitch: e.target.value })}
               />
+              <Typography variant="h6">Comparable titles:</Typography>
+              <TextEditor
+                placeHolder="Comparable titles"
+                html={state.comps}
+                setHtml={(html) => {
+                  setState({ ...state, comps: html })
+                }}
+              />
               <Divider />
-              <TextField
-                label="Synopsis"
-                multiline
-                error={Boolean(errors?.modelState?.synopsis)}
-                helperText={errors?.modelState?.synopsis}
-                fullWidth
-                value={state.synopsis}
-                onChange={(e) =>
-                  setState({ ...state, synopsis: e.target.value })
-                }
+              <Typography variant="h6">Synopsis:</Typography>
+              <TextEditor
+                placeHolder="Synopsis"
+                html={state.synopsis}
+                setHtml={(html) => {
+                  setState({ ...state, synopsis: html })
+                }}
               />
 
               <FormControlLabel
@@ -208,6 +239,7 @@ export const ManuscriptEdit: React.FC<IProps> = ({
                 }
                 label="Has been published before."
               />
+              <Divider />
               <FileUpload
                 onChange={(file: { name: string; image: string }) =>
                   setState({ ...state, script: file })

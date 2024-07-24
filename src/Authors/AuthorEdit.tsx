@@ -22,6 +22,7 @@ import { ManuscriptsList } from '../Manuscripts/ManuscriptsList'
 import { Manuscript } from '../Manuscripts/Manuscript.entity'
 import { ManuscriptEdit } from '../Manuscripts/ManuscriptEdit'
 import AddIcon from '@mui/icons-material/Add'
+import TextEditor from '../utils/TextEditor'
 
 const authorRepo = remult.repo(Author)
 const manuscriptsRepo = remult.repo(Manuscript)
@@ -36,7 +37,13 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
   const [state, setState] = useState(author)
   const [errors, setErrors] = useState<ErrorInfo<Author>>()
   const [manuscripts, setManuscripts] = useState<Manuscript[]>([])
-  const [editManuscript, setEditManuscript] = useState<Manuscript | undefined>()
+  const [editManuscript, _setEditManuscript] = useState<
+    Manuscript | undefined
+  >()
+
+  const setEditManuscript = (manuscript: Manuscript) => {
+    _setEditManuscript(manuscript)
+  }
 
   useEffect(() => {
     if (author.firstName !== '') {
@@ -87,7 +94,7 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
         ? [afterEditManuscript, ...manuscripts]
         : [...manuscripts]
     setManuscripts(newManuscripts)
-    await manuscriptsRepo.insert(afterEditManuscript)
+    await manuscriptsRepo.save(afterEditManuscript)
   }
 
   const createManuscript = () => {
@@ -98,8 +105,15 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
 
   return (
     <div>
-      <Dialog open={Boolean(author)} onClose={handleClose}>
-        <DialogTitle>{!author.id ? 'Create ' : 'Update '} Author</DialogTitle>
+      <Dialog
+        fullWidth
+        maxWidth="lg"
+        open={Boolean(author)}
+        onClose={handleClose}
+      >
+        <DialogTitle align="center">
+          {!author.id ? 'Create ' : 'Update '} Author
+        </DialogTitle>
         <DialogContent>
           <Box component="form" sx={{ pt: 1 }} noValidate autoComplete="off">
             <Stack spacing={2}>
@@ -169,17 +183,22 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
                     {errors?.modelState?.phoneNumber}
                   </FormHelperText>
                 </FormControl>
+                <FormControl
+                  sx={{ flexGrow: 1 }}
+                  error={Boolean(errors?.modelState?.pronouns)}
+                >
+                  <TextField
+                    label="Pronouns"
+                    error={Boolean(errors?.modelState?.pronouns)}
+                    helperText={errors?.modelState?.pronouns}
+                    fullWidth
+                    value={state.pronouns}
+                    onChange={(e) =>
+                      setState({ ...state, pronouns: e.target.value })
+                    }
+                  />
+                </FormControl>
               </Stack>
-              <TextField
-                label="Pronouns"
-                error={Boolean(errors?.modelState?.pronouns)}
-                helperText={errors?.modelState?.pronouns}
-                fullWidth
-                value={state.pronouns}
-                onChange={(e) =>
-                  setState({ ...state, pronouns: e.target.value })
-                }
-              />
               <Divider />
               <TextField
                 label="Address"
@@ -222,107 +241,123 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
                 />
               </Stack>
               <Divider />
-              <TextField
-                label="Website"
-                error={Boolean(errors?.modelState?.website)}
-                helperText={errors?.modelState?.website}
-                fullWidth
-                value={state.website}
-                onChange={(e) =>
-                  setState({ ...state, website: e.target.value })
-                }
-              />
-              <TextField
-                label="Blog"
-                error={Boolean(errors?.modelState?.blog)}
-                helperText={errors?.modelState?.blog}
-                fullWidth
-                value={state.blog}
-                onChange={(e) => setState({ ...state, blog: e.target.value })}
-              />
-              <TextField
-                label="Twitter"
-                error={Boolean(errors?.modelState?.twitter)}
-                helperText={errors?.modelState?.twitter}
-                fullWidth
-                value={state.twitter}
-                onChange={(e) =>
-                  setState({ ...state, twitter: e.target.value })
-                }
-              />
-              <Divider />
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                <Stack
-                  direction={{ xs: 'column', sm: 'row' }}
-                  justifyContent="space-between"
-                  spacing={2}
-                >
-                  <FormControl
-                    sx={{ flexGrow: 1 }}
-                    error={Boolean(errors?.modelState?.published)}
-                  >
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={state.published}
-                          onChange={(e) =>
-                            setState({
-                              ...state,
-                              published: e.target.checked
-                            })
-                          }
-                        />
-                      }
-                      label="I've been published before."
-                    />
-                    <FormHelperText>
-                      {errors?.modelState?.published}
-                    </FormHelperText>
-                  </FormControl>
-                  <FormControl
-                    sx={{ flexGrow: 1 }}
-                    error={Boolean(errors?.modelState?.agented)}
-                  >
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={state.agented}
-                          onChange={(e) =>
-                            setState({
-                              ...state,
-                              agented: e.target.checked
-                            })
-                          }
-                        />
-                      }
-                      label="I've had an agent before."
-                    />
-                    <FormHelperText>
-                      {errors?.modelState?.agented}
-                    </FormHelperText>
-                  </FormControl>
-                </Stack>
+                <TextField
+                  label="Website"
+                  error={Boolean(errors?.modelState?.website)}
+                  helperText={errors?.modelState?.website}
+                  fullWidth
+                  value={state.website}
+                  onChange={(e) =>
+                    setState({ ...state, website: e.target.value })
+                  }
+                />
+                <TextField
+                  label="Blog"
+                  error={Boolean(errors?.modelState?.blog)}
+                  helperText={errors?.modelState?.blog}
+                  fullWidth
+                  value={state.blog}
+                  onChange={(e) => setState({ ...state, blog: e.target.value })}
+                />
+                <TextField
+                  label="Twitter"
+                  error={Boolean(errors?.modelState?.twitter)}
+                  helperText={errors?.modelState?.twitter}
+                  fullWidth
+                  value={state.twitter}
+                  onChange={(e) =>
+                    setState({ ...state, twitter: e.target.value })
+                  }
+                />
               </Stack>
-              <TextField
-                label="Name of former agent (if applicable)"
-                error={Boolean(errors?.modelState?.formerAgent)}
-                helperText={errors?.modelState?.formerAgent}
-                fullWidth
-                value={state.formerAgent}
-                onChange={(e) =>
-                  setState({ ...state, formerAgent: e.target.value })
-                }
-              />
-              <TextField
-                label="Bio"
-                multiline
-                error={Boolean(errors?.modelState?.bio)}
-                helperText={errors?.modelState?.bio}
-                fullWidth
-                value={state.bio}
-                onChange={(e) => setState({ ...state, bio: e.target.value })}
+              <Divider />
+              <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                justifyContent="space-between"
+                alignItems="center"
+                spacing={0}
+              >
+                <FormControl
+                  sx={{ flexGrow: 1 }}
+                  error={Boolean(errors?.modelState?.published)}
+                >
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        size="small"
+                        checked={state.published}
+                        onChange={(e) =>
+                          setState({
+                            ...state,
+                            published: e.target.checked
+                          })
+                        }
+                      />
+                    }
+                    label={
+                      <Typography sx={{ fontSize: 13 }}>
+                        I've been published before.
+                      </Typography>
+                    }
+                  />
+                  <FormHelperText>
+                    {errors?.modelState?.published}
+                  </FormHelperText>
+                </FormControl>
+                <FormControl
+                  sx={{ flexGrow: 1 }}
+                  error={Boolean(errors?.modelState?.agented)}
+                >
+                  <FormControlLabel
+                    sx={{ flexGrow: 1 }}
+                    control={
+                      <Switch
+                        size="small"
+                        checked={state.agented}
+                        onChange={(e) =>
+                          setState({
+                            ...state,
+                            agented: e.target.checked
+                          })
+                        }
+                      />
+                    }
+                    label={
+                      <Typography sx={{ fontSize: 13 }}>
+                        I've had an agent before.
+                      </Typography>
+                    }
+                  />
+                  <FormHelperText>{errors?.modelState?.agented}</FormHelperText>
+                </FormControl>
+                <FormControl
+                  sx={{ flexGrow: 2 }}
+                  error={Boolean(errors?.modelState?.agented)}
+                >
+                  <TextField
+                    label="Name of former agent (if applicable)"
+                    error={Boolean(errors?.modelState?.formerAgent)}
+                    helperText={errors?.modelState?.formerAgent}
+                    fullWidth
+                    value={state.formerAgent}
+                    onChange={(e) =>
+                      setState({ ...state, formerAgent: e.target.value })
+                    }
+                  />
+                </FormControl>
+              </Stack>
+              <Typography variant="h6">Bio:</Typography>
+              <TextEditor
+                placeHolder="Blurb"
+                html={state.bio}
+                setHtml={(html) => {
+                  console.log('setHtml:', html)
+                  setState({ ...state, bio: html })
+                }}
               />
             </Stack>
+            <Divider sx={{ marginTop: 2, marginBottom: 2 }} />
             <Typography>Manuscripts:</Typography>
             <ManuscriptsList
               manuscripts={manuscripts}
@@ -349,7 +384,6 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
                 manuscript={editManuscript}
                 onClose={() => setEditManuscript(undefined)}
                 onSaved={(manuscript: Manuscript) => {
-                  console.log('onSaved:', manuscript)
                   editManuscriptSaved(manuscript)
                 }}
               />

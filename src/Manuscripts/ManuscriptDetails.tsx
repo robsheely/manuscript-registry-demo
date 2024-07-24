@@ -53,11 +53,34 @@ export const ManuscriptDetails: React.FC<Props> = ({
                 label="Target audience"
                 value={manuscript.target}
               />
-              <TextField
-                multiline
-                fullWidth
-                label="Blurb"
-                value={manuscript.blurb}
+              <Typography>Blurb:</Typography>
+              <div
+                style={{
+                  border: ' 1px solid lightGray',
+                  borderRadius: '4px',
+                  padding: '10px'
+                }}
+                dangerouslySetInnerHTML={{ __html: manuscript.blurb }}
+              />
+              <Typography>Comparable titles:</Typography>
+              <div
+                style={{
+                  border: ' 1px solid lightGray',
+                  borderRadius: '4px',
+                  padding: '10px',
+                  minHeight: '50px'
+                }}
+                dangerouslySetInnerHTML={{ __html: manuscript.comps }}
+              />
+              <Typography>Synopsis:</Typography>
+              <div
+                style={{
+                  border: ' 1px solid lightGray',
+                  borderRadius: '4px',
+                  padding: '10px',
+                  minHeight: '50px'
+                }}
+                dangerouslySetInnerHTML={{ __html: manuscript.synopsis || '' }}
               />
               <TextField
                 value={

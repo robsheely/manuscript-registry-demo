@@ -34,48 +34,25 @@ const NoMouseBox = styled(Box)({
   pointerEvents: 'none'
 })
 
+const StyledLabel = styled('label')`
+    cursor: pointer,
+    text-align: center,
+    display: flex,
+    width: 400px
+  }`
+
 export const DOCX_TYPE =
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 
 export const FileUpload: React.FC<FileUploadProps> = ({
   hoverLabel = 'Click or drag to upload file',
   dropLabel = 'Drop file here',
-  width = '500px',
   height = '100px',
   backgroundColor = '#fff',
-  image: {
-    url,
-    imageStyle = {
-      height: 'inherit'
-    }
-  } = {},
   onChange
 }) => {
   const [labelText, setLabelText] = React.useState<string>(hoverLabel)
   const [isDragOver, setIsDragOver] = React.useState<boolean>(false)
-
-  const StyledLabel = styled('label')`
-    cursor: pointer,
-    text-align: center,
-    display: flex,
-    &:hover p,&:hover svg,& img: {
-      opacity: 1
-    },
-    & p, svg: {
-      opacity: 0.4
-    },
-    &:hover img: {
-      opacity: 0.3
-    }
-  ${() =>
-    isDragOver &&
-    `& img: {
-      opacity: 0.3
-    },
-    & p, svg: {
-      opacity: 1
-    }`}
-  }`
 
   const stopDefaults = (e: React.DragEvent) => {
     e.stopPropagation()
@@ -130,6 +107,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       sendFile(file)
     }
   }
+  const color = !isDragOver ? 'primary' : 'disabled'
 
   return (
     <>
@@ -139,15 +117,23 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         id="file-upload"
         type="file"
       />
-
-      <StyledLabel htmlFor="file-upload" {...dragEvents}>
-        <NoMouseBox width={width} height={height} bgcolor={backgroundColor}>
-          <IconBox height={height} width={width}>
-            <CloudUploadIcon fontSize="large" />
-            <Typography>{labelText}</Typography>
-          </IconBox>
-        </NoMouseBox>
-      </StyledLabel>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <StyledLabel htmlFor="file-upload" {...dragEvents}>
+          <NoMouseBox width="100%" height={height}>
+            <IconBox
+              height={height}
+              width="400px"
+              bgcolor={backgroundColor}
+              border="solid 1px"
+              borderColor={!isDragOver ? 'primary.main' : 'grey.400'}
+              borderRadius={2}
+            >
+              <CloudUploadIcon color={color} fontSize="large" />
+              <Typography color={color}>{labelText}</Typography>
+            </IconBox>
+          </NoMouseBox>
+        </StyledLabel>
+      </div>
     </>
   )
 }

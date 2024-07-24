@@ -56,8 +56,6 @@ export class Author {
   @BackendMethod({ allowed: Allow.authenticated })
   async saveWithManuscripts?(manuscriptIds: string[]) {
     const isNew = !this.id
-    console.log('#### 0')
-    console.log('#### 1', this)
     const authorManuscriptsRepo = repo(Author).relations(this).manuscripts
     const existingAuthorManuscripts = isNew
       ? []
@@ -67,24 +65,21 @@ export class Author {
           }
         })
 
-    console.log('manuscripts:', manuscriptIds, existingAuthorManuscripts)
-
     const manuscriptsToDelete = existingAuthorManuscripts.filter(
       (existing) => !manuscriptIds.includes(existing.manuscriptId!)
     )
 
     const manuscriptsToAdd = manuscriptIds.filter((id) => {
       return !existingAuthorManuscripts.find((existing) => {
-        console.log('foooooo-id:', id, existing)
         return existing.manuscriptId == id
       })
     })
 
-    console.log('#### 2', {
-      existingAuthorManuscripts,
-      manuscriptsToDelete,
-      manuscriptsToAdd
-    })
+    // console.log('#### 2', {
+    //   existingAuthorManuscripts,
+    //   manuscriptsToDelete,
+    //   manuscriptsToAdd
+    // })
     await Promise.all(
       manuscriptsToDelete.map((dc) => authorManuscriptsRepo.delete(dc))
     )
@@ -95,7 +90,5 @@ export class Author {
       }))
     )
     const author = await repo(Author).save(this)
-
-    console.log('#### 3', author)
   }
 }

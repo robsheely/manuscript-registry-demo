@@ -117,7 +117,18 @@ export const AuthorShow: React.FC<{}> = () => {
                       <Typography>{author.formerAgent}</Typography>
                     )}
                   </Stack>
-                  <Typography sx={{ mt: 1 }}>{author.bio}</Typography>
+                  <Typography>Bio:</Typography>
+                  <div
+                    style={{
+                      border: ' 1px solid lightGray',
+                      borderRadius: '4px',
+                      padding: '10px',
+                      minHeight: '50px'
+                    }}
+                    dangerouslySetInnerHTML={{
+                      __html: author.bio || ''
+                    }}
+                  />
                 </Stack>
               </Stack>
             </CardContent>

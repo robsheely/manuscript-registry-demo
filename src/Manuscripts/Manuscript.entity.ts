@@ -36,6 +36,8 @@ export class Manuscript {
   @Fields.string({ validate: Validators.required })
   pitch = ''
   @Fields.string()
+  comps = ''
+  @Fields.string()
   synopsis? = ''
   @Fields.boolean({ validate: Validators.required })
   published: boolean = false

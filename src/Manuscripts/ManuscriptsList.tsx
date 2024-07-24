@@ -38,7 +38,7 @@ export const ManuscriptsList: React.FC<{
       headerName: 'STATUS',
       headerAlign: 'center',
       align: 'center',
-      flex: 120,
+      flex: 150,
       renderCell: (params) => {
         return (
           <Select
@@ -111,11 +111,13 @@ export const ManuscriptsList: React.FC<{
 
   const columns: GridColDef[] = [
     { field: 'title', headerName: 'TITLE', flex: 200 },
-    { field: 'author', headerName: 'AUTHOR', flex: 130 },
+    ...(!setEditManuscript
+      ? [{ field: 'author', headerName: 'AUTHOR', flex: 130 }]
+      : []),
     {
       field: 'genre',
       headerName: 'GENRE',
-      flex: 130,
+      flex: 200,
       valueGetter: (_value, row) => row.genre.caption
     },
     {
@@ -124,16 +126,21 @@ export const ManuscriptsList: React.FC<{
       flex: 90,
       valueGetter: (_value, row) => row.ageGroup.caption
     },
-    { field: 'wordCount', headerName: 'WORDS', flex: 100 },
-    ...(showStatusFilter ? filterColumns : editColumns)
+    {
+      field: 'wordCount',
+      headerName: 'WORDS',
+      flex: 100,
+      valueGetter: (_value, row) => row.wordCount.toLocaleString('en-US')
+    },
+    ...(showStatusFilter ? filterColumns : []),
+    ...(setEditManuscript ? editColumns : [])
   ]
 
   const rows = manuscripts.map((manuscript) => {
     const author = authors.find((a) => a.id === manuscript.authorId)
     return {
       ...manuscript,
-      author: `${author?.firstName} ${author?.lastName}`,
-      wordCount: manuscript?.wordCount?.toLocaleString('en-US')
+      author: `${author?.firstName} ${author?.lastName}`
     }
   })
 
