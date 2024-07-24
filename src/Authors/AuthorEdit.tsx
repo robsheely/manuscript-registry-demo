@@ -23,6 +23,9 @@ import { Manuscript } from '../Manuscripts/Manuscript.entity'
 import { ManuscriptEdit } from '../Manuscripts/ManuscriptEdit'
 import AddIcon from '@mui/icons-material/Add'
 import TextEditor from '../utils/TextEditor'
+import { Genre } from './Genre'
+import { AgeGroup } from './AgeGroup'
+import { Status } from '../Manuscripts/Status'
 
 const authorRepo = remult.repo(Author)
 const manuscriptsRepo = remult.repo(Manuscript)
@@ -77,6 +80,13 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
     }
   }
 
+  const updateTextState = (field: string, value: string) => {
+    setState((state1) => {
+      console.log('updateTextState:', state1, field, value)
+      return { ...state1, [field]: value }
+    })
+  }
+
   // const deleteManuscript = async (deletedManuscript: Manuscript) => {
   //     await manuscriptsRepo.delete(deletedManuscript);
   //     setManuscripts(manuscripts.filter(contact => deletedManuscript.id !== contact.id));
@@ -93,6 +103,15 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
 
   const createManuscript = () => {
     const newManuscript = new Manuscript()
+    newManuscript.title = ''
+    newManuscript.genre = Genre.F1
+    newManuscript.ageGroup = AgeGroup.adult
+    newManuscript.status = Status.unread
+    newManuscript.blurb = ''
+    newManuscript.pitch = ''
+    newManuscript.wordCount = 0
+    newManuscript.synopsis
+    newManuscript.published = false
     newManuscript.author = author
     setEditManuscript(newManuscript)
   }
@@ -343,11 +362,10 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
               </Stack>
               <Typography variant="h6">Bio:</Typography>
               <TextEditor
-                placeHolder="Blurb"
+                placeHolder="Bio"
                 html={state.bio}
-                setHtml={(html) => {
-                  console.log('setHtml:', html)
-                  setState({ ...state, bio: html })
+                setHtml={(bio) => {
+                  updateTextState('bio', bio)
                 }}
               />
             </Stack>

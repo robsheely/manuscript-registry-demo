@@ -26,6 +26,9 @@ const TextEditor = ({ placeHolder, html, setHtml }: Props) => {
   const editorConfig: Partial<IEditorConfig> = {
     placeholder: placeHolder,
     scroll: false,
+    onBlur: (editor) => {
+      setHtml(editor.getHtml())
+    },
     hoverbarKeys: {}
   }
 
@@ -51,7 +54,6 @@ const TextEditor = ({ placeHolder, html, setHtml }: Props) => {
         value={html}
         mode="simple"
         onCreated={setEditor}
-        onChange={(editor) => setHtml(editor.getHtml())}
         style={{ height: '200px', overflowY: 'auto' }}
       />
     </div>

@@ -42,14 +42,10 @@ export const ManuscriptEdit: React.FC<IProps> = ({
   onClose
 }) => {
   const [errors, setErrors] = useState<ErrorInfo<Manuscript>>()
-  const [state, _setState] = useState(manuscript)
+  const [state, setState] = useState(manuscript)
 
   const handleClose = () => {
     onClose()
-  }
-  const setState = (newState: Manuscript) => {
-    console.log('setState:', state.blurb)
-    _setState(newState)
   }
 
   useEffect(() => {
@@ -70,6 +66,13 @@ export const ManuscriptEdit: React.FC<IProps> = ({
       setErrors(err)
     }
   }
+  const updateTextState = (field: string, value: string) => {
+    setState((state1) => {
+      console.log('updateTextState:', state1, field, value)
+      return { ...state1, [field]: value }
+    })
+  }
+
   return (
     <div>
       <Dialog
@@ -196,9 +199,8 @@ export const ManuscriptEdit: React.FC<IProps> = ({
               <TextEditor
                 placeHolder="Blurb"
                 html={state.blurb}
-                setHtml={(html) => {
-                  console.log('setHtml:', html)
-                  setState({ ...state, blurb: html })
+                setHtml={(blurb) => {
+                  updateTextState('blurb', blurb)
                 }}
               />
               <TextField
@@ -214,8 +216,8 @@ export const ManuscriptEdit: React.FC<IProps> = ({
               <TextEditor
                 placeHolder="Comparable titles"
                 html={state.comps}
-                setHtml={(html) => {
-                  setState({ ...state, comps: html })
+                setHtml={(comps) => {
+                  updateTextState('comps', comps)
                 }}
               />
               <Divider />
@@ -223,8 +225,8 @@ export const ManuscriptEdit: React.FC<IProps> = ({
               <TextEditor
                 placeHolder="Synopsis"
                 html={state.synopsis}
-                setHtml={(html) => {
-                  setState({ ...state, synopsis: html })
+                setHtml={(synopsis) => {
+                  updateTextState('synopsis', synopsis)
                 }}
               />
 
