@@ -35,6 +35,9 @@ export const ManuscriptsPage: React.FC<{}> = () => {
 
   const manuscriptsQuery = useMemo(() => {
     const query = manuscriptRepo.query({
+      include: {
+        author: true
+      },
       pageSize: rowsPerPage
     })
     return query
@@ -79,9 +82,9 @@ export const ManuscriptsPage: React.FC<{}> = () => {
     return (
       (!filterState.title || manuscript.title.includes(filterState.title)) &&
       (!filterState.author ||
-        `${manuscript.author?.firstName} ${manuscript.author?.lastName}`.includes(
-          filterState.author
-        )) &&
+        `${manuscript.author?.firstName} ${manuscript.author?.lastName}`
+          .toLowerCase()
+          .includes(filterState.author.toLowerCase())) &&
       (!filterState.genres.length ||
         filterState.genres.some((genre) => manuscript.genre.id === genre.id)) &&
       (!filterState.ageGroups.length ||
