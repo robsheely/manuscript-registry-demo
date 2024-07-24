@@ -37,13 +37,7 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
   const [state, setState] = useState(author)
   const [errors, setErrors] = useState<ErrorInfo<Author>>()
   const [manuscripts, setManuscripts] = useState<Manuscript[]>([])
-  const [editManuscript, _setEditManuscript] = useState<
-    Manuscript | undefined
-  >()
-
-  const setEditManuscript = (manuscript: Manuscript) => {
-    _setEditManuscript(manuscript)
-  }
+  const [editManuscript, setEditManuscript] = useState<Manuscript | undefined>()
 
   useEffect(() => {
     if (author.firstName !== '') {
