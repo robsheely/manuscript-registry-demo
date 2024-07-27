@@ -53,6 +53,7 @@ export const ManuscriptDetails: React.FC<Props> = ({
                 label="Target audience"
                 value={manuscript.target}
               />
+              <TextField label="Pitch" value={manuscript.pitch} />
               <Typography>Blurb:</Typography>
               <div
                 style={{

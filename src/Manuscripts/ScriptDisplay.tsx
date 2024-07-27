@@ -2,6 +2,7 @@ import { Buffer } from 'buffer'
 import * as docx from 'docx-preview'
 import React from 'react'
 import { DOCX_TYPE } from './FileUpload'
+import { Box, CircularProgress } from '@mui/material'
 
 const dataUrlToFile = (dataUrl: string, filename: string): File | undefined => {
   const arr = dataUrl.split(',')
@@ -22,6 +23,7 @@ type Props = {
 
 const ScriptDisplay = ({ file }: Props) => {
   const ref = React.useRef(null)
+  const [loading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
     if (file) {
@@ -29,25 +31,52 @@ const ScriptDisplay = ({ file }: Props) => {
       const fileData = dataUrlToFile(href, file.name)
 
       if (ref.current && fileData) {
+        setLoading(true)
         const template = fileData.arrayBuffer()
         docx
           .renderAsync(template, ref.current, ref.current, {
-            ignoreHeight: true,
+            ignoreHeight: false,
             ignoreWidth: true,
             inWrapper: false,
-            renderHeaders: false
+            renderHeaders: false,
+            renderChanges: true,
+            renderComments: true
           })
-          .then(() => console.log('docx: finished'))
+          .then(() => {
+            setLoading(false)
+            console.log('docx: finished')
+          })
       }
     }
   }, [])
 
   return (
     <div>
+      {loading && (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            padding: 30
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      )}
+      <style>
+        {`
+            div.panel-section del {
+              color: red;
+            } 
+            div.panel-section ins {
+              color: green;
+          }`}
+      </style>
       <div
         ref={ref}
         id="panel-section"
-        style={{ height: '800px', overflowY: 'auto' }}
+        className="panel-section"
+        style={{ height: 'calc(100vh - 400px)', overflowY: 'auto' }}
       />
     </div>
   )

@@ -12,7 +12,7 @@ const authorRepo = remult.repo(Author)
 
 export const ManuscriptsList: React.FC<{
   manuscripts: Manuscript[]
-  setStatusForManuscript: (manuscript: Manuscript, status: Status) => void
+  setStatusForManuscript?: (manuscript: Manuscript, status: Status) => void
   showStatusFilter?: boolean
   setEditManuscript?: (manuscript: Manuscript) => void
 }> = ({
@@ -57,7 +57,8 @@ export const ManuscriptsList: React.FC<{
               const chosenStatus = getValueList(Status).find(
                 (status) => status.id === e.target.value
               )
-              setStatusForManuscript(params.row, chosenStatus!)
+              setStatusForManuscript &&
+                setStatusForManuscript(params.row, chosenStatus!)
             }}
           >
             {statuses.map((status) => (

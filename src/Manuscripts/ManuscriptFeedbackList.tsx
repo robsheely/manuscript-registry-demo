@@ -10,27 +10,29 @@ import {
 import React, { useEffect, useState } from 'react'
 import { repo } from 'remult'
 import { Manuscript } from './Manuscript.entity'
-import { ManuscriptNote } from './ManuscriptNote.entity'
-import { Note } from './Note'
+import { ManuscriptFeedback } from './ManuscriptFeedback.entity'
+import { Feedback } from './Feedback'
 
 type Props = {
   manuscript: Manuscript
 }
 
-export const ManuscriptNotes: React.FC<Props> = ({ manuscript }: Props) => {
-  const [newNote, setNewNote] = useState(new ManuscriptNote())
-  const [notes, setNotes] = useState<ManuscriptNote[]>([])
+export const ManuscriptFeedbackList: React.FC<Props> = ({
+  manuscript
+}: Props) => {
+  const [newFeedback, setNewFeedback] = useState(new ManuscriptFeedback())
+  const [feedbackList, setFeedbackList] = useState<ManuscriptFeedback[]>([])
 
   useEffect(() => {
-    if (manuscript && manuscript.notes) {
-      setNotes(manuscript.notes)
+    if (manuscript && manuscript.feedback) {
+      setFeedbackList(manuscript.feedback)
     }
   }, [manuscript])
 
   const submitNewNote = async () => {
-    setNotes([newNote, ...notes])
-    await repo(Manuscript).relations(manuscript!).notes.insert(newNote)
-    setNewNote(new ManuscriptNote())
+    setFeedbackList([newFeedback, ...feedbackList])
+    await repo(Manuscript).relations(manuscript!).feedback.insert(newFeedback)
+    setNewFeedback(new ManuscriptFeedback())
   }
 
   return (
@@ -40,14 +42,14 @@ export const ManuscriptNotes: React.FC<Props> = ({ manuscript }: Props) => {
           <CardContent>
             <Box mt={2}>
               <TextField
-                label="Add a note"
+                label="Add some feedback"
                 size="small"
                 fullWidth
                 multiline
-                value={newNote.text}
+                value={newFeedback.text}
                 variant="filled"
                 onChange={(e: any) =>
-                  setNewNote({ ...newNote, text: e.target.value })
+                  setNewFeedback({ ...newFeedback, text: e.target.value })
                 }
                 rows={3}
               />
@@ -57,20 +59,20 @@ export const ManuscriptNotes: React.FC<Props> = ({ manuscript }: Props) => {
                   <Button
                     variant="contained"
                     color="primary"
-                    disabled={!newNote.text}
+                    disabled={!newFeedback.text}
                     onClick={() => submitNewNote()}
                   >
-                    Add this note
+                    Add this feedback
                   </Button>
                 </Stack>
               </Box>
             </Box>
             <Divider />
 
-            {notes.map((note) => (
-              <Box key={note.id} mt={2}>
-                {note.createdAt.toLocaleString()}
-                <Note note={note} />
+            {feedbackList.map((feedback) => (
+              <Box key={feedback.id} mt={2}>
+                {feedback.createdAt.toLocaleString()}
+                <Feedback feedback={feedback} />
               </Box>
             ))}
           </CardContent>
@@ -79,3 +81,4 @@ export const ManuscriptNotes: React.FC<Props> = ({ manuscript }: Props) => {
     </Box>
   )
 }
+//[ ] - consider the fact that the tags are already in the client - but they always come in as well

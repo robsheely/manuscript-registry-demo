@@ -1,4 +1,4 @@
-import { Box, Typography, Tab, Button } from '@mui/material'
+import { Box, Typography, Tab, Button, CircularProgress } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { repo } from 'remult'
@@ -9,6 +9,8 @@ import { ManuscriptDetails } from './ManuscriptDetails'
 import { ManuscriptScript } from './ManuscriptScript'
 import { ManuscriptNotes } from './ManuscriptNotes'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import { ManuscriptFeedbackList } from './ManuscriptFeedbackList'
+import { CollaborationsPage } from './CollaborationsPage'
 
 export const ManuscriptShow: React.FC<{}> = () => {
   let params = useParams()
@@ -36,7 +38,19 @@ export const ManuscriptShow: React.FC<{}> = () => {
     })()
   }, [params.id])
 
-  if (loading) return <span>Loading</span>
+  if (loading)
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          padding: 30
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    )
+
   if (!manuscript) return <span>not found</span>
 
   return (
@@ -63,7 +77,9 @@ export const ManuscriptShow: React.FC<{}> = () => {
               >
                 <Tab label="Details" value="1" />
                 <Tab label="Manuscript" value="2" />
-                <Tab label="Notes" value="3" />
+                <Tab label="Feedback" value="3" />
+                <Tab label="Notes" value="4" />
+                <Tab label="Collaborations" value="5" />
               </TabList>
             </Box>
             <TabPanel value="1">
@@ -73,7 +89,13 @@ export const ManuscriptShow: React.FC<{}> = () => {
               <ManuscriptScript manuscript={manuscript!} />
             </TabPanel>
             <TabPanel value="3">
+              <ManuscriptFeedbackList manuscript={manuscript!} />
+            </TabPanel>
+            <TabPanel value="4">
               <ManuscriptNotes manuscript={manuscript!} />
+            </TabPanel>
+            <TabPanel value="5">
+              <CollaborationsPage />
             </TabPanel>
           </TabContext>
         </Box>

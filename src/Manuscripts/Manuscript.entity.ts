@@ -4,6 +4,7 @@ import { Genre } from '../Authors/Genre'
 import { AgeGroup } from '../Authors/AgeGroup'
 import { Status } from './Status'
 import { ManuscriptNote } from './ManuscriptNote.entity'
+import { ManuscriptFeedback } from './ManuscriptFeedback.entity'
 
 @Entity<Manuscript>('manuscripts', {
   allowApiCrud: Allow.authenticated,
@@ -45,6 +46,8 @@ export class Manuscript {
   script = { name: '', image: '' }
   @Relations.toMany(() => ManuscriptNote)
   notes?: ManuscriptNote[]
+  @Relations.toMany(() => ManuscriptFeedback)
+  feedback?: ManuscriptFeedback[]
 
   @Fields.date({
     allowApiUpdate: false

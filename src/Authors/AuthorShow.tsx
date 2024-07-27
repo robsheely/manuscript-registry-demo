@@ -3,6 +3,7 @@ import {
   Button,
   Card,
   CardContent,
+  CircularProgress,
   Divider,
   Stack,
   Typography
@@ -44,7 +45,19 @@ export const AuthorShow: React.FC<{}> = () => {
     })()
   }, [params.id])
 
-  if (loading) return <span>Loading</span>
+  if (loading)
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          padding: 30
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    )
+
   if (!author) return <span>not found</span>
 
   return (
