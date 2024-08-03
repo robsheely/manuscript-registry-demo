@@ -1,16 +1,18 @@
 import { Strategy } from 'passport-local';
 import * as passport from 'passport';
 import * as argon2 from "argon2";
-import express, { Router } from 'express'
 /* Session management with Passport */
 import { User } from '../Users/User.entity';
-import { repo, SqlDatabase } from 'remult';
-import { api } from './api'
+import { SqlDatabase } from 'remult';
 import { createPostgresDataProvider } from 'remult/postgres';
 
-type Callback = (err: any, id?: any) => void;
+const passportInit = async (app) => {
 
-const passportModule = (app) => {
+    const dbProvider = await createPostgresDataProvider({
+        connectionString: process.env.DATABASE_URL
+    })
+    const sql = SqlDatabase.getDb(dbProvider)
+
     passport.use('local',
         new Strategy(
             {
@@ -24,10 +26,7 @@ const passportModule = (app) => {
              * This is the Auth handler. We check for a valid user phone and authenticate if found
              */
             async function (_req, email, password, onDone) {
-                const dbProvider = await createPostgresDataProvider({
-                    connectionString: process.env.DATABASE_URL
-                })
-                const sql = SqlDatabase.getDb(dbProvider)
+                console.log('passport')
                 const SQL_STRING = `SELECT * FROM users WHERE email='${email}' LIMIT 1`;
                 const result = await sql.execute(SQL_STRING)
                 const user = result.rows[0]
@@ -52,48 +51,11 @@ const passportModule = (app) => {
     });
 
     passport.deserializeUser(async (id: string, onDone: Callback) => {
-        const dbProvider = await createPostgresDataProvider({
-            connectionString: process.env.DATABASE_URL
-        })
-        const sql = SqlDatabase.getDb(dbProvider)
         const SQL_STRING = `SELECT * FROM users WHERE id='${id}' LIMIT 1`;
         const result = await sql.execute(SQL_STRING)
         const user = result.rows[0]
         onDone(null, user);
     });
-
-
-    app.use(passport.initialize())
-    app.use(passport.session())
-
-    const auth = Router()
-
-    auth.use(express.json({ limit: '10mb' }))
-
-    auth.post('/api/signIn', passport.authenticate('local'), (req, res) => {
-        const user = req.user
-        req.session!['user'] = { id: user.id, email: user.email }
-        console.log('signIn', req.session!['user'])
-        res.json(user)
-    })
-
-    auth.post('/api/signOut', (req, res) => {
-        req.session!['user'] = null
-        res.json('signed out')
-    })
-
-    auth.post('/api/signUp', api.withRemult, async (req, res) => {
-        try {
-            const user = createUser(req.body)
-            //req.session!['user'] = user
-            res.json(user)
-        } catch (e) {
-            console.log(e)
-        }
-    })
-
-    app.use(auth)
-    auth.get('/api/currentUser', (req, res) => res.json(req.session!['user']))
 
     // Compare the password of an already fetched user (using `findUser`) and compare the
     // password for a potential match
@@ -107,16 +69,10 @@ const passportModule = (app) => {
 
     }
 
-    const createUser = async ({ email, password }: { email: string, password: string }) => {
-        // Here you should create the user and save the salt and hashed password (some dbs may have
-        // authentication methods that will do it for you so you don't have to worry about it):
-        const hash = await argon2.hash(password)
-        console.log('saving', email, hash)
-        const user = await repo(User).save({ email, hash })
-        console.log('saved')
+    console.log('passportModule-3')
 
-        return user;
-    }
+    app.use(passport.initialize())
+    app.use(passport.session())
 }
 
-export default passportModule;
+export default passportInit;

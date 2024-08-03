@@ -1,24 +1,44 @@
 import express from 'express'
+import session from 'express-session'
 import compression from 'compression'
-import session from 'cookie-session'
 import sslRedirect from 'heroku-ssl-redirect'
 import swaggerUi from 'swagger-ui-express'
 import { api, entities } from './api'
-import { auth } from './auth'
 import { remult } from 'remult'
 import { remultGraphql } from 'remult/graphql'
 import { createSchema, createYoga } from 'graphql-yoga'
+import auth from './auth'
 
 const app = express()
 app.use(sslRedirect())
 //app.use(helmet({ contentSecurityPolicy: false,crossOriginResourcePolicy:false }));//removed because avatar image urls point to a different website
 app.use(compression())
 
-app.use(
-  '/api',
-  session({ secret: process.env['TOKEN_SIGN_KEY'] || 'my secret' })
-)
-app.use(auth)
+const sessionInstance = session({
+  // this should be changed to something cryptographically secure for production
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: false,
+  // automatically extends the session age on each request. useful if you want
+  // the user's activity to extend their session. If you want an absolute session
+  // expiration, set to false
+  rolling: true,
+  name: 'sid', // don't use the default session cookie name
+  // set your options for the session cookie
+  cookie: {
+    httpOnly: true,
+    // the duration in milliseconds that the cookie is valid
+    maxAge: 20 * 60 * 1000, // 20 minutes
+    // recommended you use this setting in production if you have a well-known domain you want to restrict the cookies to.
+    // domain: 'your.domain.com',
+    // recommended you use this setting in production if your site is published using HTTPS
+    // secure: true,
+  }
+})
+app.use(sessionInstance)
+
+app.use('/api', sessionInstance)
+auth(app)
 
 app.get('/api/test', (_req, res) => res.send('ok'))
 //@ts-ignore
@@ -29,24 +49,6 @@ app.use(
   swaggerUi.serve,
   swaggerUi.setup(api.openApiDoc({ title: 'remult-react-todo' }))
 )
-
-// const storage = multer.diskStorage({
-//   destination: (_req, _file, cb) => {
-//     cb(null, 'uploads/')
-//   },
-//   filename: (_req, file, cb) => {
-//     cb(null, Date.now() + '-' + file.originalname)
-//   }
-// })
-
-// // Create the multer instance
-// const upload = multer({ storage: storage })
-
-// // Set up a route for file uploads
-// app.post('/upload', upload.single('file'), (_req, res) => {
-//   // Handle the uploaded file
-//   res.json({ message: 'File uploaded successfully!' })
-// })
 
 // var bodyParser = require('body-parser')
 // app.use(bodyParser.json({ limit: '50mb' }))

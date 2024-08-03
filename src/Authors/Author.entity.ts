@@ -60,16 +60,16 @@ export class Author {
     const existingAuthorManuscripts = isNew
       ? []
       : await authorManuscriptsRepo.find({
-          include: {
-            manuscript: true
-          }
-        })
+        include: {
+          manuscript: true
+        }
+      })
 
     const manuscriptsToDelete = existingAuthorManuscripts.filter(
       (existing) => !manuscriptIds.includes(existing.manuscriptId!)
     )
 
-    const manuscriptsToAdd = manuscriptIds.filter((id) => {
+    const manuscriptsIdsToAdd = manuscriptIds.filter((id) => {
       return !existingAuthorManuscripts.find((existing) => {
         return existing.manuscriptId == id
       })
@@ -81,14 +81,15 @@ export class Author {
     //   manuscriptsToAdd
     // })
     await Promise.all(
-      manuscriptsToDelete.map((dc) => authorManuscriptsRepo.delete(dc))
+      manuscriptsToDelete.map((authorManuscript) => authorManuscriptsRepo.delete(authorManuscript))
     )
+
     await authorManuscriptsRepo.insert(
-      manuscriptsToAdd.map((manuscript) => ({
+      manuscriptsIdsToAdd.map((manuscript) => ({
         authorId: this.id,
         manuscriptId: manuscript
       }))
     )
-    const author = await repo(Author).save(this)
+    //const author = await repo(Author).save(this)
   }
 }
