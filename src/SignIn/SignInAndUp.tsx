@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 import {
-  Avatar,
   Box,
   Button,
   Card,
@@ -9,73 +8,75 @@ import {
   Link,
   Stack,
   TextField,
-  Typography
-} from '@mui/material'
-import LockIcon from '@mui/icons-material/Lock'
-import { UserInfo } from 'remult'
+  Typography,
+} from '@mui/material';
+import LockIcon from '@mui/icons-material/Lock';
+import { UserData } from '../utils/userUtils';
 
 type Props = {
-  currentUser: UserInfo | undefined,
-  setCurrentUser: (user: UserInfo) => void
-}
+  currentUser: UserData | undefined;
+  setCurrentUser: (user: UserData) => void;
+};
 
 const SignInAndUp = ({ currentUser, setCurrentUser }: Props) => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState<string>()
-  const [isSigningUp, setIsSigningUp] = useState(false)
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [error, setError] = useState<string>();
+  const [isSigningUp, setIsSigningUp] = useState(false);
 
   const signIn = async () => {
-    setError(undefined)
+    setError(undefined);
     const result = await fetch('/api/signIn', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, password })
-    })
+      body: JSON.stringify({ email, password }),
+    });
     if (result.ok) {
-      setCurrentUser(await result.json())
-      setEmail('')
-      setPassword('')
-    } else setError(await result.json())
-  }
+      setCurrentUser(await result.json());
+      setEmail('');
+      setPassword('');
+    } else setError(await result.json());
+  };
 
   const signUp = async () => {
-    setError(undefined)
+    setError(undefined);
     const result = await fetch('/api/signUp', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, password })
-    })
+      body: JSON.stringify({ email, password, firstName, lastName }),
+    });
     if (result.ok) {
-      setCurrentUser(await result.json())
-      setEmail('')
-      setPassword('')
-    } else setError(await result.json())
-  }
+      setCurrentUser(await result.json());
+      setEmail('');
+      setPassword('');
+    } else setError(await result.json());
+  };
 
-  // useEffect(() => {
-  //   let tryCounter = 0
-  //   function getCurrentUser() {
-  //     fetch('/api/currentUser').then(async (r) => {
-  //       if (r.ok) {
-  //         try {
-  //           setCurrentUser(await r.json())
-  //         } catch { }
-  //       } else {
-  //         if (tryCounter++ < 10)
-  //           // retry if dev server is not yet ready
-  //           setTimeout(() => {
-  //             getCurrentUser()
-  //           }, 500)
-  //       }
-  //     })
-  //   }
-  //   getCurrentUser()
-  // }, [])
+  useEffect(() => {
+    let tryCounter = 0;
+    function getCurrentUser() {
+      fetch('/api/currentUser').then(async (r) => {
+        if (r.ok) {
+          try {
+            setCurrentUser(await r.json());
+          } catch {}
+        } else {
+          if (tryCounter++ < 10)
+            // retry if dev server is not yet ready
+            setTimeout(() => {
+              getCurrentUser();
+            }, 500);
+        }
+      });
+    }
+    getCurrentUser();
+  }, []);
 
   if (!currentUser)
     return (
@@ -88,20 +89,44 @@ const SignInAndUp = ({ currentUser, setCurrentUser }: Props) => {
         <CssBaseline />
         <GlobalStyles
           styles={{
-            body: { background: '#313264' }
+            body: { background: '#fff' },
           }}
         />
-        <Card sx={{ width: 300, m: 2, flexGrow: 0, height: 'fix-content' }}>
+        <Card
+          sx={{
+            width: 300,
+            filter: 'drop-shadow(10px 10px 6px #999)',
+            m: 2,
+            flexGrow: 0,
+            height: 'fix-content',
+            padding: 2,
+          }}
+        >
           <Box component="form" sx={{ p: 1 }} noValidate autoComplete="off">
-            <Stack spacing={4}>
+            <Stack spacing={2}>
               <Box display="flex" justifyContent="center">
-                <Avatar>
-                  <LockIcon />
-                  <Typography component="h1" variant="h5">
-                    {`Sign ${isSigningUp ? 'up' : 'in'}`}
-                  </Typography>
-                </Avatar>
+                <LockIcon sx={{ width: 50, height: 50, color: 'darkGray' }} />
               </Box>
+              {isSigningUp && (
+                <Stack spacing={4}>
+                  <TextField
+                    autoFocus
+                    variant="standard"
+                    label="First Name"
+                    fullWidth
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                  />
+                  <TextField
+                    autoFocus
+                    variant="standard"
+                    label="Last name"
+                    fullWidth
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                  />
+                </Stack>
+              )}
               <TextField
                 autoFocus
                 variant="standard"
@@ -121,23 +146,40 @@ const SignInAndUp = ({ currentUser, setCurrentUser }: Props) => {
               <Typography color="error" variant="body1">
                 {error}
               </Typography>
-              <Button variant="contained" onClick={!isSigningUp ? signIn : signUp}>
+              <Button
+                variant="contained"
+                onClick={!isSigningUp ? signIn : signUp}
+              >
                 {`SIGN ${isSigningUp ? 'UP' : 'IN'}`}
               </Button>
             </Stack>
-            <Stack sx={{
-              width: '100%', display: 'flex', gap: 1, alignItems: 'center', justifyContent: 'flex-end', padding: '10px 2px',
-            }} direction="row">
-              <Typography variant="body2" >{`${!isSigningUp ? 'Don\'t h' : 'H'}ave an account?`}</Typography>
-              <Link href="#" variant="body2" onClick={() => setIsSigningUp(!isSigningUp)}>
+            <Stack
+              sx={{
+                width: '100%',
+                display: 'flex',
+                gap: 1,
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+                padding: '10px 2px',
+              }}
+              direction="row"
+            >
+              <Typography variant="body2">{`${
+                !isSigningUp ? "Don't h" : 'H'
+              }ave an account?`}</Typography>
+              <Link
+                href="#"
+                variant="body2"
+                onClick={() => setIsSigningUp(!isSigningUp)}
+              >
                 {`Sign ${isSigningUp ? 'in' : 'up'}`}
               </Link>
             </Stack>
           </Box>
-        </Card >
-      </Box >
-    )
+        </Card>
+      </Box>
+    );
 
   return null;
-}
-export default SignInAndUp
+};
+export default SignInAndUp;

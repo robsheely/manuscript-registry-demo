@@ -22,8 +22,8 @@ const sessionInstance = session({
   // automatically extends the session age on each request. useful if you want
   // the user's activity to extend their session. If you want an absolute session
   // expiration, set to false
-  rolling: true,
-  name: 'sid', // don't use the default session cookie name
+  rolling: false,
+  name: 'manreg', // don't use the default session cookie name
   // set your options for the session cookie
   cookie: {
     httpOnly: true,
@@ -49,16 +49,6 @@ app.use(
   swaggerUi.serve,
   swaggerUi.setup(api.openApiDoc({ title: 'remult-react-todo' }))
 )
-
-// var bodyParser = require('body-parser')
-// app.use(bodyParser.json({ limit: '50mb' }))
-// app.use(
-//   bodyParser.urlencoded({
-//     limit: '50mb',
-//     extended: true,
-//     parameterLimit: 50000
-//   })
-// )
 
 const { typeDefs, resolvers } = remultGraphql({
   entities,

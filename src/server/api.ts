@@ -1,14 +1,15 @@
-import { remultExpress } from 'remult/remult-express'
-import { createPostgresDataProvider } from 'remult/postgres'
-import { config } from 'dotenv'
-import { AuthorManuscript } from '../Authors/AuthorManuscript.entity'
-import { Author } from '../Authors/Author.entity'
-import { Manuscript } from '../Manuscripts/Manuscript.entity'
-import { ManuscriptNote } from '../Manuscripts/ManuscriptNote.entity'
-import { ManuscriptFeedback } from '../Manuscripts/ManuscriptFeedback.entity'
-import { User } from '../Users/User.entity'
+import { remultExpress } from 'remult/remult-express';
+import { createPostgresDataProvider } from 'remult/postgres';
+import { config } from 'dotenv';
+import { AuthorManuscript } from '../Authors/AuthorManuscript.entity';
+import { Author } from '../Authors/Author.entity';
+import { Manuscript } from '../Manuscripts/Manuscript.entity';
+import { ManuscriptNote } from '../Manuscripts/ManuscriptNote.entity';
+import { ManuscriptFeedback } from '../Manuscripts/ManuscriptFeedback.entity';
+import { User } from '../Users/User.entity';
+import { getUserFromRequest } from '../utils/userUtils';
 
-config()
+config();
 
 export const entities = [
   Author,
@@ -16,22 +17,26 @@ export const entities = [
   AuthorManuscript,
   ManuscriptNote,
   ManuscriptFeedback,
-  User
-]
+  User,
+];
 
 export const api = remultExpress({
   getUser: (req) => {
     if (req.isAuthenticated()) {
-      return req.session!['user'];
+      const user = getUserFromRequest(req);
+      return user;
     }
-    return null
+    return null;
   },
-  dataProvider: createPostgresDataProvider({
-    connectionString: process.env.DATABASE_URL
-  }),
+  dataProvider: async () => {
+    const dp = await createPostgresDataProvider({
+      connectionString: process.env.DATABASE_URL,
+    });
+    return dp;
+  },
   entities,
   admin: false,
   error: async (e) => {
-    console.log(e)
-  }
-})
+    console.log(e.message);
+  },
+});

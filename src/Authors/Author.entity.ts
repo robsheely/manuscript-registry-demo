@@ -8,20 +8,13 @@ import {
   Validators
 } from 'remult'
 import { AuthorManuscript } from './AuthorManuscript.entity'
+import { User } from '../Users/User.entity'
 
 @Entity('authors', {
   allowApiCrud: Allow.authenticated,
   allowApiDelete: false
 })
-export class Author {
-  @Fields.uuid()
-  id?: string
-  @Fields.string({ validate: Validators.required })
-  firstName = ''
-  @Fields.string({ validate: Validators.required })
-  lastName = ''
-  @Fields.string({ validate: Validators.required })
-  email = ''
+export class Author extends User {
   @Fields.string({ validate: Validators.required })
   phoneNumber = ''
   @Fields.string()
@@ -48,8 +41,6 @@ export class Author {
   pronouns = ''
   @Fields.string({ validate: Validators.required })
   bio = ''
-  @Fields.date({ allowApiUpdate: false })
-  createdAt = new Date()
   @Relations.toMany(() => AuthorManuscript)
   manuscripts: AuthorManuscript[] = []
 
