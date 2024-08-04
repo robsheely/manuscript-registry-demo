@@ -3,18 +3,29 @@ import session from 'express-session';
 import compression from 'compression';
 import sslRedirect from 'heroku-ssl-redirect';
 import helmet from 'helmet';
+import pg, { PGStore } from 'connect-pg-simple';
+import { config } from 'dotenv';
 
 import { api } from './api';
 import auth from './auth';
+
+config();
 
 const app = express();
 app.use(sslRedirect());
 app.use(helmet()); //removed because avatar image urls point to a different website
 app.use(compression());
 
+const connection = pg(session);
+const store: PGStore = new connection({
+  conString: process.env.DATABASE_URL,
+  createTableIfMissing: true,
+});
+
 const sessionInstance = session({
   secret: 'eb50b761-1a75-4446-bd3e-feadf35e800e',
   resave: false,
+  store,
   saveUninitialized: false,
   // automatically extends the session age on each request. useful if you want
   // the user's activity to extend their session. If you want an absolute session
