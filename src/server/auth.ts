@@ -2,7 +2,7 @@ import { repo } from 'remult';
 
 import express, { Router } from 'express';
 import { Express } from 'express-serve-static-core';
-import * as passport from 'passport';
+import passport from 'passport';
 import { Strategy } from 'passport-local';
 import * as argon2 from 'argon2';
 
