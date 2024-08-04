@@ -65,6 +65,7 @@ const passportModule = async (app: Express) => {
 
   auth.post('/api/signIn', passport.authenticate('local'), (req, res) => {
     const user = req.user;
+    console.log('/api/signIn', user);
     res.json(user);
   });
 
@@ -76,6 +77,7 @@ const passportModule = async (app: Express) => {
   auth.post('/api/signUp', api.withRemult, async (req, res) => {
     try {
       const user = await createUser(req.body);
+      console.log('/api/signUp', user);
       res.json(user);
     } catch (e: any) {
       console.log('/api/signUp error:', e.message);
@@ -105,6 +107,7 @@ const passportModule = async (app: Express) => {
   }: UserData & { password: string }) => {
     const hash = await argon2.hash(password);
     const user = await repo(User).save({ email, hash, firstName, lastName });
+    console.log('createUser', user);
 
     return user;
   };
