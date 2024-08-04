@@ -18,6 +18,6 @@ export class User {
   hash = '';
   @Fields.date({ allowApiUpdate: false })
   createdAt = new Date();
-  @Field(() => UserRole)
-  roles = [UserRole.none, UserRole.agent];
+  @Fields.json()
+  roles: UserRole[] = [UserRole.author];
 }
