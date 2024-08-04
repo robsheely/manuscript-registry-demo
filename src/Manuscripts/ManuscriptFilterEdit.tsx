@@ -15,77 +15,77 @@ import {
   FormGroup,
   Typography,
   Select,
-  MenuItem
-} from '@mui/material'
-import { useState } from 'react'
-import { getValueList } from 'remult'
+  MenuItem,
+} from '@mui/material';
+import { useState } from 'react';
+import { getValueList } from 'remult';
 
-import { Genre } from '../Authors/Genre'
-import { AgeGroup } from '../Authors/AgeGroup'
-import NumberInput from '../utils/NumberInput'
-import { StatusFilter } from './StatusFilter'
+import { Genre } from '../Authors/Genre';
+import { AgeGroup } from '../Authors/AgeGroup';
+import NumberInput from '../components/NumberInput';
+import { StatusFilter } from './StatusFilter';
 
 type Props = {
-  state: ManuscriptFilterState
-  onClose: () => void
-  onSaved: (newState: ManuscriptFilterState) => void
-}
+  state: ManuscriptFilterState;
+  onClose: () => void;
+  onSaved: (newState: ManuscriptFilterState) => void;
+};
 
 export type ManuscriptFilterState = {
-  title: string
-  author: string
-  genres: Genre[]
-  ageGroups: AgeGroup[]
-  minWordCount: number
-  maxWordCount: number
-  status: StatusFilter
-}
+  title: string;
+  author: string;
+  genres: Genre[];
+  ageGroups: AgeGroup[];
+  minWordCount: number;
+  maxWordCount: number;
+  status: StatusFilter;
+};
 
 export const ManuscriptFilterEdit: React.FC<Props> = ({
   state,
   onSaved,
-  onClose
+  onClose,
 }) => {
-  const [newState, setNewState] = useState(state)
+  const [newState, setNewState] = useState(state);
   const handleClose = () => {
-    onClose()
-  }
+    onClose();
+  };
 
   const handleSave = () => {
-    onSaved(newState)
-    handleClose()
-  }
+    onSaved(newState);
+    handleClose();
+  };
 
   const handleGenreChange = (genre: Genre, checked: boolean) => {
-    const genres = [...newState.genres]
-    const index = genres.indexOf(genre)
+    const genres = [...newState.genres];
+    const index = genres.indexOf(genre);
     if (!checked) {
       if (index > -1) {
-        genres.splice(index, 1)
+        genres.splice(index, 1);
       }
     } else {
       if (index === -1) {
-        genres.push(genre)
+        genres.push(genre);
       }
     }
-    setNewState({ ...newState, genres })
-  }
+    setNewState({ ...newState, genres });
+  };
 
   const handleAgeGroupChange = (ageGroup: AgeGroup, checked: boolean) => {
-    const ageGroups = [...newState.ageGroups]
-    const index = ageGroups.indexOf(ageGroup)
+    const ageGroups = [...newState.ageGroups];
+    const index = ageGroups.indexOf(ageGroup);
     if (!checked) {
       if (index > -1) {
-        ageGroups.splice(index, 1)
+        ageGroups.splice(index, 1);
       }
     } else {
       if (index === -1) {
-        ageGroups.push(ageGroup)
+        ageGroups.push(ageGroup);
       }
     }
-    setNewState({ ...newState, ageGroups })
-  }
-  const statuses = getValueList(StatusFilter)
+    setNewState({ ...newState, ageGroups });
+  };
+  const statuses = getValueList(StatusFilter);
 
   return (
     <Dialog open={Boolean(state)} onClose={handleClose}>
@@ -119,9 +119,9 @@ export const ManuscriptFilterEdit: React.FC<Props> = ({
                 value={newState.status?.id || StatusFilter.all.id}
                 onChange={(e) => {
                   const chosenStatus = getValueList(StatusFilter).find(
-                    (status) => status.id === e.target.value
-                  )
-                  setNewState({ ...newState, status: chosenStatus! })
+                    (status) => status.id === e.target.value,
+                  );
+                  setNewState({ ...newState, status: chosenStatus! });
                 }}
               >
                 {statuses.map((status) => (
@@ -195,7 +195,7 @@ export const ManuscriptFilterEdit: React.FC<Props> = ({
                         onChange={(_e, value) =>
                           setNewState({
                             ...newState,
-                            minWordCount: value ?? -1
+                            minWordCount: value ?? -1,
                           })
                         }
                       />
@@ -218,7 +218,7 @@ export const ManuscriptFilterEdit: React.FC<Props> = ({
                         onChange={(_e, value) =>
                           setNewState({
                             ...newState,
-                            maxWordCount: value ?? -1
+                            maxWordCount: value ?? -1,
                           })
                         }
                       />
@@ -239,5 +239,5 @@ export const ManuscriptFilterEdit: React.FC<Props> = ({
         <Button onClick={handleSave}>Save</Button>
       </DialogActions>
     </Dialog>
-  )
-}
+  );
+};

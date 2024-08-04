@@ -12,35 +12,37 @@ import {
   FormHelperText,
   FormControlLabel,
   Switch,
-  Typography
-} from '@mui/material'
-import { useEffect, useState } from 'react'
-import { Author } from './Author.entity'
-import { remult } from 'remult'
-import { ErrorInfo } from 'remult'
-import { ManuscriptsList } from '../Manuscripts/ManuscriptsList'
-import { Manuscript } from '../Manuscripts/Manuscript.entity'
-import { ManuscriptEdit } from '../Manuscripts/ManuscriptEdit'
-import AddIcon from '@mui/icons-material/Add'
-import TextEditor from '../utils/TextEditor'
-import { Genre } from './Genre'
-import { AgeGroup } from './AgeGroup'
-import { Status } from '../Manuscripts/Status'
+  Typography,
+} from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Author } from './Author.entity';
+import { remult } from 'remult';
+import { ErrorInfo } from 'remult';
+import { ManuscriptsList } from '../Manuscripts/ManuscriptsList';
+import { Manuscript } from '../Manuscripts/Manuscript.entity';
+import { ManuscriptEdit } from '../Manuscripts/ManuscriptEdit';
+import AddIcon from '@mui/icons-material/Add';
+import TextEditor from '../components/TextEditor';
+import { Genre } from './Genre';
+import { AgeGroup } from './AgeGroup';
+import { Status } from '../Manuscripts/Status';
 
-const authorRepo = remult.repo(Author)
-const manuscriptsRepo = remult.repo(Manuscript)
+const authorRepo = remult.repo(Author);
+const manuscriptsRepo = remult.repo(Manuscript);
 
 interface IProps {
-  author: Author
-  onClose: () => void
-  onSaved: (author: Author) => void
+  author: Author;
+  onClose: () => void;
+  onSaved: (author: Author) => void;
 }
 
 export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
-  const [state, setState] = useState(author)
-  const [errors, setErrors] = useState<ErrorInfo<Author>>()
-  const [manuscripts, setManuscripts] = useState<Manuscript[]>([])
-  const [editManuscript, setEditManuscript] = useState<Manuscript | undefined>()
+  const [state, setState] = useState(author);
+  const [errors, setErrors] = useState<ErrorInfo<Author>>();
+  const [manuscripts, setManuscripts] = useState<Manuscript[]>([]);
+  const [editManuscript, setEditManuscript] = useState<
+    Manuscript | undefined
+  >();
 
   useEffect(() => {
     if (author.firstName !== '') {
@@ -48,44 +50,44 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
         .relations(author)
         .manuscripts.find({
           include: {
-            manuscript: true
-          }
+            manuscript: true,
+          },
         })
         .then((authorManuscript) => {
           const manuscripts = authorManuscript
             .filter((authorManuscript) => authorManuscript.manuscript)
-            .map((authorManuscript) => authorManuscript.manuscript)
-          setManuscripts(manuscripts)
-        })
+            .map((authorManuscript) => authorManuscript.manuscript);
+          setManuscripts(manuscripts);
+        });
     }
-  }, [author])
+  }, [author]);
 
   const handleClose = () => {
-    onClose()
-  }
+    onClose();
+  };
 
   const handleSave = async () => {
-    const ref = authorRepo.getEntityRef(author)
+    const ref = authorRepo.getEntityRef(author);
     try {
-      setErrors(undefined)
-      author = Object.assign(author, state)
+      setErrors(undefined);
+      author = Object.assign(author, state);
       await author.saveWithManuscripts!(
-        manuscripts.map((manuscript) => manuscript.id!)
-      )
-      onSaved(author)
-      handleClose()
+        manuscripts.map((manuscript) => manuscript.id!),
+      );
+      onSaved(author);
+      handleClose();
     } catch (err: any) {
-      setErrors(err)
-      ref.undoChanges()
+      setErrors(err);
+      ref.undoChanges();
     }
-  }
+  };
 
   const updateTextState = (field: string, value: string) => {
     setState((state1) => {
-      console.log('updateTextState:', state1, field, value)
-      return { ...state1, [field]: value }
-    })
-  }
+      console.log('updateTextState:', state1, field, value);
+      return { ...state1, [field]: value };
+    });
+  };
 
   // const deleteManuscript = async (deletedManuscript: Manuscript) => {
   //     await manuscriptsRepo.delete(deletedManuscript);
@@ -96,25 +98,25 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
     const newManuscripts =
       editManuscript?.title === ''
         ? [afterEditManuscript, ...manuscripts]
-        : [...manuscripts]
-    setManuscripts(newManuscripts)
-    await manuscriptsRepo.save(afterEditManuscript)
-  }
+        : [...manuscripts];
+    setManuscripts(newManuscripts);
+    await manuscriptsRepo.save(afterEditManuscript);
+  };
 
   const createManuscript = () => {
-    const newManuscript = new Manuscript()
-    newManuscript.title = ''
-    newManuscript.genre = Genre.F1
-    newManuscript.ageGroup = AgeGroup.adult
-    newManuscript.status = Status.unread
-    newManuscript.blurb = ''
-    newManuscript.pitch = ''
-    newManuscript.wordCount = 0
-    newManuscript.synopsis
-    newManuscript.published = false
-    newManuscript.author = author
-    setEditManuscript(newManuscript)
-  }
+    const newManuscript = new Manuscript();
+    newManuscript.title = '';
+    newManuscript.genre = Genre.F1;
+    newManuscript.ageGroup = AgeGroup.adult;
+    newManuscript.status = Status.unread;
+    newManuscript.blurb = '';
+    newManuscript.pitch = '';
+    newManuscript.wordCount = 0;
+    newManuscript.synopsis;
+    newManuscript.published = false;
+    newManuscript.author = author;
+    setEditManuscript(newManuscript);
+  };
 
   return (
     <div>
@@ -303,7 +305,7 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
                         onChange={(e) =>
                           setState({
                             ...state,
-                            published: e.target.checked
+                            published: e.target.checked,
                           })
                         }
                       />
@@ -331,7 +333,7 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
                         onChange={(e) =>
                           setState({
                             ...state,
-                            agented: e.target.checked
+                            agented: e.target.checked,
                           })
                         }
                       />
@@ -365,7 +367,7 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
                 placeHolder="Bio"
                 html={state.bio}
                 setHtml={(bio) => {
-                  updateTextState('bio', bio)
+                  updateTextState('bio', bio);
                 }}
               />
             </Stack>
@@ -396,7 +398,7 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
                 manuscript={editManuscript}
                 onClose={() => setEditManuscript(undefined)}
                 onSaved={(manuscript: Manuscript) => {
-                  editManuscriptSaved(manuscript)
+                  editManuscriptSaved(manuscript);
                 }}
               />
             )}
@@ -408,5 +410,5 @@ export const AuthorEdit: React.FC<IProps> = ({ author, onSaved, onClose }) => {
         </DialogActions>
       </Dialog>
     </div>
-  )
-}
+  );
+};

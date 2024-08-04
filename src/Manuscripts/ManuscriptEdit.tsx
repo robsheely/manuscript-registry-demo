@@ -15,63 +15,63 @@ import {
   FormHelperText,
   FormControlLabel,
   Switch,
-  Typography
-} from '@mui/material'
-import { useEffect, useState } from 'react'
-import { Manuscript } from './Manuscript.entity'
-import { remult } from 'remult'
-import { ErrorInfo, getValueList } from 'remult'
+  Typography,
+} from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Manuscript } from './Manuscript.entity';
+import { remult } from 'remult';
+import { ErrorInfo, getValueList } from 'remult';
 
-import { Genre } from '../Authors/Genre'
-import { AgeGroup } from '../Authors/AgeGroup'
-import FileUpload from './FileUpload'
-import { Status } from './Status'
-import TextEditor from '../utils/TextEditor'
+import { Genre } from '../Authors/Genre';
+import { AgeGroup } from '../Authors/AgeGroup';
+import FileUpload from './FileUpload';
+import { Status } from './Status';
+import TextEditor from '../components/TextEditor';
 
-const manuscriptRepo = remult.repo(Manuscript)
+const manuscriptRepo = remult.repo(Manuscript);
 
 interface IProps {
-  manuscript: Manuscript
-  onClose: () => void
-  onSaved: (manuscript: Manuscript) => void
+  manuscript: Manuscript;
+  onClose: () => void;
+  onSaved: (manuscript: Manuscript) => void;
 }
 
 export const ManuscriptEdit: React.FC<IProps> = ({
   manuscript,
   onSaved,
-  onClose
+  onClose,
 }) => {
-  const [errors, setErrors] = useState<ErrorInfo<Manuscript>>()
-  const [state, setState] = useState(manuscript)
+  const [errors, setErrors] = useState<ErrorInfo<Manuscript>>();
+  const [state, setState] = useState(manuscript);
 
   const handleClose = () => {
-    onClose()
-  }
+    onClose();
+  };
 
   useEffect(() => {
-    const statuses = getValueList(Status)
+    const statuses = getValueList(Status);
     if (!state.status) {
-      setState({ ...state, status: statuses[1] })
+      setState({ ...state, status: statuses[1] });
     }
-  }, [manuscript])
+  }, [manuscript]);
 
   const handleSave = async () => {
     try {
-      setErrors(undefined)
-      let newManuscript = await manuscriptRepo.save(state)
-      onSaved(newManuscript)
-      handleClose()
+      setErrors(undefined);
+      let newManuscript = await manuscriptRepo.save(state);
+      onSaved(newManuscript);
+      handleClose();
     } catch (err: any) {
-      console.log('ManuscriptEdit err:', err)
-      setErrors(err)
+      console.log('ManuscriptEdit err:', err);
+      setErrors(err);
     }
-  }
+  };
   const updateTextState = (field: string, value: string) => {
     setState((state1) => {
-      console.log('updateTextState:', state1, field, value)
-      return { ...state1, [field]: value }
-    })
-  }
+      console.log('updateTextState:', state1, field, value);
+      return { ...state1, [field]: value };
+    });
+  };
 
   return (
     <div>
@@ -113,8 +113,8 @@ export const ManuscriptEdit: React.FC<IProps> = ({
                       setState({
                         ...state,
                         genre: getValueList(Genre).find(
-                          (item) => item.id === e.target.value
-                        )!
+                          (item) => item.id === e.target.value,
+                        )!,
                       })
                     }
                   >
@@ -140,8 +140,8 @@ export const ManuscriptEdit: React.FC<IProps> = ({
                       setState({
                         ...state,
                         ageGroup: getValueList(AgeGroup).find(
-                          (item) => item.id === e.target.value
-                        )!
+                          (item) => item.id === e.target.value,
+                        )!,
                       })
                     }
                   >
@@ -164,11 +164,11 @@ export const ManuscriptEdit: React.FC<IProps> = ({
                     sx={{
                       '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button':
                         {
-                          display: 'none'
+                          display: 'none',
                         },
                       '& input[type=number]': {
-                        MozAppearance: 'textfield'
-                      }
+                        MozAppearance: 'textfield',
+                      },
                     }}
                     type="number"
                     error={Boolean(errors?.modelState?.wordCount)}
@@ -177,7 +177,7 @@ export const ManuscriptEdit: React.FC<IProps> = ({
                     onChange={(e) =>
                       setState({
                         ...state,
-                        wordCount: parseInt(e.target.value)
+                        wordCount: parseInt(e.target.value),
                       })
                     }
                   />
@@ -200,7 +200,7 @@ export const ManuscriptEdit: React.FC<IProps> = ({
                 placeHolder="Blurb"
                 html={state.blurb}
                 setHtml={(blurb) => {
-                  updateTextState('blurb', blurb)
+                  updateTextState('blurb', blurb);
                 }}
               />
               <TextField
@@ -217,7 +217,7 @@ export const ManuscriptEdit: React.FC<IProps> = ({
                 placeHolder="Comparable titles"
                 html={state.comps}
                 setHtml={(comps) => {
-                  updateTextState('comps', comps)
+                  updateTextState('comps', comps);
                 }}
               />
               <Divider />
@@ -226,7 +226,7 @@ export const ManuscriptEdit: React.FC<IProps> = ({
                 placeHolder="Synopsis"
                 html={state.synopsis}
                 setHtml={(synopsis) => {
-                  updateTextState('synopsis', synopsis)
+                  updateTextState('synopsis', synopsis);
                 }}
               />
 
@@ -256,5 +256,5 @@ export const ManuscriptEdit: React.FC<IProps> = ({
         </DialogActions>
       </Dialog>
     </div>
-  )
-}
+  );
+};
