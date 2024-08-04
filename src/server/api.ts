@@ -1,6 +1,7 @@
 import { remultExpress } from 'remult/remult-express';
 import { createPostgresDataProvider } from 'remult/postgres';
 import { config } from 'dotenv';
+
 import { AuthorManuscript } from '../Authors/AuthorManuscript.entity';
 import { Author } from '../Authors/Author.entity';
 import { Manuscript } from '../Manuscripts/Manuscript.entity';
@@ -11,7 +12,7 @@ import { getUserFromRequest } from '../utils/userUtils';
 
 config();
 
-export const entities = [
+const entities = [
   Author,
   Manuscript,
   AuthorManuscript,
@@ -36,7 +37,7 @@ export const api = remultExpress({
   },
   entities,
   admin: false,
-  error: async (e) => {
+  error: async (e: any) => {
     console.log(e.message);
   },
 });

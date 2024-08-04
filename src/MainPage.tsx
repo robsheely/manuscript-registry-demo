@@ -1,7 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
-import { AuthorsList } from './Authors/AuthorsList';
-import { ManuscriptsPage } from './Manuscripts/ManuscriptsPage';
-import { AuthorShow } from './Authors/AuthorShow';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import {
   Box,
   createTheme,
@@ -9,21 +8,22 @@ import {
   GlobalStyles,
   ThemeProvider,
 } from '@mui/material';
-import { ManuscriptShow } from './Manuscripts/ManuscriptShow';
 
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { AuthorsList } from './Authors/AuthorsList';
+import { ManuscriptsPage } from './Manuscripts/ManuscriptsPage';
+import { AuthorShow } from './Authors/AuthorShow';
+import { ManuscriptShow } from './Manuscripts/ManuscriptShow';
 import Header from './components/Header';
 import { UserData } from './utils/userUtils';
+
 const theme = createTheme();
 
-const MainPage = ({
-  currentUser,
-  logout,
-}: {
+type Props = {
   currentUser: UserData;
   logout: () => void;
-}) => {
+};
+
+const MainPage = ({ currentUser, logout }: Props) => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

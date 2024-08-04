@@ -1,3 +1,6 @@
+import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+
 import {
   AppBar,
   Toolbar,
@@ -7,18 +10,17 @@ import {
   Menu,
   MenuItem,
   Stack,
+  Avatar,
 } from '@mui/material';
-import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { UserData } from '../utils/userUtils';
+import { blue } from '@mui/material/colors';
 
-const Header = ({
-  currentUser,
-  logout,
-}: {
+type Props = {
   currentUser: UserData;
   logout: () => void;
-}) => {
+};
+
+const Header = ({ currentUser, logout }: Props) => {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const routes = useMemo(
     () => [
@@ -48,7 +50,14 @@ const Header = ({
           <strong>MANUSCRIPT REGISTRY</strong>
         </Typography>
 
-        <Stack direction="row" sx={{ flexGrow: 1, marginLeft: 1 }}>
+        <Stack
+          direction="row"
+          sx={{
+            flexGrow: 1,
+            marginLeft: 1,
+            filter: 'drop-shadow(3px 3px 4px #333333)',
+          }}
+        >
           {routes.map((route) => (
             <Button
               color="inherit"
@@ -60,12 +69,23 @@ const Header = ({
             </Button>
           ))}
         </Stack>
-        <Box sx={{ flexGrow: 1, marginLeft: 1 }}>
+        <Box
+          sx={{
+            flexGrow: 0,
+            marginLeft: 1,
+            filter: 'drop-shadow(3px 3px 4px #333333)',
+          }}
+        >
           <Button
             color="inherit"
             onClick={(e) => setAnchorElUser(e.currentTarget)}
           >
-            {currentUser!.firstName!}
+            <Avatar
+              variant="rounded"
+              sx={{ width: 100, height: 40, bgcolor: blue[200] }}
+            >
+              {currentUser!.firstName!}
+            </Avatar>
           </Button>
           <Menu
             sx={{ mt: '45px' }}
